@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="42" fill="#0b1020"/>
+  <rect x="44" y="40" width="88" height="112" rx="12" fill="#3a466a" transform="rotate(-8 88 96)"/>
+  <rect x="56" y="36" width="88" height="112" rx="12" fill="#a78bfa"/>
+  <rect x="56" y="36" width="88" height="34" rx="12" fill="#7c5cff"/>
+  <circle cx="100" cy="102" r="20" fill="#0b1020" opacity="0.25"/>
+  <text x="100" y="112" font-size="34" text-anchor="middle" fill="#ffffff" font-family="sans-serif">📚</text>
+</svg>
