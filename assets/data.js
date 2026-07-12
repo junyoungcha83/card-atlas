@@ -320,9 +320,26 @@ const KBO = [
     story:'창원을 연고로 한 젊은 구단이에요. 창단 8년 만인 2020년, "왕조"를 꿈꾸며 첫 우승을 차지했어요.' },
 ];
 
-// KBO 구단별 실제 이미지(개인용) — [구장, 마스코트(없으면 null)] · assets/kbo/*.jpg. 인덱스는 KBO 배열과 일치
-const KBO_IMG = [
+// KBO 구단별 실제 이미지(개인용) — 인덱스는 KBO 배열과 일치
+const KBO_IMG = [   // [구장, 마스코트(없으면 null)] · assets/kbo/*.jpg
   ['jamsil','m_doosan'], ['jamsil',null], ['gocheok','m_kiwoom'], ['ssg','m_ssg'], ['kt','m_kt'],
   ['hanwha',null], ['samsung',null], ['sajik',null], ['kia',null], ['nc','m_nc'],
 ];
-KBO.forEach((t,i)=>{ const [s,m]=KBO_IMG[i]||[]; if(s) t.stadiumImg='assets/kbo/'+s+'.jpg'; if(m) t.mascotImg='assets/kbo/'+m+'.jpg'; });
+const KBO_EMB = ['e_doosan','e_lg','e_kiwoom','e_ssg','e_kt', null, 'e_samsung','e_lotte','e_kia','e_nc']; // 한화=이모지
+const KBO_EMB_HIST = [
+  ['1982 · OB 베어스 창단 — 야구공을 든 곰 캐릭터 엠블렘','1999 · 모기업명 변경으로 「두산 베어스」 개명, 곰 로고 리뉴얼','현재 · 남색 바탕의 곰 엠블렘'],
+  ['1982 · 전신 MBC 청룡(청룡 로고)','1990 · LG그룹 인수로 「LG 트윈스」 창단, 쌍둥이 콘셉트 로고','현재 · 빨강·검정의 트윈스 엠블렘'],
+  ['2008 · 「우리 히어로즈」 창단','2010 · 네이밍 스폰서로 「넥센 히어로즈」, 로고 변경','2019 · 「키움 히어로즈」로 변경, 현재 엠블렘'],
+  ['2000 · SK 와이번스 창단 — 비룡(날개 달린 용) 엠블렘','2021 · 신세계(SSG) 인수로 「SSG 랜더스」 재창단, 로고 전면 교체'],
+  ['2013 · 창단하며 마법사(wiz) 콘셉트 엠블렘 도입','현재 · 검정·빨강 기반 엠블렘'],
+  ['1986 · 빙그레 이글스 창단 — 독수리 로고','1994 · 한화그룹으로 바뀌며 「한화 이글스」, 독수리 엠블렘 변경','현재 · 주황색 기반으로 리뉴얼'],
+  ['1982 · 창단 — 사자 캐릭터 엠블렘','여러 차례 리뉴얼','현재 · 파란색 바탕의 S·L 라이온즈 엠블렘'],
+  ['1982 · 창단','여러 차례 로고 변경','현재 · 남색·빨강의 「G(Giants)」 엠블렘'],
+  ['1982 · 해태 타이거즈 창단 — 호랑이 로고','2001 · 기아 인수로 「KIA 타이거즈」, 호랑이 엠블렘 리뉴얼','현재 · 빨강 기반 엠블렘'],
+  ['2011 · 창단(2013 1군 참가) — 공룡(다이노스) 콘셉트 엠블렘','현재 · 남색·금색 기반 엠블렘'],
+];
+KBO.forEach((t,i)=>{ const [s,m]=KBO_IMG[i]||[];
+  if(s) t.stadiumImg='assets/kbo/'+s+'.jpg';
+  if(m) t.mascotImg='assets/kbo/'+m+'.jpg';
+  if(KBO_EMB[i]) t.emblemImg='assets/kbo/'+KBO_EMB[i]+'.png';
+  t.emblems=KBO_EMB_HIST[i]||[]; });

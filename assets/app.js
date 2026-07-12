@@ -62,7 +62,7 @@ function faceKbo(t, s){
   if(!s){
     return `<div class="cardface" style="${style}">
       <div class="k-head">
-        <span class="k-emb">${t.emb}</span>
+        ${t.emblemImg?`<img class="k-emb-img" src="${t.emblemImg}" alt="${esc(t.name)} 엠블렘">`:`<span class="k-emb">${t.emb}</span>`}
         <div class="c-title"><h2>${esc(t.name)}</h2><span class="c-en">${esc(t.city)} 연고</span></div>
       </div>
       <div class="info-grid">
@@ -80,11 +80,11 @@ function faceKbo(t, s){
     </div>`;
   }
   return `<div class="cardface backface" style="${style}">
-    <div class="k-head sm"><span class="k-emb sm">${t.emb}</span><h2>${esc(t.name)} <small>역사</small></h2></div>
+    <div class="k-head sm">${t.emblemImg?`<img class="k-emb-img sm" src="${t.emblemImg}" alt="">`:`<span class="k-emb sm">${t.emb}</span>`}<h2>${esc(t.name)} <small>역사</small></h2></div>
     <div class="c-sec"><h3>📅 창단</h3><p>${esc(t.founded)}</p></div>
     <div class="c-sec"><h3>🏆 우승</h3><p>${esc(t.titles)}</p></div>
     <div class="c-sec"><h3>🎖️ 수상·명장면</h3><ul class="bul">${t.awards.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
-    <div class="c-sec"><h3>📖 팀 이야기</h3><p>${esc(t.story)}</p></div>
+    <div class="c-sec"><h3>🕓 엠블렘의 역사</h3><ol class="timeline emb-tl">${(t.emblems||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
     <div class="pageno">뒷면 2/2 · 넘기면 다음 구단 →</div>
   </div>`;
 }
