@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v12';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v13';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -112,10 +112,15 @@ function faceFoot(t, s){
       <div class="c-head">
         <img class="c-flag" src="https://flagcdn.com/w320/${t.flag}.png" alt="${esc(t.n)} 국기" onerror="this.style.visibility='hidden'">
         <div class="c-title"><h2>${esc(t.n)}</h2><span class="c-en">${esc(t.conf)}</span></div>
+        ${t.cf?`<img class="conf-emb" src="assets/conf/${t.cf}.png" alt="${esc(t.conf)} 엠블렘" onerror="this.style.display='none'">`:''}
       </div>
       <div class="fmap" data-iso="${t.iso}" data-vb="${CONTI[t.cont].vb}"><span class="fmap-label">${CONTI[t.cont].name}</span></div>
       <div class="info-grid">
-        ${infoRow('최고 성적', t.best)}${infoRow('월드컵 출전', t.apps)}${infoRow('소속 연맹', t.conf)}
+        ${infoRow('소속 연맹', t.conf)}${infoRow('월드컵 출전', t.apps)}
+      </div>
+      <div class="c-sec"><h3>🏆 최고 성적</h3><p>${esc(t.best)}</p></div>
+      <div class="c-sec"><h3>📊 역대 월드컵 성적</h3>
+        <div class="wc-results">${(t.wc||[]).map(r=>`<span class="${/우승|준우승|3위|4위/.test(r)?'hi':''}">${esc(r)}</span>`).join('')||'<span class="wc-none">본선 기록 없음</span>'}</div>
       </div>
       <div class="pageno">앞면 1/2 · 넘기면 레전드 선수 →</div>
     </div>`;
