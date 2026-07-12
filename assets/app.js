@@ -9,6 +9,21 @@ const side = () => PAGE&1;
 // ── 카드 면(HTML) ──
 function infoRow(k,v){ return `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`; }
 
+// 역사카드 워터마크(대표 이미지/상징을 밝은 톤으로 중첩) 배치 스폿
+const WM_SPOTS=[{t:'-4%',l:'-6%',s:155,r:-8},{t:'33%',l:'60%',s:175,r:9},{t:'62%',l:'-5%',s:150,r:-6},
+  {t:'4%',l:'63%',s:120,r:7},{t:'70%',l:'54%',s:140,r:5},{t:'42%',l:'22%',s:195,r:-3}];
+function watermark(c){
+  const items = c.imgs ? c.imgs.map(v=>({img:v})) : (c.icons||[]).map(v=>({emoji:v}));
+  return items.slice(0,WM_SPOTS.length).map((it,i)=>{ const s=WM_SPOTS[i];
+    const pos=`top:${s.t};left:${s.l};transform:rotate(${s.r}deg)`;
+    return it.img
+      ? `<img class="wmi" src="${it.img}" style="${pos};width:${s.s}px" alt="" onerror="this.remove()">`
+      : `<span class="wmi emoji" style="${pos};font-size:${s.s}px">${it.emoji}</span>`;
+  }).join('');
+}
+// 등거리(2:1) 세계지도 위 위치 핀 좌표(%)
+function pinStyle(c){ const x=((c.lng+180)/360*100).toFixed(1), y=((90-c.lat)/180*100).toFixed(1); return `left:${x}%;top:${y}%`; }
+
 function faceCountry(c, s){
   if(!s){
     return `<div class="cardface">
@@ -16,7 +31,10 @@ function faceCountry(c, s){
         <img class="c-flag" src="https://flagcdn.com/w320/${c.flag}.png" alt="${esc(c.name)} 국기" onerror="this.style.visibility='hidden'">
         <div class="c-title"><h2>${esc(c.name)}</h2><span class="c-en">${esc(c.en)}</span></div>
       </div>
-      <img class="c-map" src="assets/maps/${c.map}.svg" alt="${esc(c.name)} 지도" onerror="this.style.display='none'">
+      <div class="map-duo">
+        <div class="mapbox"><img class="c-map" src="assets/maps/${c.map}.svg" alt="${esc(c.name)} 지도" onerror="this.style.display='none'"><span class="mlabel">${esc(c.name)}</span></div>
+        <div class="mapbox worldbox"><img class="c-world" src="assets/world.jpg" alt="세계 위치"><span class="pin" style="${pinStyle(c)}"></span><span class="mlabel">${esc(c.region.split(' · ')[0])}</span></div>
+      </div>
       <div class="info-grid">
         ${infoRow('위치',c.region)}${infoRow('면적',c.area)}${infoRow('인구',c.pop)}
         ${infoRow('통화',c.currency)}${infoRow('종교',c.religion)}${infoRow('국가원수',c.gov)}
@@ -27,12 +45,15 @@ function faceCountry(c, s){
     </div>`;
   }
   return `<div class="cardface backface">
-    <div class="c-head sm">
-      <img class="c-flag sm" src="https://flagcdn.com/w320/${c.flag}.png" alt="" onerror="this.style.visibility='hidden'">
-      <h2>${esc(c.name)} <small>역사</small></h2>
+    <div class="wm">${watermark(c)}</div>
+    <div class="hbody">
+      <div class="c-head sm">
+        <img class="c-flag sm" src="https://flagcdn.com/w320/${c.flag}.png" alt="" onerror="this.style.visibility='hidden'">
+        <h2>${esc(c.name)} <small>역사</small></h2>
+      </div>
+      <ol class="timeline">${c.history.map(h=>`<li>${esc(h)}</li>`).join('')}</ol>
+      <div class="pageno">뒷면 2/2 · 넘기면 다음 나라 →</div>
     </div>
-    <ol class="timeline">${c.history.map(h=>`<li>${esc(h)}</li>`).join('')}</ol>
-    <div class="pageno">뒷면 2/2 · 넘기면 다음 나라 →</div>
   </div>`;
 }
 

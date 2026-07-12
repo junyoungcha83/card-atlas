@@ -36,7 +36,7 @@ button{font-family:inherit}
 .card3d.flipped{transform:rotateY(-180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .face.back{transform:rotateY(180deg)}
-.cardface{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+.cardface{position:relative;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
   background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 14px 44px;
   box-shadow:0 8px 24px rgba(0,0,0,.3)}
 
@@ -49,8 +49,28 @@ button{font-family:inherit}
 .c-head.sm h2{font-size:1.25rem}
 .c-head h2 small{font-size:.9rem;color:var(--primary2);font-weight:700}
 .c-en{color:var(--muted);font-size:.9rem}
-.c-map{display:block;width:70%;max-width:200px;height:150px;object-fit:contain;margin:2px auto 14px;
-  background:#0f1630;border:1px solid var(--border);border-radius:14px;padding:8px}
+/* 지도 2분할: 왼쪽 국가 실루엣 · 오른쪽 세계지도+위치핀 */
+.map-duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 14px}
+.mapbox{position:relative;height:150px;background:#0f1630;border:1px solid var(--border);border-radius:14px;
+  padding:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.c-map{max-width:100%;max-height:120px;object-fit:contain;display:block}
+.worldbox{padding:0}
+.c-world{width:100%;height:100%;object-fit:fill;display:block}
+.pin{position:absolute;width:12px;height:12px;border-radius:50%;background:#ff3b3b;border:2px solid #fff;
+  transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,.7);animation:pinpulse 1.6s infinite}
+@keyframes pinpulse{0%{box-shadow:0 0 0 3px rgba(255,59,59,.55),0 1px 4px rgba(0,0,0,.7)}
+  70%{box-shadow:0 0 0 13px rgba(255,59,59,0),0 1px 4px rgba(0,0,0,.7)}
+  100%{box-shadow:0 0 0 3px rgba(255,59,59,0),0 1px 4px rgba(0,0,0,.7)}}
+.mlabel{position:absolute;left:6px;bottom:5px;font-size:.66rem;font-weight:700;color:#e7ecf6;
+  background:rgba(8,12,20,.62);padding:2px 7px;border-radius:8px;max-width:calc(100% - 12px);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 역사카드 워터마크(밝은 톤 중첩) */
+.wm{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;border-radius:20px}
+.wmi{position:absolute}
+img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blend-mode:screen;border-radius:8px}
+.wmi.emoji{opacity:.1;line-height:1;mix-blend-mode:normal}
+.hbody{position:relative;z-index:1}
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .info-grid>div{min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
 .info-grid dt{color:var(--muted);font-size:.7rem;margin-bottom:2px}
