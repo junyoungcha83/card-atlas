@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v18';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v19';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -271,11 +271,26 @@ function renderHome(){
       <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
       <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
       <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
+      <button class="home-card" data-k="heroes"><span class="hc-emo">☯️</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
+      <button class="home-card" data-k="korhist"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국역사</b><small>단군부터 대한민국까지</small></button>
+      <button class="home-card" data-k="geo"><span class="hc-emo">🗺️</span><b>한국지리</b><small>전국 도·시·군·구</small></button>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
 
+const DECKS = { world:1, kbo:1, foot:1 };
+const SOON_TITLE = { heroes:'☯️ 한국위인전', korhist:'🗺️ 한국역사', geo:'🗺️ 한국지리' };
+function comingSoon(kind){
+  KIND=null;
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">${SOON_TITLE[kind]||''}</div></div>
+    <div class="soon"><div class="soon-emo">🚧</div><h2>준비 중입니다</h2><p>곧 채워질 예정이에요.</p></div>`;
+  document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
+  history.replaceState(null,'','#'+kind);
+}
+
 function openDeck(kind, it=0, sd=0){
+  if(!DECKS[kind]){ comingSoon(kind); return; }
   KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?KBO : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
   renderDeck();
@@ -283,7 +298,7 @@ function openDeck(kind, it=0, sd=0){
 
 function route(){
   const h=location.hash.slice(1);
-  const m=h.match(/^(world|kbo|foot)(?:=(\d+)\.(\d+))?$/);
+  const m=h.match(/^(world|kbo|foot|heroes|korhist|geo)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }
