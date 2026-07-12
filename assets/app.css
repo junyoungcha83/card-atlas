@@ -160,3 +160,4 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .ltext{line-height:1.65;font-size:.92rem;color:var(--text)}
 .lmuted{color:var(--muted)}
 .llink{display:inline-block;margin-top:14px;color:var(--primary2);font-weight:700;text-decoration:none}
+.lcredit{margin-top:12px;color:var(--muted);font-size:.7rem}

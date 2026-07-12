@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v11';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v12';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -265,17 +265,24 @@ function openLegend(q){
     ov.addEventListener('click',e=>{ if(e.target===ov) ov.style.display='none'; });
     ov.querySelector('.lclose').onclick=()=>{ ov.style.display='none'; };
   }
-  const body=ov.querySelector('.lbody');
-  body.innerHTML='<p class="lmuted">불러오는 중…</p>'; ov.style.display='flex';
+  const body=ov.querySelector('.lbody'); ov.style.display='flex';
+  const render=(title,img,bio)=>{
+    body.innerHTML='<h3>'+esc(title)+'</h3>'+
+      (img?'<img class="lphoto" src="'+esc(img)+'" alt="">':'')+
+      (bio?'<p class="ltext">'+esc(bio)+'</p>':'<p class="lmuted">이력 정보가 없어요.</p>')+
+      '<a class="llink" href="https://ko.wikipedia.org/wiki/'+encodeURIComponent(title)+'" target="_blank" rel="noopener">위키백과에서 더 보기 →</a>'+
+      '<p class="lcredit">사진·글 출처: 위키백과 (CC BY-SA)</p>';
+  };
+  const L = (typeof LEGENDS!=='undefined' && LEGENDS[q]) ? LEGENDS[q] : null;
+  if(L && (L.bio || L.img)){ render(L.t||q, L.img||'', L.bio||''); return; }  // 오프라인(로컬) 우선
+  body.innerHTML='<p class="lmuted">불러오는 중…</p>';                          // 로컬에 없으면 온라인 폴백
   const url='https://ko.wikipedia.org/w/api.php?action=query&prop=extracts%7Cpageimages&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=360&redirects=1&format=json&origin=*&titles='+encodeURIComponent(q);
   fetch(url).then(r=>r.json()).then(d=>{
     const pages=(d.query&&d.query.pages)||{}, p=Object.values(pages)[0]||{};
-    const title=p.title||q, img=p.thumbnail&&p.thumbnail.source; let ex=(p.extract||'').replace(/\s+/g,' ').trim();
+    const title=p.title||q, img=(p.thumbnail&&p.thumbnail.source)||''; let ex=(p.extract||'').replace(/\s+/g,' ').trim();
     if(!ex&&!img){ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">위키백과에서 정보를 찾지 못했어요.</p>'; return; }
     if(ex.length>700) ex=ex.slice(0,700)+'…';
-    body.innerHTML='<h3>'+esc(title)+'</h3>'+(img?'<img class="lphoto" src="'+esc(img)+'" alt="">':'')+
-      (ex?'<p class="ltext">'+esc(ex)+'</p>':'')+
-      '<a class="llink" href="https://ko.wikipedia.org/wiki/'+encodeURIComponent(title)+'" target="_blank" rel="noopener">위키백과에서 더 보기 →</a>';
+    render(title,img,ex);
   }).catch(()=>{ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">불러오기 실패 — 인터넷 연결을 확인하세요.</p>'; });
 }
 document.addEventListener('click', e=>{ const b=e.target.closest&&e.target.closest('.legend-item'); if(b){ e.preventDefault(); openLegend(b.dataset.q); } });
