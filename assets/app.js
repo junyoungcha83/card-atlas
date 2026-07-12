@@ -96,7 +96,63 @@ function faceKbo(t, s){
   </div>`;
 }
 
-const faces = (data,s) => KIND==='world' ? faceCountry(data,s) : faceKbo(data,s);
+// 대륙별 지도 crop(viewBox) — worldmap.svg(1000x507, 로빈슨) 기준
+const CONTI = {
+  eu:{ name:'유럽',       vb:'400 20 185 155' },
+  as:{ name:'아시아',     vb:'560 40 335 215' },
+  af:{ name:'아프리카',   vb:'430 150 210 270' },
+  sa:{ name:'남아메리카', vb:'235 205 200 285' },
+  na:{ name:'북·중미',    vb:'70 20 320 240' },
+  oc:{ name:'오세아니아', vb:'760 250 200 175' },
+};
+function faceFoot(t, s){
+  if(!s){
+    return `<div class="cardface foot">
+      <div class="c-head">
+        <img class="c-flag" src="https://flagcdn.com/w320/${t.flag}.png" alt="${esc(t.n)} 국기" onerror="this.style.visibility='hidden'">
+        <div class="c-title"><h2>${esc(t.n)}</h2><span class="c-en">${esc(t.conf)}</span></div>
+      </div>
+      <div class="fmap" data-iso="${t.iso}" data-vb="${CONTI[t.cont].vb}"><span class="fmap-label">${CONTI[t.cont].name}</span></div>
+      <div class="info-grid">
+        ${infoRow('출전 지역', t.conf)}${infoRow('월드컵 출전', t.apps)}
+      </div>
+      <div class="pageno">앞면 1/2 · 넘기면 기록·레전드 →</div>
+    </div>`;
+  }
+  return `<div class="cardface backface foot">
+    <div class="c-head sm"><img class="c-flag sm" src="https://flagcdn.com/w320/${t.flag}.png" alt="" onerror="this.style.visibility='hidden'"><h2>${esc(t.n)} <small>월드컵</small></h2></div>
+    <div class="c-sec"><h3>🏆 최고 성적</h3><p>${esc(t.best)}</p></div>
+    <div class="c-sec"><h3>📅 월드컵 출전</h3><p>${esc(t.apps)}</p></div>
+    <div class="c-sec"><h3>⭐ 레전드 선수</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
+    <div class="c-sec"><h3>🌍 소속 연맹</h3><p>${esc(t.conf)}</p></div>
+    <div class="pageno">뒷면 2/2 · 넘기면 다음 나라 →</div>
+  </div>`;
+}
+
+// worldmap.svg 로드 후 .fmap에 대륙(회색)+해당국(초록) 지도 주입
+let MAP_SVG = null;
+fetch('assets/worldmap.svg').then(r=>r.text()).then(txt=>{
+  const doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+  MAP_SVG = doc.querySelector('svg'); hydrateMaps();
+}).catch(()=>{});
+function hydrateMaps(){
+  if(!MAP_SVG) return;
+  document.querySelectorAll('.fmap').forEach(box=>{
+    if(box.querySelector('svg')) return;
+    const svg = MAP_SVG.cloneNode(true);
+    const vb = box.dataset.vb; svg.setAttribute('viewBox', vb);
+    svg.removeAttribute('width'); svg.removeAttribute('height');
+    const p = vb.split(' ').map(Number), vbAR = p[2]/p[3];
+    const boxAR = (box.clientWidth||440)/(box.clientHeight||190);
+    if(vbAR >= boxAR){ svg.style.width='100%'; svg.style.height='auto'; }   // viewBox 비율에 맞춰 요소 크기 → 밖 영역 렌더 방지
+    else { svg.style.height='100%'; svg.style.width='auto'; }
+    let el; try { el = svg.getElementById(box.dataset.iso); } catch(_){}
+    if(el) el.classList.add('on');
+    box.insertBefore(svg, box.firstChild);
+  });
+}
+
+const faces = (data,s) => KIND==='world' ? faceCountry(data,s) : KIND==='kbo' ? faceKbo(data,s) : faceFoot(data,s);
 
 // ── 덱 렌더 ──
 function buildCard(){
@@ -106,6 +162,7 @@ function buildCard(){
     <div class="face front">${faces(data,0)}</div>
     <div class="face back">${faces(data,1)}</div>
   </div>`;
+  hydrateMaps();
 }
 const curCard = () => { const s=document.getElementById('slide'); return s?s.firstElementChild:null; };
 
@@ -147,7 +204,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':'⚾ KBO 구단'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'⚽ 월드컵'}</div>
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -156,7 +213,7 @@ function renderDeck(){
       <div class="dots" id="dots">${LIST.map((_,i)=>`<i${i===item()?' class="on"':''}></i>`).join('')}</div>
       <button class="nav-btn" id="next">›</button>
     </div>
-    <div class="hint" id="hint">👉 옆으로 넘기면 <b>뒷면(역사)</b>, 한 번 더 넘기면 <b>다음 ${KIND==='world'?'나라':'구단'}</b></div>`;
+    <div class="hint" id="hint">👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b></div>`;
   document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
   document.getElementById('prev').onclick=()=>go(-1);
   document.getElementById('next').onclick=()=>go(1);
@@ -180,19 +237,20 @@ function renderHome(){
       <p class="home-sub">카드를 옆으로 넘기면 뒷면(역사)이 나오고,<br>한 번 더 넘기면 다음 카드로 넘어가요.</p>
       <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
       <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
+      <button class="home-card" data-k="foot"><span class="hc-emo">⚽</span><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
 
 function openDeck(kind, it=0, sd=0){
-  KIND=kind; LIST = kind==='world'?COUNTRIES:KBO;
+  KIND=kind; LIST = kind==='world'?COUNTRIES:kind==='kbo'?KBO:FOOT;
   PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
   renderDeck();
 }
 
 function route(){
   const h=location.hash.slice(1);
-  const m=h.match(/^(world|kbo)(?:=(\d+)\.(\d+))?$/);
+  const m=h.match(/^(world|kbo|foot)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }

@@ -128,3 +128,13 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .hint{margin-top:12px;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.5;transition:opacity .4s}
 .hint b{color:var(--primary2)}
 .hint.gone{opacity:0}
+
+/* ⚽ 월드컵 — 대륙(회색)+해당국(초록) 지도 */
+.fmap{position:relative;width:100%;height:190px;background:#0f1630;border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;margin:2px 0 14px;display:flex;align-items:center;justify-content:center}
+.fmap svg{display:block}
+.fmap svg path,.fmap svg g{fill:#3f4a68;stroke:#0b1020;stroke-width:.4}
+.fmap svg .on,.fmap svg .on *{fill:#22c55e}
+.fmap-label{position:absolute;left:8px;bottom:6px;z-index:1;font-size:.72rem;font-weight:800;color:#e7ecf6;
+  background:rgba(8,12,20,.62);padding:2px 9px;border-radius:8px}
+.foot .info-grid dd{font-size:.82rem}
