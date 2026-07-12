@@ -1,5 +1,5 @@
 // 앱 셸 오프라인 캐시. 캐시 이름 바꾸면 옛 캐시 자동 폐기.
-const CACHE = 'card-atlas-v9';
+const CACHE = 'card-atlas-v10';
 self.addEventListener('message', e => { if (e.data === 'skip-waiting') self.skipWaiting(); });
 const KBO_IMGS = ['jamsil','gocheok','ssg','kt','samsung','sajik','kia','nc','hanwha','m_doosan','m_kiwoom','m_kt','m_nc','m_ssg']
   .map(n => `./assets/kbo/${n}.jpg`)

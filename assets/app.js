@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v9';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v10';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -259,4 +259,15 @@ window.addEventListener('hashchange', route);
 route();
 
 // 서비스워커
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  const hadController = !!navigator.serviceWorker.controller;   // 첫 방문(최초 제어권 획득)엔 새로고침 안 함
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    if(!hadController || refreshing) return;
+    refreshing = true; location.reload();                       // 새 버전 활성화 시 자동 새로고침
+  });
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    reg.update();
+    setInterval(()=>reg.update(), 60*1000);                      // 주기적으로 새 버전 확인
+  }).catch(()=>{});
+}
