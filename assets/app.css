@@ -35,9 +35,12 @@ button{font-family:inherit}
 .card3d{position:relative;width:100%;height:70vh;max-height:660px;min-height:440px;
   transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .card3d.flipped{transform:rotateY(-180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.face.back{transform:rotateY(180deg)}
+/* backface-hidden 제거: 3D 안에서 내부 스크롤이 막히는 버그 회피. 불투명 면 + translateZ로 겹침 처리 */
+.face{position:absolute;inset:0}
+.face.front{transform:translateZ(1px)}
+.face.back{transform:rotateY(180deg) translateZ(1px)}
 .cardface{position:relative;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  touch-action:pan-y;overscroll-behavior:contain;
   background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px 14px 44px;
   box-shadow:0 8px 24px rgba(0,0,0,.3)}
 
