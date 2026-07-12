@@ -62,8 +62,9 @@ function faceKbo(t, s){
   if(!s){
     return `<div class="cardface" style="${style}">
       <div class="k-head">
-        <div class="c-title"><h2>${esc(t.name)}</h2><span class="c-en">${esc(t.city)} 연고</span></div>
         ${t.emblemImg?`<img class="k-emb-img" src="${t.emblemImg}" alt="${esc(t.name)} 엠블렘">`:`<span class="k-emb">${t.emb}</span>`}
+        <div class="c-title"><h2>${esc(t.name)}</h2><span class="c-en">${esc(t.city)} 연고</span></div>
+        ${t.logoImg?`<img class="k-logo-img" src="${t.logoImg}" alt="${esc(t.name)} 로고">`:''}
       </div>
       <div class="info-grid">
         ${infoRow('연고지',t.city)}${infoRow('홈구장',t.stadium)}
@@ -85,7 +86,7 @@ function faceKbo(t, s){
     </div>`;
   }
   return `<div class="cardface backface" style="${style}">
-    <div class="k-head sm"><h2>${esc(t.name)} <small>역사</small></h2>${t.emblemImg?`<img class="k-emb-img sm" src="${t.emblemImg}" alt="">`:`<span class="k-emb sm">${t.emb}</span>`}</div>
+    <div class="k-head sm">${t.emblemImg?`<img class="k-emb-img sm" src="${t.emblemImg}" alt="">`:`<span class="k-emb sm">${t.emb}</span>`}<h2>${esc(t.name)} <small>역사</small></h2>${t.logoImg?`<img class="k-logo-img sm" src="${t.logoImg}" alt="">`:''}</div>
     <div class="c-sec"><h3>🏆 우승</h3><p>${esc(t.titles)}</p></div>
     <div class="c-sec"><h3>🎖️ 수상·명장면</h3><ul class="bul">${t.awards.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
     <div class="c-sec"><h3>⭐ 대표 레전드</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
