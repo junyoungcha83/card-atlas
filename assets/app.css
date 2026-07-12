@@ -13,6 +13,7 @@ button{font-family:inherit}
 /* ── 홈 ── */
 .home{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:20px 6px}
 .home h1{font-size:2rem}
+.ver{font-size:.6rem;color:var(--muted);font-weight:700;vertical-align:super}
 .home-sub{color:var(--muted);line-height:1.5;margin:0 0 8px}
 .home-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:20px;
   padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--text);
