@@ -182,12 +182,13 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 
 /* 월드컵 역사 카드 */
 .wch-emo{font-size:2rem;flex:none}
-.wc-hist{display:flex;flex-direction:column;gap:6px}
-.wch-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:7px 10px}
-.wch-t{font-weight:800;font-size:.82rem;margin-bottom:3px}
-.wch-t span{color:var(--muted);font-weight:600;margin-left:6px}
-.wch-r{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:.8rem}
-.wch-r .win{color:#f6d21a;font-weight:800}
-.wch-r .run{color:var(--muted);font-weight:600}
-.wch-r .kor{font-weight:700}
-.wch-r .kor.good{color:#34d399}
+/* 도서 목차 스타일 */
+.wc-toc{list-style:none;margin:0;padding:0}
+.wc-toc li{padding:9px 2px;border-bottom:1px solid var(--border)}
+.wc-toc li:last-child{border-bottom:none}
+.toc-l{font-size:.9rem;line-height:1.35}
+.wc-toc .no{display:inline-block;min-width:2.3em;font-weight:800;color:var(--primary2)}
+.wc-toc .ti{font-weight:700}
+.wc-toc .re{margin-top:3px;padding-left:2.3em;color:var(--muted);font-size:.82rem;font-weight:600;line-height:1.4}
+.wc-toc .re .kor{color:var(--text)}
+.wc-toc .re .kor.good{color:#34d399;font-weight:700}

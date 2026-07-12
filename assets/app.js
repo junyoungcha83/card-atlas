@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v16';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v17';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -141,11 +141,11 @@ function faceWcHistory(s){
   if(!s){
     return `<div class="cardface foot wchist">
       <div class="c-head"><span class="wch-emo">🏆</span><div class="c-title"><h2>월드컵 역사</h2><span class="c-en">1930 → 2022 · 22개 대회</span></div></div>
-      <div class="wc-hist">${WORLD_CUPS.map(w=>`
-        <div class="wch-row">
-          <div class="wch-t">${w.no}회 · ${w.yr} <span>${esc(w.host)}</span></div>
-          <div class="wch-r"><span class="win">🥇 ${esc(w.win)}</span><span class="run">🥈 ${esc(w.run)}</span><span class="kor ${/위|16강|8강/.test(w.kor)?'good':''}">🇰🇷 ${esc(w.kor)}</span></div>
-        </div>`).join('')}</div>
+      <ol class="wc-toc">${WORLD_CUPS.map(w=>`
+        <li>
+          <div class="toc-l"><span class="no">${String(w.no).padStart(2,'0')}회</span> <span class="ti">${w.yr}년 ${esc(w.host)} 월드컵</span></div>
+          <div class="re">🥇 ${esc(w.win)} · 🥈 ${esc(w.run)} · <span class="kor ${/위|16강|8강/.test(w.kor)?'good':''}">🇰🇷 ${esc(w.kor)}</span></div>
+        </li>`).join('')}</ol>
       <div class="pageno">앞면 1/2 · 넘기면 기록 요약 →</div>
     </div>`;
   }
