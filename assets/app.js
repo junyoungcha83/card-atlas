@@ -70,12 +70,18 @@ function faceKbo(t, s){
         ${infoRow('수용인원',t.capacity)}${infoRow('마스코트',t.mascot)}
       </div>
       <div class="c-sec"><h3>⭐ 대표 레전드</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
-      ${t.mascotImg ? `<div class="c-sec"><h3>🎽 마스코트</h3>
-        <div class="k-mascot-row"><img class="k-mascot" src="${t.mascotImg}" alt="${esc(t.mascot)}" onerror="this.closest('.k-mascot-row').style.display='none'"><span>${esc(t.mascot)}</span></div></div>` : ''}
-      <div class="c-sec"><h3>🏟️ 홈구장</h3>
-        ${t.stadiumImg ? `<img class="k-stadium" src="${t.stadiumImg}" alt="${esc(t.stadium)}" onerror="this.style.display='none'">` : ''}
-        <div class="k-cap">${esc(t.stadium)} · ${esc(t.capacity)}</div>
-      </div>
+      <div class="c-sec"><div class="k-duo">
+        <div class="k-col">
+          <div class="k-col-label">🏟️ 홈구장</div>
+          ${t.stadiumImg ? `<img class="k-col-img cover" src="${t.stadiumImg}" alt="${esc(t.stadium)}">` : `<div class="k-ph">🏟️</div>`}
+          <div class="k-cap">${esc(t.stadium)}<br><small>${esc(t.capacity)}</small></div>
+        </div>
+        <div class="k-col">
+          <div class="k-col-label">🎽 마스코트</div>
+          ${t.mascotImg ? `<img class="k-col-img contain" src="${t.mascotImg}" alt="${esc(t.mascot)}">` : `<div class="k-ph">${t.emb}</div>`}
+          <div class="k-name">${esc(t.mascot)}</div>
+        </div>
+      </div></div>
       <div class="pageno">앞면 1/2 · 넘기면 역사 →</div>
     </div>`;
   }

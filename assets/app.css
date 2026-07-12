@@ -72,14 +72,18 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .wmi.emoji{opacity:.1;line-height:1;mix-blend-mode:normal}
 .hbody{position:relative;z-index:1}
 
-/* KBO 마스코트 · 야구장 이미지 */
-.k-mascot-row{display:flex;align-items:center;gap:12px}
-.k-mascot{height:110px;width:auto;object-fit:contain;border-radius:10px;background:#0f1630;
-  border:1px solid var(--border);padding:4px}
-.k-mascot-row span{font-weight:700;font-size:.95rem}
-.k-stadium{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;
-  border:1px solid var(--border);margin-bottom:6px}
-.k-cap{color:var(--muted);font-size:.82rem;text-align:center}
+/* KBO 홈구장(왼쪽) · 마스코트(오른쪽) 2열 */
+.k-duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+.k-col{min-width:0;display:flex;flex-direction:column;gap:6px}
+.k-col-label{font-size:.8rem;color:var(--primary2);font-weight:800;border-left:4px solid var(--primary);padding-left:8px}
+.k-col-img{width:100%;height:130px;border-radius:12px;border:1px solid var(--border);background:#0f1630;display:block}
+.k-col-img.cover{object-fit:cover}
+.k-col-img.contain{object-fit:contain;padding:4px}
+.k-ph{width:100%;height:130px;border-radius:12px;border:1px dashed var(--border);background:#0f1630;
+  display:flex;align-items:center;justify-content:center;font-size:2.6rem}
+.k-cap{color:var(--muted);font-size:.78rem;text-align:center;line-height:1.35}
+.k-cap small{font-size:.72rem}
+.k-name{font-weight:800;font-size:.95rem;text-align:center}
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .info-grid>div{min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
 .info-grid dt{color:var(--muted);font-size:.7rem;margin-bottom:2px}
