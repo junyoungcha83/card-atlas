@@ -319,3 +319,10 @@ const KBO = [
     awards:['프랜차이즈 스타 나성범','괴력의 외국인 타자 테임즈'],
     story:'창원을 연고로 한 젊은 구단이에요. 창단 8년 만인 2020년, "왕조"를 꿈꾸며 첫 우승을 차지했어요.' },
 ];
+
+// KBO 구단별 실제 이미지(개인용) — [구장, 마스코트(없으면 null)] · assets/kbo/*.jpg. 인덱스는 KBO 배열과 일치
+const KBO_IMG = [
+  ['jamsil','m_doosan'], ['jamsil',null], ['gocheok','m_kiwoom'], ['ssg','m_ssg'], ['kt','m_kt'],
+  ['hanwha',null], ['samsung',null], ['sajik',null], ['kia',null], ['nc','m_nc'],
+];
+KBO.forEach((t,i)=>{ const [s,m]=KBO_IMG[i]||[]; if(s) t.stadiumImg='assets/kbo/'+s+'.jpg'; if(m) t.mascotImg='assets/kbo/'+m+'.jpg'; });

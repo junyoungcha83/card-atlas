@@ -1,9 +1,12 @@
 // 앱 셸 오프라인 캐시. 캐시 이름 바꾸면 옛 캐시 자동 폐기.
-const CACHE = 'card-atlas-v2';
+const CACHE = 'card-atlas-v3';
 self.addEventListener('message', e => { if (e.data === 'skip-waiting') self.skipWaiting(); });
+const KBO_IMGS = ['jamsil','gocheok','ssg','kt','samsung','sajik','kia','nc','hanwha','m_doosan','m_kiwoom','m_kt','m_nc','m_ssg']
+  .map(n => `./assets/kbo/${n}.jpg`);
 const CORE = ['./','./index.html','./assets/app.css','./assets/app.js','./assets/data.js','./manifest.webmanifest','./assets/icon.svg',
   './assets/world.jpg',
-  './assets/kr/hunmin.jpg','./assets/kr/semicon.jpg','./assets/kr/goguryeo.png','./assets/kr/dangun.jpg','./assets/kr/geobukseon.jpg','./assets/kr/ahn.jpg'];
+  './assets/kr/hunmin.jpg','./assets/kr/semicon.jpg','./assets/kr/goguryeo.png','./assets/kr/dangun.jpg','./assets/kr/geobukseon.jpg','./assets/kr/ahn.jpg',
+  ...KBO_IMGS];
 const MAP_CODES = ['kr','us','jp','cn','gb','fr','de','it','es','ru','ca','au','in','br','mx','eg','za','sa','th','vn'];
 const MAPS = MAP_CODES.map(c => `./assets/maps/${c}.svg`);
 
