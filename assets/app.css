@@ -192,3 +192,7 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .wc-toc .re{margin-top:3px;padding-left:2.3em;color:var(--muted);font-size:.82rem;font-weight:600;line-height:1.4}
 .wc-toc .re .kor{color:var(--text)}
 .wc-toc .re .kor.good{color:#34d399;font-weight:700}
+
+/* KBO 유니폼 · 엠블럼 변천사 이미지 */
+.kb-uni-img{width:100%;border-radius:12px;border:1px solid var(--border);display:block;margin-top:4px}
+.kb-eh-img{width:100%;border-radius:12px;border:1px solid var(--border);display:block}

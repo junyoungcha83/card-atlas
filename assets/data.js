@@ -350,10 +350,12 @@ const KBO_TEAM_HIST = [   // 구단의 역사(변천사 포함)
   ['1982 · 해태 타이거즈로 창단, 해태 시절 9회 우승','2001 · 기아가 인수해 「KIA 타이거즈」','통산 12회 최다 우승 (2024 포함)'],
   ['2011 · 창단 (2013년 1군 참가), 창원 연고','2020 · 창단 8년 만에 첫 우승'],
 ];
-KBO.forEach((t,i)=>{ const [s,m]=KBO_IMG[i]||[];
-  if(s) t.stadiumImg='assets/kbo/'+s+'.jpg';
-  if(m) t.mascotImg='assets/kbo/'+m+'.jpg';
-  if(KBO_EMB[i]) t.emblemImg='assets/kbo/'+KBO_EMB[i]+'.png';
+const KBO_KEY = ['doosan','lg','kiwoom','ssg','kt','hanwha','samsung','lotte','kia','nc']; // 이미지 파일 키
+KBO.forEach((t,i)=>{
+  const key=KBO_KEY[i]||''; t.key=key;
+  t.stadiumImg='assets/kbo/s_'+key+'.jpg';   // 구장(사용자 캡처)
+  t.mascotImg='assets/kbo/m_'+key+'.jpg';    // 마스코트(사용자 캡처)
+  if(KBO_EMB[i]) t.emblemImg='assets/kbo/'+KBO_EMB[i]+'.png';   // 헤더 소형 엠블럼
   t.emblems=KBO_EMB_HIST[i]||[];
   t.teamHistory=KBO_TEAM_HIST[i]||[]; });
 

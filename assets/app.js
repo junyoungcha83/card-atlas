@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v17';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v18';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -83,6 +83,8 @@ function faceKbo(t, s){
           <div class="k-name">${esc(t.mascot)}</div>
         </div>
       </div></div>
+      <div class="c-sec kb-uni"><div class="k-col-label">👕 유니폼</div>
+        <img class="kb-uni-img" src="assets/kbo/u_${t.key}.jpg" alt="${esc(t.name)} 유니폼" onerror="this.closest('.kb-uni').remove()"></div>
       <div class="pageno">앞면 1/2 · 넘기면 역사 →</div>
     </div>`;
   }
@@ -92,7 +94,9 @@ function faceKbo(t, s){
     <div class="c-sec"><h3>🎖️ 수상·명장면</h3><ul class="bul">${t.awards.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
     <div class="c-sec"><h3>⭐ 대표 레전드</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
     <div class="c-sec"><h3>📖 구단의 역사</h3><ol class="timeline emb-tl">${(t.teamHistory||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
-    <div class="c-sec"><h3>🏷️ 구단 로고의 역사</h3><ol class="timeline emb-tl">${(t.emblems||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
+    <div class="c-sec"><h3>🏷️ 구단 로고의 역사</h3>
+      <img class="kb-eh-img" src="assets/kbo/eh_${t.key}.jpg" alt="${esc(t.name)} 엠블럼 변천사" onerror="this.style.display='none';var f=this.nextElementSibling;if(f)f.style.display='block'">
+      <ol class="timeline emb-tl" style="display:none">${(t.emblems||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
     <div class="pageno">뒷면 2/2 · 넘기면 다음 구단 →</div>
   </div>`;
 }
