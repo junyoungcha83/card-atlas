@@ -176,3 +176,15 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .hc-emo-img{height:58px;width:auto;object-fit:contain}
 .bar-emb{height:22px;width:auto;vertical-align:-5px}
 .nat-emb{width:46px;height:46px;object-fit:contain;flex:none;background:#fff;border-radius:10px;padding:4px;box-shadow:0 2px 6px rgba(0,0,0,.3);margin-left:6px}
+
+/* 월드컵 역사 카드 */
+.wch-emo{font-size:2rem;flex:none}
+.wc-hist{display:flex;flex-direction:column;gap:6px}
+.wch-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:7px 10px}
+.wch-t{font-weight:800;font-size:.82rem;margin-bottom:3px}
+.wch-t span{color:var(--muted);font-weight:600;margin-left:6px}
+.wch-r{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:.8rem}
+.wch-r .win{color:#f6d21a;font-weight:800}
+.wch-r .run{color:var(--muted);font-weight:600}
+.wch-r .kor{font-weight:700}
+.wch-r .kor.good{color:#34d399}

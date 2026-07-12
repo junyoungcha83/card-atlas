@@ -465,3 +465,29 @@ FOOT.forEach(t=>{ t.wc = FOOT_WC[t.n] || [];
   const c=t.conf;
   t.cf = /UEFA/.test(c)?'uefa' : /CONMEBOL/.test(c)?'conmebol' : /CONCACAF/.test(c)?'concacaf' : /AFC/.test(c)?'afc' : /CAF/.test(c)?'caf' : '';
 });
+
+// 역대 월드컵(1930~2022) — 회차/개최국/우승/준우승/한국 성적
+const WORLD_CUPS = [
+  {no:1,yr:1930,host:'우루과이',win:'우루과이',run:'아르헨티나',kor:'불참'},
+  {no:2,yr:1934,host:'이탈리아',win:'이탈리아',run:'체코슬로바키아',kor:'불참'},
+  {no:3,yr:1938,host:'프랑스',win:'이탈리아',run:'헝가리',kor:'불참'},
+  {no:4,yr:1950,host:'브라질',win:'우루과이',run:'브라질',kor:'불참'},
+  {no:5,yr:1954,host:'스위스',win:'서독',run:'헝가리',kor:'조별리그(첫 출전)'},
+  {no:6,yr:1958,host:'스웨덴',win:'브라질',run:'스웨덴',kor:'불참'},
+  {no:7,yr:1962,host:'칠레',win:'브라질',run:'체코슬로바키아',kor:'불참'},
+  {no:8,yr:1966,host:'잉글랜드',win:'잉글랜드',run:'서독',kor:'불참'},
+  {no:9,yr:1970,host:'멕시코',win:'브라질',run:'이탈리아',kor:'불참'},
+  {no:10,yr:1974,host:'서독',win:'서독',run:'네덜란드',kor:'불참'},
+  {no:11,yr:1978,host:'아르헨티나',win:'아르헨티나',run:'네덜란드',kor:'불참'},
+  {no:12,yr:1982,host:'스페인',win:'이탈리아',run:'서독',kor:'불참'},
+  {no:13,yr:1986,host:'멕시코',win:'아르헨티나',run:'서독',kor:'조별리그'},
+  {no:14,yr:1990,host:'이탈리아',win:'서독',run:'아르헨티나',kor:'조별리그'},
+  {no:15,yr:1994,host:'미국',win:'브라질',run:'이탈리아',kor:'조별리그'},
+  {no:16,yr:1998,host:'프랑스',win:'프랑스',run:'브라질',kor:'조별리그'},
+  {no:17,yr:2002,host:'대한민국·일본',win:'브라질',run:'독일',kor:'4위'},
+  {no:18,yr:2006,host:'독일',win:'이탈리아',run:'프랑스',kor:'조별리그'},
+  {no:19,yr:2010,host:'남아프리카공화국',win:'스페인',run:'네덜란드',kor:'16강'},
+  {no:20,yr:2014,host:'브라질',win:'독일',run:'아르헨티나',kor:'조별리그'},
+  {no:21,yr:2018,host:'러시아',win:'프랑스',run:'크로아티아',kor:'조별리그'},
+  {no:22,yr:2022,host:'카타르',win:'아르헨티나',run:'프랑스',kor:'16강'},
+];

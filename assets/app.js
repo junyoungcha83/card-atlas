@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v14';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v15';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -136,6 +136,28 @@ function faceFoot(t, s){
   </div>`;
 }
 
+// 월드컵 역사 카드(덱 첫 장): 1930~2022 전 대회 우승·준우승·한국 성적
+function faceWcHistory(s){
+  if(!s){
+    return `<div class="cardface foot wchist">
+      <div class="c-head"><span class="wch-emo">🏆</span><div class="c-title"><h2>월드컵 역사</h2><span class="c-en">1930 → 2022 · 22개 대회</span></div></div>
+      <div class="wc-hist">${WORLD_CUPS.map(w=>`
+        <div class="wch-row">
+          <div class="wch-t">${w.no}회 · ${w.yr} <span>${esc(w.host)}</span></div>
+          <div class="wch-r"><span class="win">🥇 ${esc(w.win)}</span><span class="run">🥈 ${esc(w.run)}</span><span class="kor ${/위|16강|8강/.test(w.kor)?'good':''}">🇰🇷 ${esc(w.kor)}</span></div>
+        </div>`).join('')}</div>
+      <div class="pageno">앞면 1/2 · 넘기면 기록 요약 →</div>
+    </div>`;
+  }
+  return `<div class="cardface backface foot wchist">
+    <div class="c-head sm"><span class="wch-emo">🏆</span><h2>월드컵 <small>기록</small></h2></div>
+    <div class="c-sec"><h3>👑 최다 우승국</h3><div class="chips">${['브라질 5회','독일 4회','이탈리아 4회','아르헨티나 3회','우루과이 2회','프랑스 2회','잉글랜드 1회','스페인 1회'].map(x=>`<span>${x}</span>`).join('')}</div></div>
+    <div class="c-sec"><h3>🇰🇷 대한민국</h3><p>1954년 첫 출전 · 통산 11회 출전 · 최고 성적 <b>4위(2002)</b> · 원정 첫 16강(2010)</p></div>
+    <div class="c-sec"><h3>ℹ️ 참고</h3><p>서독은 통일 전 독일(1954·1974·1990 우승)이에요. 2002년은 대한민국·일본 공동 개최였어요.</p></div>
+    <div class="pageno">뒷면 2/2 · 넘기면 아르헨티나 →</div>
+  </div>`;
+}
+
 // worldmap.svg 로드 후 .fmap에 대륙(회색)+해당국(초록) 지도 주입
 let MAP_SVG = null;
 fetch('assets/worldmap.svg').then(r=>r.text()).then(txt=>{
@@ -159,7 +181,7 @@ function hydrateMaps(){
   });
 }
 
-const faces = (data,s) => KIND==='world' ? faceCountry(data,s) : KIND==='kbo' ? faceKbo(data,s) : faceFoot(data,s);
+const faces = (data,s) => KIND==='world' ? faceCountry(data,s) : KIND==='kbo' ? faceKbo(data,s) : (data && data.hist) ? faceWcHistory(s) : faceFoot(data,s);
 
 // ── 덱 렌더 ──
 function buildCard(){
@@ -250,7 +272,7 @@ function renderHome(){
 }
 
 function openDeck(kind, it=0, sd=0){
-  KIND=kind; LIST = kind==='world'?COUNTRIES:kind==='kbo'?KBO:FOOT;
+  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?KBO : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
   renderDeck();
 }
