@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v10';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v11';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -115,17 +115,17 @@ function faceFoot(t, s){
       </div>
       <div class="fmap" data-iso="${t.iso}" data-vb="${CONTI[t.cont].vb}"><span class="fmap-label">${CONTI[t.cont].name}</span></div>
       <div class="info-grid">
-        ${infoRow('출전 지역', t.conf)}${infoRow('월드컵 출전', t.apps)}
+        ${infoRow('최고 성적', t.best)}${infoRow('월드컵 출전', t.apps)}${infoRow('소속 연맹', t.conf)}
       </div>
-      <div class="pageno">앞면 1/2 · 넘기면 기록·레전드 →</div>
+      <div class="pageno">앞면 1/2 · 넘기면 레전드 선수 →</div>
     </div>`;
   }
   return `<div class="cardface backface foot">
-    <div class="c-head sm"><img class="c-flag sm" src="https://flagcdn.com/w320/${t.flag}.png" alt="" onerror="this.style.visibility='hidden'"><h2>${esc(t.n)} <small>월드컵</small></h2></div>
-    <div class="c-sec"><h3>🏆 최고 성적</h3><p>${esc(t.best)}</p></div>
-    <div class="c-sec"><h3>📅 월드컵 출전</h3><p>${esc(t.apps)}</p></div>
-    <div class="c-sec"><h3>⭐ 레전드 선수</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
-    <div class="c-sec"><h3>🌍 소속 연맹</h3><p>${esc(t.conf)}</p></div>
+    <div class="c-head sm"><img class="c-flag sm" src="https://flagcdn.com/w320/${t.flag}.png" alt="" onerror="this.style.visibility='hidden'"><h2>${esc(t.n)} <small>레전드</small></h2></div>
+    <div class="c-sec"><h3>⭐ 레전드 선수</h3>
+      <div class="legend-list">${t.legends.map(l=>`<button class="legend-item" data-q="${esc(l)}"><span>${esc(l)}</span><i>ⓘ 사진·이력</i></button>`).join('')}</div>
+      <p class="legend-hint">선수를 누르면 사진과 이력을 볼 수 있어요 (출처: 위키백과)</p>
+    </div>
     <div class="pageno">뒷면 2/2 · 넘기면 다음 나라 →</div>
   </div>`;
 }
@@ -205,7 +205,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'⚽ 월드컵'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'🏆 월드컵'}</div>
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -238,7 +238,7 @@ function renderHome(){
       <p class="home-sub">카드를 옆으로 넘기면 뒷면(역사)이 나오고,<br>한 번 더 넘기면 다음 카드로 넘어가요.</p>
       <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
       <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
-      <button class="home-card" data-k="foot"><span class="hc-emo">⚽</span><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
+      <button class="home-card" data-k="foot"><span class="hc-emo">🏆</span><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
@@ -255,6 +255,31 @@ function route(){
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }
+// 레전드 선수 클릭 → 위키백과 사진·이력 모달
+function openLegend(q){
+  let ov=document.getElementById('lmodal');
+  if(!ov){
+    ov=document.createElement('div'); ov.id='lmodal'; ov.className='lmodal';
+    ov.innerHTML='<div class="lbox"><button class="lclose" aria-label="닫기">✕</button><div class="lbody"></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',e=>{ if(e.target===ov) ov.style.display='none'; });
+    ov.querySelector('.lclose').onclick=()=>{ ov.style.display='none'; };
+  }
+  const body=ov.querySelector('.lbody');
+  body.innerHTML='<p class="lmuted">불러오는 중…</p>'; ov.style.display='flex';
+  const url='https://ko.wikipedia.org/w/api.php?action=query&prop=extracts%7Cpageimages&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=360&redirects=1&format=json&origin=*&titles='+encodeURIComponent(q);
+  fetch(url).then(r=>r.json()).then(d=>{
+    const pages=(d.query&&d.query.pages)||{}, p=Object.values(pages)[0]||{};
+    const title=p.title||q, img=p.thumbnail&&p.thumbnail.source; let ex=(p.extract||'').replace(/\s+/g,' ').trim();
+    if(!ex&&!img){ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">위키백과에서 정보를 찾지 못했어요.</p>'; return; }
+    if(ex.length>700) ex=ex.slice(0,700)+'…';
+    body.innerHTML='<h3>'+esc(title)+'</h3>'+(img?'<img class="lphoto" src="'+esc(img)+'" alt="">':'')+
+      (ex?'<p class="ltext">'+esc(ex)+'</p>':'')+
+      '<a class="llink" href="https://ko.wikipedia.org/wiki/'+encodeURIComponent(title)+'" target="_blank" rel="noopener">위키백과에서 더 보기 →</a>';
+  }).catch(()=>{ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">불러오기 실패 — 인터넷 연결을 확인하세요.</p>'; });
+}
+document.addEventListener('click', e=>{ const b=e.target.closest&&e.target.closest('.legend-item'); if(b){ e.preventDefault(); openLegend(b.dataset.q); } });
+
 window.addEventListener('hashchange', route);
 route();
 

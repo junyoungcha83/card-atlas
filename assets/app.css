@@ -139,3 +139,24 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .fmap-label{position:absolute;left:8px;bottom:6px;z-index:1;font-size:.72rem;font-weight:800;color:#e7ecf6;
   background:rgba(8,12,20,.62);padding:2px 9px;border-radius:8px}
 .foot .info-grid dd{font-size:.82rem}
+
+/* ⚽ 레전드 리스트 + 상세 모달 */
+.legend-list{display:flex;flex-direction:column;gap:8px}
+.legend-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);
+  font-weight:700;font-size:.98rem;cursor:pointer}
+.legend-item i{color:var(--primary2);font-style:normal;font-size:.78rem;font-weight:700}
+.legend-item:active{transform:scale(.98)}
+.legend-hint{color:var(--muted);font-size:.8rem;margin-top:10px;text-align:center}
+.lmodal{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
+  background:rgba(6,10,20,.74);padding:18px}
+.lbox{position:relative;background:var(--card);border:1px solid var(--border);border-radius:18px;
+  max-width:400px;width:100%;max-height:84vh;overflow-y:auto;padding:20px 16px;box-shadow:0 14px 44px rgba(0,0,0,.55)}
+.lclose{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;
+  background:var(--bg2);color:var(--text);font-size:1rem;cursor:pointer}
+.lbody h3{font-size:1.3rem;margin-bottom:12px;padding-right:34px}
+.lphoto{width:100%;max-width:230px;display:block;margin:0 auto 14px;border-radius:12px;
+  border:1px solid var(--border)}
+.ltext{line-height:1.65;font-size:.92rem;color:var(--text)}
+.lmuted{color:var(--muted)}
+.llink{display:inline-block;margin-top:14px;color:var(--primary2);font-weight:700;text-decoration:none}
