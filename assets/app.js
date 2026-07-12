@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v13';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v14';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -112,7 +112,8 @@ function faceFoot(t, s){
       <div class="c-head">
         <img class="c-flag" src="https://flagcdn.com/w320/${t.flag}.png" alt="${esc(t.n)} 국기" onerror="this.style.visibility='hidden'">
         <div class="c-title"><h2>${esc(t.n)}</h2><span class="c-en">${esc(t.conf)}</span></div>
-        ${t.cf?`<img class="conf-emb" src="assets/conf/${t.cf}.png" alt="${esc(t.conf)} 엠블렘" onerror="this.style.display='none'">`:''}
+        ${t.cf?`<img class="conf-emb" src="assets/conf/${t.cf}.png" alt="${esc(t.conf)} 연맹" onerror="this.style.display='none'">`:''}
+        <img class="nat-emb" src="assets/nat/${t.flag}.png" alt="${esc(t.n)} 축구협회" onerror="this.remove()">
       </div>
       <div class="fmap" data-iso="${t.iso}" data-vb="${CONTI[t.cont].vb}"><span class="fmap-label">${CONTI[t.cont].name}</span></div>
       <div class="info-grid">
@@ -210,7 +211,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'🏆 월드컵'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'<img class="bar-emb" src="assets/wc.png" alt=""> 월드컵'}</div>
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -243,7 +244,7 @@ function renderHome(){
       <p class="home-sub">카드를 옆으로 넘기면 뒷면(역사)이 나오고,<br>한 번 더 넘기면 다음 카드로 넘어가요.</p>
       <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
       <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
-      <button class="home-card" data-k="foot"><span class="hc-emo">🏆</span><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
+      <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
