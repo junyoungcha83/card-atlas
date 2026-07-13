@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v25';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v26';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -234,11 +234,20 @@ function hydrateMaps(){
 }
 
 // ── 한국위인전 카드 ──
-function heroPortrait(h, sm){
-  return `<span class="h-emb${sm?' sm':''}">`+
+// 이름 옆 역할 아이콘: 👑왕/군주 · ⚔️장군·무장 · 🔫독립운동가·의사 · 📖문인·시인·학자·문화
+const ROLE_SETS = {
+  '👑':[1,2,3,4,5,6,7,8,9,10,11,12,17,18,22,25,26,33,36,39,41,42,43,44,53,55],
+  '⚔️':[13,14,20,24,30,48,51,52,68,70],
+  '🔫':[59,60,61,62,65,66,67,69,71,72,73],
+  '📖':[15,16,19,21,23,27,28,29,31,32,34,35,37,38,40,45,46,47,49,50,54,56,57,58,63,64,74],
+};
+function heroRole(h){ for(const ic in ROLE_SETS){ if(ROLE_SETS[ic].includes(h.id)) return ic; } return '📖'; }
+// 사진: assets/heroes/{id}.jpg(.png). 없으면 '준비중' 빈칸 프레임.
+function heroPhoto(h){
+  return `<div class="h-photo">`+
     `<img src="assets/heroes/${h.id}.jpg" alt="${esc(h.n)}" `+
-      `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='grid'}">`+
-    `<span class="h-face" style="display:none">${h.e}</span></span>`;
+      `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='flex'}">`+
+    `<span class="h-photo-ph" style="display:none">📷<small>준비중</small></span></div>`;
 }
 // 첫 장: 시대별 인물 목차(시간순) — 이름 클릭 시 해당 카드로 이동
 function faceHeroesToc(){
@@ -261,15 +270,19 @@ function faceHeroesToc(){
     <div class="pageno">넘기면 첫 인물 →</div>
   </div>`;
 }
-// 인물 카드: 1인 1장(초상·업적·평가·한눈에 모두 앞면)
+// 인물 카드: 1인 1장 — 프레임(사진+시대·나라·생몰) / 아래 업적·평가·한눈에
 function faceHeroes(h){
   if(h && h.toc) return faceHeroesToc();
   const era = HERO_ERAS[h.k] || {label:'', c:'#556'};
   const no = 'No.'+String(h.id).padStart(2,'0');
   return `<div class="cardface" style="--tc:${era.c}">
-    <div class="h-head">
-      ${heroPortrait(h,false)}
-      <div class="c-title"><h2>${esc(h.n)}</h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div>
+    <div class="h-frame">
+      ${heroPhoto(h)}
+      <div class="h-meta">
+        <div class="h-name"><span class="role">${heroRole(h)}</span><span class="nm">${esc(h.n)}</span></div>
+        <div class="h-sub">${esc(era.label)} · ${esc(h.nat)}</div>
+        <div class="h-life">생몰 ${esc(h.b)} ~ ${esc(h.d)}</div>
+      </div>
       <span class="h-no">${no}</span>
     </div>
     <div class="c-sec"><h3>📜 주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>

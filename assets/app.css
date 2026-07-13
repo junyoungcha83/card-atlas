@@ -147,23 +147,23 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .backface .k-head{border-radius:20px 20px 0 0}
 
 /* ── 한국위인전 ── */
-.h-head{display:flex;align-items:center;gap:12px;margin:-16px -14px 14px;padding:16px 14px;
+.h-frame{position:relative;display:flex;gap:13px;margin:-16px -14px 15px;padding:14px;
   background:var(--tc);border-radius:20px 20px 0 0}
-.h-head.sm{margin-bottom:16px}
-.h-head .c-title{flex:1;min-width:0}
-.h-head h2{color:#fff}
-.h-head h2 small{color:rgba(255,255,255,.85);font-size:.82rem;font-weight:700}
-.h-head .c-en{color:rgba(255,255,255,.88);font-size:.85rem}
-.h-no{flex:none;color:#fff;font-weight:800;font-size:.82rem;letter-spacing:.04em;
-  background:rgba(0,0,0,.2);border-radius:999px;padding:5px 11px;font-variant-numeric:tabular-nums}
-.h-emb{width:66px;height:66px;border-radius:50%;flex:none;position:relative;overflow:hidden;
-  background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.35),inset 0 0 0 3px rgba(255,255,255,.5);
-  display:grid;place-items:center}
-.h-emb.sm{width:46px;height:46px}
-.h-emb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.h-face{font-size:2.1rem;line-height:1}
-.h-emb.sm .h-face{font-size:1.45rem}
-.h-info>div:last-child{grid-column:1/-1}   /* 생몰 한 줄 전체 */
+.h-photo{width:90px;height:112px;flex:none;position:relative;overflow:hidden;border-radius:10px;
+  background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.3),inset 0 0 0 2px rgba(255,255,255,.6)}
+.h-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.h-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;color:#8a93a8;font-size:1.6rem}
+.h-photo-ph small{font-size:.62rem;font-weight:800;letter-spacing:.02em}
+.h-meta{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px;
+  color:#fff;padding-right:44px}
+.h-name{display:flex;align-items:center;gap:9px;font-size:1.5rem;font-weight:800;line-height:1.12}
+.h-name .role{font-size:1.5rem;line-height:1;flex:none}
+.h-name .nm{min-width:0;overflow-wrap:anywhere}
+.h-sub{font-size:.95rem;font-weight:700;color:rgba(255,255,255,.95)}
+.h-life{font-size:.86rem;color:rgba(255,255,255,.86);font-variant-numeric:tabular-nums}
+.h-no{position:absolute;top:11px;right:12px;color:#fff;font-weight:800;font-size:.7rem;letter-spacing:.03em;
+  background:rgba(0,0,0,.24);border-radius:999px;padding:4px 9px;font-variant-numeric:tabular-nums}
 
 /* 위인전 목차(첫 장) */
 .toc-hint{color:var(--muted);font-size:.82rem;line-height:1.5;margin:0 0 14px}
