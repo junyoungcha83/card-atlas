@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v23';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v24';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -232,8 +232,45 @@ function hydrateMaps(){
   });
 }
 
+// ── 한국위인전 카드 ──
+function heroPortrait(h, sm){
+  return `<span class="h-emb${sm?' sm':''}">`+
+    `<img src="assets/heroes/${h.id}.jpg" alt="${esc(h.n)}" `+
+      `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='grid'}">`+
+    `<span class="h-face" style="display:none">${h.e}</span></span>`;
+}
+function faceHeroes(h, s){
+  const era = HERO_ERAS[h.k] || {label:'', c:'#556'};
+  const style = `--tc:${era.c}`;
+  const no = 'No.'+String(h.id).padStart(2,'0');
+  if(!s){
+    return `<div class="cardface" style="${style}">
+      <div class="h-head">
+        ${heroPortrait(h,false)}
+        <div class="c-title"><h2>${esc(h.n)}</h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div>
+        <span class="h-no">${no}</span>
+      </div>
+      <div class="info-grid h-info">
+        ${infoRow('시대',era.label)}${infoRow('나라',h.nat)}${infoRow('생몰',h.b+' ~ '+h.d)}
+      </div>
+      <div class="c-sec"><h3>📜 주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>
+      <div class="pageno">앞면 1/2 · 넘기면 평가 →</div>
+    </div>`;
+  }
+  return `<div class="cardface backface" style="${style}">
+    <div class="wm">${watermark({icons:[h.e,h.e,h.e]})}</div>
+    <div class="hbody">
+      <div class="h-head sm">${heroPortrait(h,true)}<div class="c-title"><h2>${esc(h.n)} <small>후대의 평가</small></h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div></div>
+      <div class="c-sec"><h3>⭐ 후대의 평가</h3><p>${esc(h.v)}</p></div>
+      <div class="c-sec"><h3>🕘 한눈에</h3><div class="chips"><span>${esc(era.label)}</span><span>${esc(h.nat)}</span><span>${esc(h.b)} ~ ${esc(h.d)}</span></div></div>
+      <div class="pageno">뒷면 2/2 · 넘기면 다음 인물 →</div>
+    </div>
+  </div>`;
+}
+
 const faces = (data,s) => KIND==='world' ? faceCountry(data,s)
   : KIND==='kbo' ? (data && data.stand ? faceKboStand(s) : faceKbo(data,s))
+  : KIND==='heroes' ? faceHeroes(data,s)
   : (data && data.hist) ? faceWcHistory(s) : faceFoot(data,s);
 
 // ── 덱 렌더 ──
@@ -286,7 +323,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':'<img class="bar-emb" src="assets/wc.png" alt=""> 월드컵'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':'<img class="bar-emb" src="assets/wc.png" alt=""> 월드컵'}</div>
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -295,7 +332,7 @@ function renderDeck(){
       <div class="dots" id="dots">${LIST.map((_,i)=>`<i${i===item()?' class="on"':''}></i>`).join('')}</div>
       <button class="nav-btn" id="next">›</button>
     </div>
-    <div class="hint" id="hint">👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b></div>`;
+    <div class="hint" id="hint">👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':KIND==='heroes'?'인물':'나라'}</b></div>`;
   document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
   document.getElementById('prev').onclick=()=>go(-1);
   document.getElementById('next').onclick=()=>go(1);
@@ -329,8 +366,8 @@ function renderHome(){
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
 
-const DECKS = { world:1, kbo:1, foot:1 };
-const SOON_TITLE = { heroes:'👑 한국위인전', korhist:'🇰🇷 한국역사', geo:'🗺️ 한국지리' };
+const DECKS = { world:1, kbo:1, foot:1, heroes:1 };
+const SOON_TITLE = { korhist:'🇰🇷 한국역사', geo:'🗺️ 한국지리' };
 function comingSoon(kind){
   KIND=null;
   APP.innerHTML=`
@@ -342,7 +379,7 @@ function comingSoon(kind){
 
 function openDeck(kind, it=0, sd=0){
   if(!DECKS[kind]){ comingSoon(kind); return; }
-  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
+  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?HEROES : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
   renderDeck();
 }
