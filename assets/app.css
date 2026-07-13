@@ -165,6 +165,19 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .h-emb.sm .h-face{font-size:1.45rem}
 .h-info>div:last-child{grid-column:1/-1}   /* 생몰 한 줄 전체 */
 
+/* 위인전 목차(첫 장) */
+.toc-hint{color:var(--muted);font-size:.82rem;line-height:1.5;margin:0 0 14px}
+.toc-sec{margin-bottom:16px}
+.toc-era{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.92rem;color:var(--text);margin-bottom:9px}
+.toc-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.toc-cnt{margin-left:auto;color:var(--muted);font-weight:700;font-size:.76rem}
+.toc-list{display:flex;flex-wrap:wrap;gap:7px}
+.toc-name{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);color:var(--text);
+  border:1px solid var(--border);border-left:3px solid var(--tc);border-radius:10px;padding:7px 11px;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:transform .08s}
+.toc-name:active{transform:scale(.96)}
+.tn-no{color:var(--muted);font-size:.7rem;font-weight:800;font-variant-numeric:tabular-nums}
+
 /* ── 하단 내비 ── */
 .nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px}
 .nav-btn{width:52px;height:52px;border-radius:50%;border:none;background:var(--primary);color:#fff;

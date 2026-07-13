@@ -1,11 +1,12 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v24';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v25';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-let KIND=null, LIST=[], PAGE=0;   // PAGE: 0..(len*2-1) — item=PAGE>>1, side=PAGE&1
-const item = () => PAGE>>1;
-const side = () => PAGE&1;
+let KIND=null, LIST=[], PAGE=0, FLAT=false;   // FLAT=단면 덱(위인전): 1인 1장, 플립 없음
+const item = () => FLAT ? PAGE : PAGE>>1;      // 일반: item=PAGE>>1, side=PAGE&1
+const side = () => FLAT ? 0 : (PAGE&1);
+const pageCount = () => FLAT ? LIST.length : LIST.length*2;
 
 // ── 카드 면(HTML) ──
 function infoRow(k,v){ return `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`; }
@@ -239,32 +240,42 @@ function heroPortrait(h, sm){
       `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='grid'}">`+
     `<span class="h-face" style="display:none">${h.e}</span></span>`;
 }
-function faceHeroes(h, s){
-  const era = HERO_ERAS[h.k] || {label:'', c:'#556'};
-  const style = `--tc:${era.c}`;
-  const no = 'No.'+String(h.id).padStart(2,'0');
-  if(!s){
-    return `<div class="cardface" style="${style}">
-      <div class="h-head">
-        ${heroPortrait(h,false)}
-        <div class="c-title"><h2>${esc(h.n)}</h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div>
-        <span class="h-no">${no}</span>
-      </div>
-      <div class="info-grid h-info">
-        ${infoRow('시대',era.label)}${infoRow('나라',h.nat)}${infoRow('생몰',h.b+' ~ '+h.d)}
-      </div>
-      <div class="c-sec"><h3>📜 주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>
-      <div class="pageno">앞면 1/2 · 넘기면 평가 →</div>
+// 첫 장: 시대별 인물 목차(시간순) — 이름 클릭 시 해당 카드로 이동
+function faceHeroesToc(){
+  const groups={};
+  HEROES.forEach((h,j)=>{ (groups[h.k]=groups[h.k]||[]).push({h,i:j+1}); });  // i = LIST 인덱스(목차가 0번)
+  const secs = Object.keys(HERO_ERAS).filter(k=>groups[k]).map(k=>{
+    const era=HERO_ERAS[k];
+    const names = groups[k].map(({h,i})=>
+      `<button class="toc-name" data-i="${i}" style="--tc:${era.c}"><span class="tn-no">${String(h.id).padStart(2,'0')}</span>${esc(h.n)}</button>`
+    ).join('');
+    return `<div class="toc-sec">
+      <div class="toc-era"><span class="toc-dot" style="background:${era.c}"></span>${esc(era.label)}<span class="toc-cnt">${groups[k].length}명</span></div>
+      <div class="toc-list">${names}</div>
     </div>`;
-  }
-  return `<div class="cardface backface" style="${style}">
-    <div class="wm">${watermark({icons:[h.e,h.e,h.e]})}</div>
-    <div class="hbody">
-      <div class="h-head sm">${heroPortrait(h,true)}<div class="c-title"><h2>${esc(h.n)} <small>후대의 평가</small></h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div></div>
-      <div class="c-sec"><h3>⭐ 후대의 평가</h3><p>${esc(h.v)}</p></div>
-      <div class="c-sec"><h3>🕘 한눈에</h3><div class="chips"><span>${esc(era.label)}</span><span>${esc(h.nat)}</span><span>${esc(h.b)} ~ ${esc(h.d)}</span></div></div>
-      <div class="pageno">뒷면 2/2 · 넘기면 다음 인물 →</div>
+  }).join('');
+  return `<div class="cardface toc">
+    <div class="c-head"><span class="k-emb">👑</span><div class="c-title"><h2>한국위인전</h2><span class="c-en">고조선 → 일제강점기 · 74인</span></div></div>
+    <p class="toc-hint">이름을 누르면 그 인물 카드로 바로 이동해요. (옆으로 넘겨도 돼요)</p>
+    ${secs}
+    <div class="pageno">넘기면 첫 인물 →</div>
+  </div>`;
+}
+// 인물 카드: 1인 1장(초상·업적·평가·한눈에 모두 앞면)
+function faceHeroes(h){
+  if(h && h.toc) return faceHeroesToc();
+  const era = HERO_ERAS[h.k] || {label:'', c:'#556'};
+  const no = 'No.'+String(h.id).padStart(2,'0');
+  return `<div class="cardface" style="--tc:${era.c}">
+    <div class="h-head">
+      ${heroPortrait(h,false)}
+      <div class="c-title"><h2>${esc(h.n)}</h2><span class="c-en">${esc(era.label)} · ${esc(h.nat)}</span></div>
+      <span class="h-no">${no}</span>
     </div>
+    <div class="c-sec"><h3>📜 주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>
+    <div class="c-sec"><h3>⭐ 후대의 평가</h3><p>${esc(h.v)}</p></div>
+    <div class="c-sec"><h3>🕘 한눈에</h3><div class="chips"><span>${esc(era.label)}</span><span>${esc(h.nat)}</span><span>생몰 ${esc(h.b)} ~ ${esc(h.d)}</span></div></div>
+    <div class="pageno">${no} · 옆으로 넘기면 다음 인물 →</div>
   </div>`;
 }
 
@@ -300,11 +311,10 @@ function slideTo(dir){
 }
 
 function go(dir){
-  const total=LIST.length*2, np=PAGE+dir;
-  if(np<0||np>=total) return;
-  const same=(np>>1)===item();
-  PAGE=np;
-  if(same) flip(side()===1); else slideTo(dir);
+  const np=PAGE+dir;
+  if(np<0||np>=pageCount()) return;
+  if(FLAT){ PAGE=np; slideTo(dir); }         // 단면: 항상 다음 카드로 슬라이드
+  else { const same=(np>>1)===item(); PAGE=np; if(same) flip(side()===1); else slideTo(dir); }
   updateMeta(); hideHint();
 }
 
@@ -312,7 +322,7 @@ function updateMeta(){
   const cnt=document.getElementById('count'); if(cnt) cnt.textContent=`${item()+1} / ${LIST.length}`;
   const p=document.getElementById('prev'), n=document.getElementById('next');
   if(p) p.disabled = PAGE<=0;
-  if(n) n.disabled = PAGE>=LIST.length*2-1;
+  if(n) n.disabled = PAGE>=pageCount()-1;
   const dots=document.getElementById('dots');
   if(dots) [...dots.children].forEach((d,i)=>d.classList.toggle('on', i===item()));
   history.replaceState(null,'',`#${KIND}=${item()}.${side()}`);
@@ -332,12 +342,12 @@ function renderDeck(){
       <div class="dots" id="dots">${LIST.map((_,i)=>`<i${i===item()?' class="on"':''}></i>`).join('')}</div>
       <button class="nav-btn" id="next">›</button>
     </div>
-    <div class="hint" id="hint">👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':KIND==='heroes'?'인물':'나라'}</b></div>`;
+    <div class="hint" id="hint">${FLAT?'👉 옆으로 넘기면 <b>다음 인물</b> · 첫 장에서 <b>이름</b>을 누르면 바로 이동':`👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b>`}</div>`;
   document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
   document.getElementById('prev').onclick=()=>go(-1);
   document.getElementById('next').onclick=()=>go(1);
   const deck=document.getElementById('deck');
-  deck.querySelectorAll('.dots i').forEach((d,i)=>d.onclick=()=>{ PAGE=i*2; buildCard(); updateMeta(); hideHint(); });
+  deck.querySelectorAll('.dots i').forEach((d,i)=>d.onclick=()=>{ PAGE=FLAT?i:i*2; buildCard(); updateMeta(); hideHint(); });
   // 스와이프
   let sx=0, sy=0, tracking=false;
   deck.addEventListener('pointerdown', e=>{ sx=e.clientX; sy=e.clientY; tracking=true; });
@@ -379,8 +389,10 @@ function comingSoon(kind){
 
 function openDeck(kind, it=0, sd=0){
   if(!DECKS[kind]){ comingSoon(kind); return; }
-  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?HEROES : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
-  PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
+  KIND=kind; FLAT = (kind==='heroes');
+  LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?[{toc:true}].concat(HEROES) : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
+  it = Math.min(Math.max(it,0), LIST.length-1);
+  PAGE = FLAT ? it : it*2 + (sd?1:0);
   renderDeck();
 }
 
@@ -421,6 +433,12 @@ function openLegend(q){
   }).catch(()=>{ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">불러오기 실패 — 인터넷 연결을 확인하세요.</p>'; });
 }
 document.addEventListener('click', e=>{ const b=e.target.closest&&e.target.closest('.legend-item'); if(b){ e.preventDefault(); openLegend(b.dataset.q); } });
+// 위인전 목차 이름 클릭 → 해당 인물 카드로 이동
+document.addEventListener('click', e=>{
+  const b=e.target.closest&&e.target.closest('.toc-name'); if(!b||KIND!=='heroes') return;
+  PAGE = FLAT ? +b.dataset.i : (+b.dataset.i)*2;
+  buildCard(); updateMeta(); hideHint();
+});
 // KBO 첫 장 순위/나의팀 탭 전환
 document.addEventListener('click', e=>{
   const tb=e.target.closest&&e.target.closest('.kbs-tab'); if(!tb) return;
