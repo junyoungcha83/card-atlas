@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v19';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v23';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -61,30 +61,33 @@ function faceCountry(c, s){
 function faceKbo(t, s){
   const style=`--tc:${t.c1};--tc2:${t.c2}`;
   if(!s){
+    // 마스코트 이름 = 파일명 '_' 뒤 글자 (m_철웅이 → 철웅이)
+    const mascotName=(t.mascotImg||'').split('/').pop().replace(/\.[^.]+$/,'').split('_')[1]||'';
+    // 유니폼 좌/우 라벨 — 기본 왼쪽 홈·오른쪽 원정, 키움·한화는 반대
+    const uniSwap=(t.key==='kiwoom'||t.key==='hanwha');
+    const uniL=uniSwap?'원정':'홈', uniR=uniSwap?'홈':'원정';
     return `<div class="cardface" style="${style}">
       <div class="k-head">
         ${t.emblemImg?`<img class="k-emb-img" src="${t.emblemImg}" alt="${esc(t.name)} 엠블렘">`:`<span class="k-emb">${t.emb}</span>`}
         <div class="c-title"><h2>${esc(t.name)}</h2><span class="c-en">${esc(t.city)} 연고</span></div>
         ${t.logoImg?`<img class="k-logo-img" src="${t.logoImg}" alt="${esc(t.name)} 로고">`:''}
       </div>
-      <div class="info-grid">
-        ${infoRow('연고지',t.city)}${infoRow('홈구장',t.stadium)}
-        ${infoRow('수용인원',t.capacity)}${infoRow('마스코트',t.mascot)}
+      <div class="info-grid k-info">
+        ${infoRow('연고지',t.city)}${infoRow('홈구장',t.stadium)}${infoRow('수용인원',t.capacity)}
       </div>
       <div class="c-sec"><div class="k-duo">
         <div class="k-col">
-          <div class="k-col-label">🏟️ 홈구장</div>
           ${t.stadiumImg ? `<img class="k-col-img cover" src="${t.stadiumImg}" alt="${esc(t.stadium)}">` : `<div class="k-ph">🏟️</div>`}
-          <div class="k-cap">${esc(t.stadium)}<br><small>${esc(t.capacity)}</small></div>
         </div>
         <div class="k-col">
-          <div class="k-col-label">🎽 마스코트</div>
-          ${t.mascotImg ? `<img class="k-col-img contain" src="${t.mascotImg}" alt="${esc(t.mascot)}">` : `<div class="k-ph">${t.emb}</div>`}
-          <div class="k-name">${esc(t.mascot)}</div>
+          ${t.mascotImg ? `<img class="k-col-img contain" src="${t.mascotImg}" alt="${esc(mascotName)}">` : `<div class="k-ph">${t.emb}</div>`}
+          <div class="k-name">${esc(mascotName)}</div>
         </div>
       </div></div>
-      <div class="c-sec kb-uni"><div class="k-col-label">👕 유니폼</div>
-        <img class="kb-uni-img" src="assets/kbo/u_${t.key}.jpg" alt="${esc(t.name)} 유니폼" onerror="this.closest('.kb-uni').remove()"></div>
+      <div class="c-sec kb-uni">
+        <img class="kb-uni-img" src="assets/kbo/u_${t.key}.jpg" alt="${esc(t.name)} 유니폼" onerror="this.closest('.kb-uni').remove()">
+        <div class="kb-uni-labels"><span>${uniL}</span><span>${uniR}</span></div>
+      </div>
       <div class="pageno">앞면 1/2 · 넘기면 역사 →</div>
     </div>`;
   }
@@ -162,6 +165,50 @@ function faceWcHistory(s){
   </div>`;
 }
 
+// ── KBO 덱 첫 장(순위 카드) — 탭: 순위 / 나의팀 ──
+// '순위' 탭: 프로 원년(1982)~작년(2025) 한국시리즈 우승·준우승 (나의 팀은 강조)
+const KBO_MY_RE = /한화|롯데|NC|KT/;   // 나의 팀 이름 매칭(한화·롯데·NC·KT)
+function kbsRankHTML(){
+  const rows = KBO_CHAMPS.map(([yr,win,run])=>{
+    const w=KBO_MY_RE.test(win)?' my':'', r=KBO_MY_RE.test(run)?' my':'';
+    return `<tr><td class="yr">${yr}</td><td class="win${w}">🥇 ${esc(win)}</td><td class="run${r}">🥈 ${esc(run)}</td></tr>`;
+  }).join('');
+  return `<table class="kbs-table rank"><thead><tr><th>연도</th><th>우승</th><th>준우승</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="kbs-note">노란색 = 나의 팀(한화·롯데·NC·KT)이 우승/준우승한 해</p>`;
+}
+// '나의팀' 탭: 한화·NC·KT·롯데의 연도별 정규시즌 순위 (창단 전 '-')
+function kbsMyteamHTML(){
+  const order=['한화','NC','KT','롯데'], cols=KBO_MYTEAM.cols;
+  const idx=order.map(n=>cols.indexOf(n));   // 표시 순서 → row 내 위치(연도 다음)
+  const head=order.map(n=>`<th>${esc(n)}</th>`).join('');
+  const body=KBO_MYTEAM.rows.map(r=>{
+    const tds=idx.map(i=>{ const v=r[1+i]; const c=v==='-'?' na':(v==='1'?' first':''); return `<td class="${c.trim()}">${esc(v)}</td>`; }).join('');
+    return `<tr><td class="yr">${r[0]}</td>${tds}</tr>`;
+  }).join('');
+  return `<table class="kbs-table myteam"><thead><tr><th>연도</th>${head}</tr></thead><tbody>${body}</tbody></table>
+    <p class="kbs-note">숫자 = 정규시즌 순위 · <b>1</b> = 정규시즌 1위 · '-' = 창단(1군) 전<br>롯데 1982~ · 한화 1986~ · NC 2013~ · KT 2015~</p>`;
+}
+function faceKboStand(s){
+  if(!s){
+    return `<div class="cardface kbs">
+      <div class="c-head"><span class="k-emb">⚾</span><div class="c-title"><h2>KBO 순위</h2><span class="c-en">프로 원년 1982 → 2025</span></div></div>
+      <div class="kbs-tabs" role="tablist">
+        <button class="kbs-tab on" type="button" data-tab="rank">순위</button>
+        <button class="kbs-tab" type="button" data-tab="myteam">나의팀</button>
+      </div>
+      <div class="kbs-body" id="kbsBody" data-cur="rank">${kbsRankHTML()}</div>
+      <div class="pageno">앞면 1/2 · 넘기면 통산 우승 →</div>
+    </div>`;
+  }
+  return `<div class="cardface backface kbs">
+    <div class="c-head sm"><span class="k-emb sm">🏆</span><h2>KBO <small>통산 우승</small></h2></div>
+    <div class="c-sec"><h3>👑 통산 한국시리즈 우승 (연고 승계 포함)</h3>
+      <ol class="kbs-titles">${KBO_TITLE_COUNT.map(([n,c])=>`<li><span class="tn">${esc(n)}</span><span class="tc">${c}회</span></li>`).join('')}</ol></div>
+    <div class="c-sec"><h3>ℹ️ 나의 팀</h3><p>한화 이글스 · NC 다이노스 · KT 위즈 · 롯데 자이언츠 — 앞면 '나의팀' 탭에서 연도별 정규시즌 순위를 볼 수 있어요.</p></div>
+    <div class="pageno">뒷면 2/2 · 넘기면 두산 베어스 →</div>
+  </div>`;
+}
+
 // worldmap.svg 로드 후 .fmap에 대륙(회색)+해당국(초록) 지도 주입
 let MAP_SVG = null;
 fetch('assets/worldmap.svg').then(r=>r.text()).then(txt=>{
@@ -185,7 +232,9 @@ function hydrateMaps(){
   });
 }
 
-const faces = (data,s) => KIND==='world' ? faceCountry(data,s) : KIND==='kbo' ? faceKbo(data,s) : (data && data.hist) ? faceWcHistory(s) : faceFoot(data,s);
+const faces = (data,s) => KIND==='world' ? faceCountry(data,s)
+  : KIND==='kbo' ? (data && data.stand ? faceKboStand(s) : faceKbo(data,s))
+  : (data && data.hist) ? faceWcHistory(s) : faceFoot(data,s);
 
 // ── 덱 렌더 ──
 function buildCard(){
@@ -268,18 +317,20 @@ function renderHome(){
     <div class="home">
       <h1>📚 카드 도감 <sup class="ver">${BUILD}</sup></h1>
       <p class="home-sub">카드를 옆으로 넘기면 뒷면(역사)이 나오고,<br>한 번 더 넘기면 다음 카드로 넘어가요.</p>
-      <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
-      <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
-      <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
-      <button class="home-card" data-k="heroes"><span class="hc-emo">☯️</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
-      <button class="home-card" data-k="korhist"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국역사</b><small>단군부터 대한민국까지</small></button>
-      <button class="home-card" data-k="geo"><span class="hc-emo">🗺️</span><b>한국지리</b><small>전국 도·시·군·구</small></button>
+      <div class="home-grid">
+        <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
+        <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
+        <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
+        <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
+        <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
+        <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구</small></button>
+      </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
 
 const DECKS = { world:1, kbo:1, foot:1 };
-const SOON_TITLE = { heroes:'☯️ 한국위인전', korhist:'🗺️ 한국역사', geo:'🗺️ 한국지리' };
+const SOON_TITLE = { heroes:'👑 한국위인전', korhist:'🇰🇷 한국역사', geo:'🗺️ 한국지리' };
 function comingSoon(kind){
   KIND=null;
   APP.innerHTML=`
@@ -291,7 +342,7 @@ function comingSoon(kind){
 
 function openDeck(kind, it=0, sd=0){
   if(!DECKS[kind]){ comingSoon(kind); return; }
-  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?KBO : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
+  KIND=kind; LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   PAGE = Math.min(Math.max(it,0), LIST.length-1)*2 + (sd?1:0);
   renderDeck();
 }
@@ -333,6 +384,14 @@ function openLegend(q){
   }).catch(()=>{ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">불러오기 실패 — 인터넷 연결을 확인하세요.</p>'; });
 }
 document.addEventListener('click', e=>{ const b=e.target.closest&&e.target.closest('.legend-item'); if(b){ e.preventDefault(); openLegend(b.dataset.q); } });
+// KBO 첫 장 순위/나의팀 탭 전환
+document.addEventListener('click', e=>{
+  const tb=e.target.closest&&e.target.closest('.kbs-tab'); if(!tb) return;
+  const body=document.getElementById('kbsBody'); if(!body || body.dataset.cur===tb.dataset.tab) return;
+  tb.parentElement.querySelectorAll('.kbs-tab').forEach(x=>x.classList.toggle('on', x===tb));
+  body.dataset.cur=tb.dataset.tab;
+  body.innerHTML = tb.dataset.tab==='rank' ? kbsRankHTML() : kbsMyteamHTML();
+});
 
 window.addEventListener('hashchange', route);
 route();

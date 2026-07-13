@@ -1,10 +1,11 @@
 // 앱 셸 오프라인 캐시. 캐시 이름 바꾸면 옛 캐시 자동 폐기.
-const CACHE = 'card-atlas-v19';
+const CACHE = 'card-atlas-v23';
 self.addEventListener('message', e => { if (e.data === 'skip-waiting') self.skipWaiting(); });
 const KEYS=['doosan','lg','kiwoom','ssg','kt','hanwha','samsung','lotte','kia','nc'];
+const MASCOTS=['철웅이','럭키·스타','턱돌이','랜디','빅또','수리','블레오','누리·아라','호걸이','단디·쎄리'];
 const KBO_IMGS = [].concat(
   KEYS.map(k=>`./assets/kbo/s_${k}.jpg`),
-  KEYS.map(k=>`./assets/kbo/m_${k}.jpg`),
+  MASCOTS.map(n=>`./assets/kbo/m_${n}.jpg`),
   KEYS.map(k=>`./assets/kbo/u_${k}.jpg`),
   KEYS.map(k=>`./assets/kbo/eh_${k}.jpg`),
   ['e_doosan','e_lg','e_kiwoom','e_ssg','e_kt','e_samsung','e_lotte','e_kia','e_nc'].map(n=>`./assets/kbo/${n}.png`)
