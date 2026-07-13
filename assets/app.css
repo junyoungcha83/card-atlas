@@ -147,23 +147,28 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .backface .k-head{border-radius:20px 20px 0 0}
 
 /* ── 한국위인전 ── */
-.h-frame{position:relative;display:flex;gap:13px;margin:-16px -14px 15px;padding:14px;
-  background:var(--tc);border-radius:20px 20px 0 0}
-.h-photo{width:90px;height:112px;flex:none;position:relative;overflow:hidden;border-radius:10px;
-  background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.3),inset 0 0 0 2px rgba(255,255,255,.6)}
+.h-frame{position:relative;display:flex;align-items:center;gap:11px;margin:-16px -14px 16px;
+  padding:16px 54px 16px 14px;background:var(--tc);border-radius:20px 20px 0 0}
+.h-icon{flex:none;display:grid;place-items:center;width:46px;height:40px;border-radius:7px;
+  border:1.5px solid rgba(255,255,255,.75);background:rgba(255,255,255,.16);font-size:1.5rem;line-height:1}
+.h-nm{font-size:1.55rem;font-weight:800;color:#fff;min-width:0;overflow-wrap:anywhere;line-height:1.14}
+.h-no{position:absolute;top:13px;right:14px;color:#fff;font-weight:800;font-size:.72rem;letter-spacing:.03em;
+  background:rgba(0,0,0,.22);border-radius:999px;padding:4px 9px;font-variant-numeric:tabular-nums}
+
+.h-body-top{display:flex;gap:14px;align-items:stretch;margin-bottom:16px}
+.h-photo{flex:0 0 46%;aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:12px;
+  border:1px solid var(--border);background:var(--bg2)}
 .h-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .h-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;color:#8a93a8;font-size:1.6rem}
-.h-photo-ph small{font-size:.62rem;font-weight:800;letter-spacing:.02em}
-.h-meta{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:8px;
-  color:#fff;padding-right:44px}
-.h-name{display:flex;align-items:center;gap:9px;font-size:1.5rem;font-weight:800;line-height:1.12}
-.h-name .role{font-size:1.5rem;line-height:1;flex:none}
-.h-name .nm{min-width:0;overflow-wrap:anywhere}
-.h-sub{font-size:.95rem;font-weight:700;color:rgba(255,255,255,.95)}
-.h-life{font-size:.86rem;color:rgba(255,255,255,.86);font-variant-numeric:tabular-nums}
-.h-no{position:absolute;top:11px;right:12px;color:#fff;font-weight:800;font-size:.7rem;letter-spacing:.03em;
-  background:rgba(0,0,0,.24);border-radius:999px;padding:4px 9px;font-variant-numeric:tabular-nums}
+  gap:5px;color:var(--muted);font-size:2rem}
+.h-photo-ph small{font-size:.72rem;font-weight:700}
+.h-facts{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.fact{text-align:center}
+.fact .fl{display:block;font-size:.8rem;color:var(--muted);font-weight:700;
+  padding-bottom:5px;margin-bottom:6px;border-bottom:1px solid var(--border)}
+.fact .fv{display:block;font-size:1rem;font-weight:800;overflow-wrap:anywhere}
+.hero .c-sec h3{border-left:none;border-bottom:2px solid var(--tc);padding:0 2px 5px;
+  display:inline-block;color:var(--text)}
 
 /* 위인전 목차(첫 장) */
 .toc-hint{color:var(--muted);font-size:.82rem;line-height:1.5;margin:0 0 14px}

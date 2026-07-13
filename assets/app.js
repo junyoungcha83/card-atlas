@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v26';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v27';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -247,7 +247,7 @@ function heroPhoto(h){
   return `<div class="h-photo">`+
     `<img src="assets/heroes/${h.id}.jpg" alt="${esc(h.n)}" `+
       `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='flex'}">`+
-    `<span class="h-photo-ph" style="display:none">📷<small>준비중</small></span></div>`;
+    `<span class="h-photo-ph" style="display:none">📷<small>사진 준비중</small></span></div>`;
 }
 // 첫 장: 시대별 인물 목차(시간순) — 이름 클릭 시 해당 카드로 이동
 function faceHeroesToc(){
@@ -275,19 +275,22 @@ function faceHeroes(h){
   if(h && h.toc) return faceHeroesToc();
   const era = HERO_ERAS[h.k] || {label:'', c:'#556'};
   const no = 'No.'+String(h.id).padStart(2,'0');
-  return `<div class="cardface" style="--tc:${era.c}">
+  return `<div class="cardface hero" style="--tc:${era.c}">
     <div class="h-frame">
-      ${heroPhoto(h)}
-      <div class="h-meta">
-        <div class="h-name"><span class="role">${heroRole(h)}</span><span class="nm">${esc(h.n)}</span></div>
-        <div class="h-sub">${esc(era.label)} · ${esc(h.nat)}</div>
-        <div class="h-life">생몰 ${esc(h.b)} ~ ${esc(h.d)}</div>
-      </div>
+      <span class="h-icon">${heroRole(h)}</span>
+      <span class="h-nm">${esc(h.n)}</span>
       <span class="h-no">${no}</span>
     </div>
-    <div class="c-sec"><h3>📜 주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>
-    <div class="c-sec"><h3>⭐ 후대의 평가</h3><p>${esc(h.v)}</p></div>
-    <div class="c-sec"><h3>🕘 한눈에</h3><div class="chips"><span>${esc(era.label)}</span><span>${esc(h.nat)}</span><span>생몰 ${esc(h.b)} ~ ${esc(h.d)}</span></div></div>
+    <div class="h-body-top">
+      ${heroPhoto(h)}
+      <div class="h-facts">
+        <div class="fact"><span class="fl">시대</span><span class="fv">${esc(era.label)}</span></div>
+        <div class="fact"><span class="fl">나라</span><span class="fv">${esc(h.nat)}</span></div>
+        <div class="fact"><span class="fl">생몰</span><span class="fv">${esc(h.b)} ~ ${esc(h.d)}</span></div>
+      </div>
+    </div>
+    <div class="c-sec"><h3>주요 업적 · 대표작</h3><p>${esc(h.a)}</p></div>
+    <div class="c-sec"><h3>후대의 평가</h3><p>${esc(h.v)}</p></div>
     <div class="pageno">${no} · 옆으로 넘기면 다음 인물 →</div>
   </div>`;
 }
