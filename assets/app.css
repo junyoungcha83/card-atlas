@@ -280,6 +280,15 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .geo-detail{padding:12px 12px calc(20px + env(safe-area-inset-bottom));overflow-y:auto;flex:1}
 .geo-maps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .geo-more{margin-top:14px;background:#0f1630;border:1px dashed var(--border);border-radius:12px;padding:12px;color:var(--muted);font-size:.85rem;text-align:center}
+.geo-grid.sub{margin-top:4px}
+
+/* 과거도시 카드 */
+.cardface.past{background:linear-gradient(160deg,#1a2338,#121a2c)}
+.past-emo{font-size:2.2rem;flex:none}
+.past-badge{display:inline-block;margin:2px 0 4px;background:#3a2f12;color:#ffcf5a;border:1px solid #6b551d;border-radius:999px;padding:4px 12px;font-weight:800;font-size:.82rem}
+.past .c-sec p{font-size:1rem;line-height:1.7}
+.past-now{margin-top:14px;background:#0f1630;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:.95rem}
+.past-now b{color:#ffd98a}
 
 /* ── 편집 모드 · 사진 업로드(+버튼) ── */
 .edit-btn{font-size:.82rem;padding:5px 10px;white-space:nowrap}

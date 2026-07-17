@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v34';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v35';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -376,7 +376,21 @@ function faceHeroes(h){
 const faces = (data,s) => KIND==='world' ? faceCountry(data,s)
   : KIND==='kbo' ? (data && data.stand ? faceKboStand(s) : faceKbo(data,s))
   : KIND==='heroes' ? faceHeroes(data,s)
+  : KIND==='past' ? facePastCity(data)
   : (data && data.hist) ? faceWcHistory(s) : faceFoot(data,s);
+
+// 과거도시 카드(단면)
+function facePastCity(c){
+  const T={ '통합':['🔗','통합'], '개명':['✏️','이름 바뀜'], '개명·통합':['✏️','개명·통합'], '승격':['⬆️','승격'], '편입':['➡️','편입'] };
+  const [emo,lab]=T[c.type]||['🏚️',c.type];
+  return `<div class="cardface past">
+    <div class="c-head"><span class="past-emo">${emo}</span><div class="c-title"><h2>${esc(c.old)}</h2><span class="c-en">${esc(c.region)}</span></div></div>
+    <div class="past-badge">${esc(lab)}${c.year&&c.year!=='—'?` · ${esc(c.year)}년`:''}</div>
+    <div class="c-sec"><p>${esc(c.story)}</p></div>
+    <div class="past-now">📍 지금은 <b>${esc(c.now)}</b></div>
+    <div class="pageno">옆으로 넘기면 다음 도시 →</div>
+  </div>`;
+}
 
 // ── 덱 렌더 ──
 function buildCard(){
@@ -428,7 +442,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':KIND==='past'?'🏚️ 과거도시':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
       ${(KIND==='kbo'||KIND==='heroes')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
       <div class="bar-count" id="count"></div>
     </div>
@@ -438,7 +452,7 @@ function renderDeck(){
       <div class="dots" id="dots">${LIST.map((_,i)=>`<i${i===item()?' class="on"':''}></i>`).join('')}</div>
       <button class="nav-btn" id="next">›</button>
     </div>
-    <div class="hint" id="hint">${FLAT?'👉 옆으로 넘기면 <b>다음 인물</b> · 첫 장에서 <b>이름</b>을 누르면 바로 이동':`👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b>`}</div>`;
+    <div class="hint" id="hint">${KIND==='past'?'👉 옆으로 넘기면 <b>다음 도시</b>':FLAT?'👉 옆으로 넘기면 <b>다음 인물</b> · 첫 장에서 <b>이름</b>을 누르면 바로 이동':`👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b>`}</div>`;
   document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
   document.getElementById('prev').onclick=()=>go(-1);
@@ -468,12 +482,13 @@ function renderHome(){
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구</small></button>
+        <button class="home-card" data-k="past"><span class="hc-emo">🏚️</span><b>과거도시</b><small>사라진·통합·이름 바뀐 도시</small></button>
       </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>openDeck(b.dataset.k));
 }
 
-const DECKS = { world:1, kbo:1, foot:1, heroes:1 };
+const DECKS = { world:1, kbo:1, foot:1, heroes:1, past:1 };
 const SOON_TITLE = { korhist:'🇰🇷 한국역사', geo:'🗺️ 한국지리' };
 function comingSoon(kind){
   KIND=null;
@@ -517,17 +532,64 @@ function renderGeoRegion(code){
       </div>
       <div class="c-sec"><h3>📖 역사 · 이슈</h3><ol class="timeline">${r.history.map(h=>`<li>${esc(h)}</li>`).join('')}</ol></div>
       ${people}
-      <div class="geo-more">🏙️ 시·군·구 상세 소개는 다음 업데이트에서 추가돼요.</div>
+      ${(r.cities&&r.cities.length)
+        ? `<div class="c-sec"><h3>🏙️ 시 · 군</h3><div class="geo-grid sub">${r.cities.map(cs=>{const c=GEO_CITY[cs];return `<button class="geo-tile" data-city="${cs}"><img src="assets/maps/geo/${cs}_only.svg" alt="" loading="lazy"><b>${esc(c.name)}</b><small>${esc(c.type)}</small></button>`;}).join('')}</div><div class="geo-more" style="margin-top:8px">그 외 시·군은 다음 업데이트에서 추가돼요.</div></div>`
+        : `<div class="geo-more">🏙️ 시·군·구 상세 소개는 다음 업데이트에서 추가돼요.</div>`}
     </div>`;
   document.getElementById('back').onclick=()=>{ renderGeoIndex(); };
+  APP.querySelectorAll('.geo-tile[data-city]').forEach(b=>b.onclick=()=>renderGeoCity(b.dataset.city));
+  window.scrollTo(0,0);
+}
+function renderGeoCity(slug){
+  const c=GEO_CITY[slug]; if(!c){ renderGeoIndex(); return; }
+  KIND='geo'; history.replaceState(null,'','#geo='+slug);
+  const parent=GEO_SIDO[c.parent];
+  const people=(c.people&&c.people.length)?`<div class="c-sec"><h3>🧑 주요 인물</h3><div class="chips">${c.people.map(p=>`<span>${esc(p)}</span>`).join('')}</div></div>`:'';
+  const gus=(c.gus&&c.gus.length)?`<div class="c-sec"><h3>🏘️ 구</h3><div class="geo-grid sub">${c.gus.map(g=>{const gg=GEO_GU[g];return `<button class="geo-tile" data-gu="${g}"><img src="assets/maps/geo/${g}_only.svg" alt="" loading="lazy"><b>${esc(gg.name)}</b><small>${esc(gg.type)}</small></button>`;}).join('')}</div></div>`:'';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ ${esc(parent.name)}</button><div class="bar-title">🏙️ ${esc(c.full)}</div></div>
+    <div class="geo-detail">
+      <div class="geo-maps">
+        <div class="mapbox"><img class="c-map" src="assets/maps/geo/${slug}_only.svg" alt="${esc(c.name)} 지도"><span class="mlabel">${esc(c.name)}</span></div>
+        <div class="mapbox"><img class="c-map" src="assets/maps/geo/${slug}_up.svg" alt="${esc(parent.name)}에서 ${esc(c.name)} 위치"><span class="mlabel">${esc(parent.name)} 안에서</span></div>
+      </div>
+      <div class="info-grid">
+        ${infoRow('행정구역',c.full)}${infoRow('유형',c.type)}${infoRow('청 소재지',c.seat)}
+        ${infoRow('넓이',c.area)}${infoRow('인구',c.pop)}${infoRow('위치',c.region)}
+      </div>
+      <div class="c-sec"><h3>📖 역사 · 이슈</h3><ol class="timeline">${c.history.map(h=>`<li>${esc(h)}</li>`).join('')}</ol></div>
+      ${people}
+      ${gus || (c.type.includes('구 없음')?'<div class="geo-more">이천시는 구가 없이 읍·면·동으로 이뤄져 있어요.</div>':'')}
+    </div>`;
+  document.getElementById('back').onclick=()=>renderGeoRegion(c.parent);
+  APP.querySelectorAll('.geo-tile[data-gu]').forEach(b=>b.onclick=()=>renderGeoGu(b.dataset.gu));
+  window.scrollTo(0,0);
+}
+function renderGeoGu(code){
+  const g=GEO_GU[code]; if(!g){ renderGeoIndex(); return; }
+  KIND='geo'; history.replaceState(null,'','#geo='+code);
+  const city=GEO_CITY[g.parent];
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ ${esc(city.name)}</button><div class="bar-title">🏘️ ${esc(g.full)}</div></div>
+    <div class="geo-detail">
+      <div class="geo-maps">
+        <div class="mapbox"><img class="c-map" src="assets/maps/geo/${code}_only.svg" alt="${esc(g.name)} 지도"><span class="mlabel">${esc(g.name)}</span></div>
+        <div class="mapbox"><img class="c-map" src="assets/maps/geo/${code}_up.svg" alt="${esc(city.name)}에서 ${esc(g.name)} 위치"><span class="mlabel">${esc(city.name)} 안에서</span></div>
+      </div>
+      <div class="info-grid">
+        ${infoRow('행정구역',g.full)}${infoRow('유형',g.type)}${infoRow('넓이',g.area)}${infoRow('인구',g.pop)}
+      </div>
+      <div class="c-sec"><h3>📖 특징</h3><ol class="timeline">${g.history.map(h=>`<li>${esc(h)}</li>`).join('')}</ol></div>
+    </div>`;
+  document.getElementById('back').onclick=()=>renderGeoCity(g.parent);
   window.scrollTo(0,0);
 }
 
 function openDeck(kind, it=0, sd=0){
   if(kind==='geo'){ history.replaceState(null,'','#geo'); renderGeoIndex(); return; }
   if(!DECKS[kind]){ comingSoon(kind); return; }
-  KIND=kind; FLAT = (kind==='heroes');
-  LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?[{toc:true}].concat(HEROES) : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
+  KIND=kind; FLAT = (kind==='heroes' || kind==='past');
+  LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?[{toc:true}].concat(HEROES) : kind==='past'?PAST_CITIES : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   it = Math.min(Math.max(it,0), LIST.length-1);
   PAGE = FLAT ? it : it*2 + (sd?1:0);
   renderDeck();
@@ -535,9 +597,15 @@ function openDeck(kind, it=0, sd=0){
 
 function route(){
   const h=location.hash.slice(1);
-  const gm=h.match(/^geo(?:=(\d+))?$/);
-  if(gm){ if(gm[1] && GEO_SIDO[gm[1]]) renderGeoRegion(gm[1]); else renderGeoIndex(); return; }
-  const m=h.match(/^(world|kbo|foot|heroes|korhist)(?:=(\d+)\.(\d+))?$/);
+  const gm=h.match(/^geo(?:=([a-z0-9]+))?$/i);
+  if(gm){ const x=gm[1];
+    if(!x) renderGeoIndex();
+    else if(GEO_SIDO[x]) renderGeoRegion(x);
+    else if(typeof GEO_CITY!=='undefined' && GEO_CITY[x]) renderGeoCity(x);
+    else if(typeof GEO_GU!=='undefined' && GEO_GU[x]) renderGeoGu(x);
+    else renderGeoIndex();
+    return; }
+  const m=h.match(/^(world|kbo|foot|heroes|korhist|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }
