@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v29';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v30';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -108,7 +108,7 @@ function faceCountry(c, s){
         <div class="c-title"><h2>${esc(c.name)}</h2><span class="c-en">${esc(c.en)}</span></div>
       </div>
       <div class="map-duo">
-        <div class="mapbox"><img class="c-map" src="assets/maps/${c.map}.svg" alt="${esc(c.name)} 지도" onerror="this.style.display='none'"><span class="mlabel">${esc(c.name)}</span></div>
+        <div class="mapbox">${c.map?`<img class="c-map" src="assets/maps/${c.map}.svg" alt="${esc(c.name)} 지도" onerror="this.style.display='none'">`:''}<span class="mlabel">${esc(c.name)}</span></div>
         <div class="mapbox worldbox"><img class="c-world" src="assets/world.jpg" alt="세계 위치"><span class="pin" style="${pinStyle(c)}"></span><span class="mlabel">${esc(c.region.split(' · ')[0])}</span></div>
       </div>
       <div class="info-grid">
@@ -462,7 +462,7 @@ function renderHome(){
       <h1>📚 카드 도감 <sup class="ver">${BUILD}</sup></h1>
       <p class="home-sub">카드를 옆으로 넘기면 뒷면(역사)이 나오고,<br>한 번 더 넘기면 다음 카드로 넘어가요.</p>
       <div class="home-grid">
-        <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>20개국 · 기본정보 · 자연 · 역사</small></button>
+        <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>48개국 · 기본정보 · 자연 · 역사</small></button>
         <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
         <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
