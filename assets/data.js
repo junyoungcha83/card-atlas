@@ -238,7 +238,7 @@ const COUNTRIES = [
       '개혁(도이머이) 이후 빠르게 성장하고 있어요.'] },
 
   // ── 세계 국가 추가 28개국 (월드컵 국가 중심 + 대만) ──
-  { name:'아르헨티나', en:'Argentina', flag:'ar', region:'남아메리카', lat:-34, lng:-64,
+  { name:'아르헨티나', en:'Argentina', flag:'ar', map:'ar', region:'남아메리카', lat:-34, lng:-64,
     area:'약 278만 km²', pop:'약 4,600만 명', currency:'페소 (ARS)', religion:'천주교', gov:'대통령제 (연방 공화국)',
     nature:'남미 남쪽의 큰 나라예요. 팜파스 대초원과 안데스 산맥, 남쪽 끝 파타고니아 빙하가 있어요.',
     korea:'지구 반대편이지만 소고기·곡물 등 농축산물 교역으로 교류해요. 한인 이민자도 살고 있어요.',
@@ -250,7 +250,7 @@ const COUNTRIES = [
       '20세기에 정치·경제의 부침을 여러 번 겪었어요.',
       '축구 월드컵에서 세 번(1978·1986·2022) 우승한 축구 강국이에요.'] },
 
-  { name:'포르투갈', en:'Portugal', flag:'pt', region:'유럽 · 남유럽', lat:39.5, lng:-8,
+  { name:'포르투갈', en:'Portugal', flag:'pt', map:'pt', region:'유럽 · 남유럽', lat:39.5, lng:-8,
     area:'약 9만 km²', pop:'약 1,000만 명', currency:'유로 (EUR)', religion:'천주교', gov:'공화제 (대통령 + 총리)',
     nature:'유럽 서쪽 끝 대서양에 접한 나라예요. 따뜻하고 해안 경치가 아름다워요.',
     korea:'대항해시대에 일본·마카오까지 온 나라예요. 지금은 관광·교역으로 교류해요.',
@@ -262,7 +262,7 @@ const COUNTRIES = [
       '1910년 왕정을 끝내고 공화국이 되었어요.',
       '지금은 EU 회원국이자 인기 관광 나라예요.'] },
 
-  { name:'네덜란드', en:'Netherlands', flag:'nl', region:'유럽 · 서유럽', lat:52.2, lng:5.3,
+  { name:'네덜란드', en:'Netherlands', flag:'nl', map:'nl', region:'유럽 · 서유럽', lat:52.2, lng:5.3,
     area:'약 4.2만 km²', pop:'약 1,800만 명', currency:'유로 (EUR)', religion:'기독교·무종교', gov:'입헌군주제 (국왕 + 총리)',
     nature:'국토의 많은 곳이 바다보다 낮아 제방과 풍차로 땅을 지켜요. 튤립과 운하로 유명해요.',
     korea:'조선시대에 하멜이 표류해 왔던 나라예요. 지금은 무역·물류 교류가 많아요.',
@@ -274,7 +274,7 @@ const COUNTRIES = [
       '여러 지역에 식민지를 두었어요.',
       '지금은 EU의 물류·농업 강국이에요.'] },
 
-  { name:'벨기에', en:'Belgium', flag:'be', region:'유럽 · 서유럽', lat:50.6, lng:4.6,
+  { name:'벨기에', en:'Belgium', flag:'be', map:'be', region:'유럽 · 서유럽', lat:50.6, lng:4.6,
     area:'약 3만 km²', pop:'약 1,170만 명', currency:'유로 (EUR)', religion:'천주교', gov:'입헌군주제 (연방)',
     nature:'작지만 유럽의 교통 요지예요. 초콜릿·와플·감자튀김으로 유명해요.',
     korea:'6·25 전쟁에 군대를 보내 도운 우방이에요. EU 본부가 있어 외교 교류가 많아요.',
@@ -286,7 +286,7 @@ const COUNTRIES = [
       '지금은 EU와 NATO 본부가 있는 나라예요.',
       '프랑스어와 네덜란드어를 함께 써요.'] },
 
-  { name:'크로아티아', en:'Croatia', flag:'hr', region:'유럽 · 남유럽(발칸)', lat:45.1, lng:15.2,
+  { name:'크로아티아', en:'Croatia', flag:'hr', map:'hr', region:'유럽 · 남유럽(발칸)', lat:45.1, lng:15.2,
     area:'약 5.7만 km²', pop:'약 390만 명', currency:'유로 (EUR)', religion:'천주교', gov:'공화제',
     nature:'아드리아해의 푸른 바다와 수많은 섬, 성벽 도시로 유명해요.',
     korea:'드라마·예능으로 알려진 인기 여행지예요. 축구를 아주 잘하는 나라예요.',
@@ -298,7 +298,7 @@ const COUNTRIES = [
       '2013년 EU에 가입했어요.',
       '2018·2022 월드컵에서 준우승·3위를 했어요.'] },
 
-  { name:'우루과이', en:'Uruguay', flag:'uy', region:'남아메리카', lat:-33, lng:-56,
+  { name:'우루과이', en:'Uruguay', flag:'uy', map:'uy', region:'남아메리카', lat:-33, lng:-56,
     area:'약 17.6만 km²', pop:'약 350만 명', currency:'페소 (UYU)', religion:'천주교·무종교', gov:'대통령제',
     nature:'아르헨티나와 브라질 사이의 작은 나라예요. 넓은 초원에서 소를 길러요.',
     korea:'소고기 등을 교역해요. 축구 첫 월드컵을 열고 우승한 나라예요.',
@@ -310,7 +310,7 @@ const COUNTRIES = [
       '1930년 제1회 월드컵을 열고 우승했어요.',
       '남미에서 안정된 민주주의 나라로 꼽혀요.'] },
 
-  { name:'스위스', en:'Switzerland', flag:'ch', region:'유럽 · 중부유럽', lat:46.8, lng:8.2,
+  { name:'스위스', en:'Switzerland', flag:'ch', map:'ch', region:'유럽 · 중부유럽', lat:46.8, lng:8.2,
     area:'약 4.1만 km²', pop:'약 880만 명', currency:'스위스 프랑 (CHF)', religion:'기독교', gov:'연방 공화제 (직접민주주의)',
     nature:'알프스 산맥의 나라예요. 아름다운 호수와 설산, 정밀 시계로 유명해요.',
     korea:'중립국이에요. 6·25 정전 감시 활동을 했고 관광·금융으로 교류해요.',
@@ -322,7 +322,7 @@ const COUNTRIES = [
       '시계·금융·정밀공업이 발달했어요.',
       '국민투표가 활발한 직접민주주의 나라예요.'] },
 
-  { name:'폴란드', en:'Poland', flag:'pl', region:'유럽 · 중부유럽', lat:52, lng:19,
+  { name:'폴란드', en:'Poland', flag:'pl', map:'pl', region:'유럽 · 중부유럽', lat:52, lng:19,
     area:'약 31만 km²', pop:'약 3,800만 명', currency:'즈워티 (PLN)', religion:'천주교', gov:'공화제',
     nature:'넓은 평원의 나라예요. 북쪽으로 발트해에 접해 있어요.',
     korea:'최근 방위산업·전자 분야 협력이 크게 늘고 있어요.',
@@ -334,7 +334,7 @@ const COUNTRIES = [
       '제2차 세계대전이 시작된 곳으로 큰 피해를 입었어요.',
       '1989년 민주화 뒤 빠르게 성장하고 있어요.'] },
 
-  { name:'스웨덴', en:'Sweden', flag:'se', region:'유럽 · 북유럽', lat:62, lng:15,
+  { name:'스웨덴', en:'Sweden', flag:'se', map:'se', region:'유럽 · 북유럽', lat:62, lng:15,
     area:'약 45만 km²', pop:'약 1,050만 명', currency:'크로나 (SEK)', religion:'기독교·무종교', gov:'입헌군주제',
     nature:'숲과 호수가 많은 북유럽 나라예요. 겨울이 길고 오로라를 볼 수 있어요.',
     korea:'6·25 때 의료 지원을 했어요. 복지·디자인·가구로 유명해요.',
@@ -346,7 +346,7 @@ const COUNTRIES = [
       '복지국가의 대표 모델이 되었어요.',
       '노벨상을 시상하는 나라예요.'] },
 
-  { name:'덴마크', en:'Denmark', flag:'dk', region:'유럽 · 북유럽', lat:56, lng:10,
+  { name:'덴마크', en:'Denmark', flag:'dk', map:'dk', region:'유럽 · 북유럽', lat:56, lng:10,
     area:'약 4.3만 km²', pop:'약 590만 명', currency:'크로네 (DKK)', religion:'기독교', gov:'입헌군주제',
     nature:'반도와 섬으로 이뤄진 평평한 나라예요. 자전거와 풍력발전으로 유명해요.',
     korea:'낙농·친환경 에너지 분야에서 협력해요. 레고와 동화의 나라예요.',
@@ -358,7 +358,7 @@ const COUNTRIES = [
       '복지와 친환경에서 앞선 나라예요.',
       '레고와 안데르센 동화로 유명해요.'] },
 
-  { name:'노르웨이', en:'Norway', flag:'no', region:'유럽 · 북유럽', lat:62, lng:10,
+  { name:'노르웨이', en:'Norway', flag:'no', map:'no', region:'유럽 · 북유럽', lat:62, lng:10,
     area:'약 38만 km²', pop:'약 550만 명', currency:'크로네 (NOK)', religion:'기독교', gov:'입헌군주제',
     nature:'빙하가 만든 피오르 해안이 유명해요. 석유·연어와 오로라의 나라예요.',
     korea:'수산·해운·친환경 분야에서 협력해요. 노벨평화상을 시상하는 나라예요.',
@@ -370,7 +370,7 @@ const COUNTRIES = [
       '북해에서 석유가 나와 부유해졌어요.',
       '노벨평화상을 주는 나라예요.'] },
 
-  { name:'튀르키예', en:'Türkiye', flag:'tr', region:'유럽·아시아 (아나톨리아)', lat:39, lng:35,
+  { name:'튀르키예', en:'Türkiye', flag:'tr', map:'tr', region:'유럽·아시아 (아나톨리아)', lat:39, lng:35,
     area:'약 78만 km²', pop:'약 8,500만 명', currency:'리라 (TRY)', religion:'이슬람교', gov:'대통령제 (공화국)',
     nature:'유럽과 아시아에 걸친 나라예요. 이스탄불이 두 대륙을 잇고 있어요.',
     korea:'6·25 전쟁에 참전한 "형제의 나라"예요. 문화·관광 교류가 활발해요.',
@@ -382,7 +382,7 @@ const COUNTRIES = [
       '유럽과 아시아를 잇는 요충지예요.',
       '6·25에 참전한 우방이에요.'] },
 
-  { name:'그리스', en:'Greece', flag:'gr', region:'유럽 · 남유럽', lat:39, lng:22,
+  { name:'그리스', en:'Greece', flag:'gr', map:'gr', region:'유럽 · 남유럽', lat:39, lng:22,
     area:'약 13만 km²', pop:'약 1,040만 명', currency:'유로 (EUR)', religion:'정교회', gov:'공화제',
     nature:'지중해의 수많은 섬과 파란 바다, 고대 유적으로 가득한 나라예요.',
     korea:'6·25 참전국이에요. 해운 강국이자 인기 여행지예요.',
@@ -394,7 +394,7 @@ const COUNTRIES = [
       '6·25 전쟁에 참전했어요.',
       '지금은 EU 회원국이자 해운·관광 강국이에요.'] },
 
-  { name:'나이지리아', en:'Nigeria', flag:'ng', region:'아프리카 · 서아프리카', lat:9, lng:8,
+  { name:'나이지리아', en:'Nigeria', flag:'ng', map:'ng', region:'아프리카 · 서아프리카', lat:9, lng:8,
     area:'약 92만 km²', pop:'약 2억 2천만 명', currency:'나이라 (NGN)', religion:'이슬람교·기독교', gov:'대통령제 (연방)',
     nature:'아프리카에서 인구가 가장 많은 나라예요. 열대 기후에 석유가 풍부해요.',
     korea:'에너지·건설 분야에서 협력해요. 아프리카에서 손꼽히는 큰 시장이에요.',
@@ -406,7 +406,7 @@ const COUNTRIES = [
       '석유 자원으로 성장했어요.',
       '아프리카 인구 1위이며 영화(놀리우드)·음악이 활발해요.'] },
 
-  { name:'가나', en:'Ghana', flag:'gh', region:'아프리카 · 서아프리카', lat:8, lng:-1,
+  { name:'가나', en:'Ghana', flag:'gh', map:'gh', region:'아프리카 · 서아프리카', lat:8, lng:-1,
     area:'약 24만 km²', pop:'약 3,400만 명', currency:'세디 (GHS)', religion:'기독교·이슬람교', gov:'대통령제',
     nature:'서아프리카 해안 나라예요. 카카오(초콜릿 원료)와 금이 많이 나요.',
     korea:'코코아·자원을 교역해요. 축구로 친숙한 나라예요.',
@@ -418,7 +418,7 @@ const COUNTRIES = [
       '1957년 사하라 이남에서 앞서서 독립했어요.',
       '안정된 민주주의 나라로 평가받아요.'] },
 
-  { name:'세네갈', en:'Senegal', flag:'sn', region:'아프리카 · 서아프리카', lat:14.5, lng:-14.5,
+  { name:'세네갈', en:'Senegal', flag:'sn', map:'sn', region:'아프리카 · 서아프리카', lat:14.5, lng:-14.5,
     area:'약 20만 km²', pop:'약 1,800만 명', currency:'세파프랑 (XOF)', religion:'이슬람교', gov:'대통령제',
     nature:'아프리카 서쪽 끝 대서양에 접한 나라예요. 활기찬 음악과 시장이 유명해요.',
     korea:'수산·개발 분야에서 협력해요. 축구를 잘하는 나라예요.',
@@ -430,7 +430,7 @@ const COUNTRIES = [
       '서아프리카의 안정된 민주주의 나라예요.',
       '축구와 음악으로 유명해요.'] },
 
-  { name:'카메룬', en:'Cameroon', flag:'cm', region:'아프리카 · 중부아프리카', lat:6, lng:12.5,
+  { name:'카메룬', en:'Cameroon', flag:'cm', map:'cm', region:'아프리카 · 중부아프리카', lat:6, lng:12.5,
     area:'약 47.5만 km²', pop:'약 2,800만 명', currency:'세파프랑 (XAF)', religion:'기독교·이슬람교', gov:'대통령제',
     nature:'"아프리카의 축소판"이라 불릴 만큼 해안·사막·밀림 등 다양한 자연이 있어요.',
     korea:'자원·개발 분야에서 협력해요. 축구로 친숙한 나라예요.',
@@ -442,7 +442,7 @@ const COUNTRIES = [
       '아프리카 축구의 강자로 유명해요.',
       '프랑스어와 영어를 함께 써요.'] },
 
-  { name:'모로코', en:'Morocco', flag:'ma', region:'아프리카 · 북아프리카', lat:32, lng:-6,
+  { name:'모로코', en:'Morocco', flag:'ma', map:'ma', region:'아프리카 · 북아프리카', lat:32, lng:-6,
     area:'약 45만 km²', pop:'약 3,800만 명', currency:'디르함 (MAD)', religion:'이슬람교', gov:'입헌군주제',
     nature:'사하라 사막과 대서양·지중해, 아틀라스 산맥이 있어요. 다채로운 시장(수크)이 유명해요.',
     korea:'관광·자동차 산업에서 협력해요. 2022 월드컵에서 4강에 올랐어요.',
@@ -454,7 +454,7 @@ const COUNTRIES = [
       '1956년 독립했어요.',
       '2022 월드컵에서 아프리카 최초로 4강에 올랐어요.'] },
 
-  { name:'콜롬비아', en:'Colombia', flag:'co', region:'남아메리카', lat:4, lng:-73,
+  { name:'콜롬비아', en:'Colombia', flag:'co', map:'co', region:'남아메리카', lat:4, lng:-73,
     area:'약 114만 km²', pop:'약 5,200만 명', currency:'페소 (COP)', religion:'천주교', gov:'대통령제',
     nature:'안데스 산맥과 아마존, 태평양·카리브해에 접한 나라예요. 커피로 유명해요.',
     korea:'6·25 전쟁에 참전한 남미 유일의 나라예요. 커피를 교역해요.',
@@ -466,7 +466,7 @@ const COUNTRIES = [
       '6·25에 남미에서 유일하게 군대를 보냈어요.',
       '음악과 문학(마르케스)으로 유명한 나라예요.'] },
 
-  { name:'칠레', en:'Chile', flag:'cl', region:'남아메리카', lat:-30, lng:-71,
+  { name:'칠레', en:'Chile', flag:'cl', map:'cl', region:'남아메리카', lat:-30, lng:-71,
     area:'약 75.6만 km²', pop:'약 1,900만 명', currency:'페소 (CLP)', religion:'천주교', gov:'대통령제',
     nature:'남북으로 아주 길쭉한 나라예요. 아타카마 사막·안데스·빙하가 모두 있어요.',
     korea:'우리나라의 첫 자유무역협정(FTA) 상대국이에요. 구리·과일·와인을 교역해요.',
@@ -478,7 +478,7 @@ const COUNTRIES = [
       '세계에서 구리를 가장 많이 생산해요.',
       '한국이 처음으로 FTA를 맺은 나라예요.'] },
 
-  { name:'페루', en:'Peru', flag:'pe', region:'남아메리카', lat:-10, lng:-76,
+  { name:'페루', en:'Peru', flag:'pe', map:'pe', region:'남아메리카', lat:-10, lng:-76,
     area:'약 129만 km²', pop:'약 3,400만 명', currency:'솔 (PEN)', religion:'천주교', gov:'대통령제',
     nature:'안데스 고원과 아마존 밀림, 태평양 해안이 있어요. 잉카 유적 마추픽추가 유명해요.',
     korea:'자원·수산을 교역해요. 잉카 문명으로 잘 알려진 나라예요.',
@@ -490,7 +490,7 @@ const COUNTRIES = [
       '마추픽추 등 잉카 유산이 남아 있어요.',
       '광물·수산 자원이 풍부해요.'] },
 
-  { name:'이란', en:'Iran', flag:'ir', region:'아시아 · 서아시아', lat:32, lng:53,
+  { name:'이란', en:'Iran', flag:'ir', map:'ir', region:'아시아 · 서아시아', lat:32, lng:53,
     area:'약 165만 km²', pop:'약 8,800만 명', currency:'리알 (IRR)', religion:'이슬람교(시아파)', gov:'이슬람 공화제',
     nature:'고원과 사막의 나라예요. 석유와 천연가스가 풍부해요.',
     korea:'옛 페르시아로 오래전부터 교역했어요. 건설·에너지 협력의 역사가 있어요.',
@@ -502,7 +502,7 @@ const COUNTRIES = [
       '1979년 이슬람 혁명으로 공화국이 되었어요.',
       '석유·가스가 많이 나는 자원국이에요.'] },
 
-  { name:'카타르', en:'Qatar', flag:'qa', region:'아시아 · 서아시아(걸프)', lat:25.3, lng:51.2,
+  { name:'카타르', en:'Qatar', flag:'qa', map:'qa', region:'아시아 · 서아시아(걸프)', lat:25.3, lng:51.2,
     area:'약 1.2만 km²', pop:'약 270만 명', currency:'리얄 (QAR)', religion:'이슬람교', gov:'군주제 (에미르)',
     nature:'걸프해의 작은 반도 나라예요. 사막과 풍부한 천연가스가 있어요.',
     korea:'천연가스(LNG)를 많이 공급하는 나라예요. 건설 분야에서 협력해요.',
@@ -514,7 +514,7 @@ const COUNTRIES = [
       '2022년 월드컵을 열었어요.',
       '세계적인 천연가스 수출국이에요.'] },
 
-  { name:'인도네시아', en:'Indonesia', flag:'id', region:'아시아 · 동남아시아', lat:-2, lng:118,
+  { name:'인도네시아', en:'Indonesia', flag:'id', map:'id', region:'아시아 · 동남아시아', lat:-2, lng:118,
     area:'약 191만 km²', pop:'약 2억 8천만 명', currency:'루피아 (IDR)', religion:'이슬람교', gov:'대통령제 (공화국)',
     nature:'1만 7천여 개 섬으로 이뤄진 세계 최대의 섬나라예요. 화산과 열대우림이 많아요.',
     korea:'아세안의 핵심 협력국이에요. K-팝과 제조업 교류가 활발해요.',
@@ -526,7 +526,7 @@ const COUNTRIES = [
       '세계에서 이슬람 인구가 가장 많은 나라예요.',
       '아세안을 이끄는 큰 나라예요.'] },
 
-  { name:'필리핀', en:'Philippines', flag:'ph', region:'아시아 · 동남아시아', lat:13, lng:122,
+  { name:'필리핀', en:'Philippines', flag:'ph', map:'ph', region:'아시아 · 동남아시아', lat:13, lng:122,
     area:'약 30만 km²', pop:'약 1억 1천만 명', currency:'페소 (PHP)', religion:'천주교', gov:'대통령제',
     nature:'7천여 개 섬으로 이뤄진 나라예요. 열대 기후에 아름다운 바다가 많아요.',
     korea:'6·25 참전국이에요. 관광과 인적 교류가 아주 많아요.',
@@ -538,7 +538,7 @@ const COUNTRIES = [
       '1946년 독립했어요.',
       '6·25에 참전한 가까운 우방이에요.'] },
 
-  { name:'싱가포르', en:'Singapore', flag:'sg', region:'아시아 · 동남아시아', lat:1.35, lng:103.8,
+  { name:'싱가포르', en:'Singapore', flag:'sg', map:'sg', region:'아시아 · 동남아시아', lat:1.35, lng:103.8,
     area:'약 730 km²', pop:'약 590만 명', currency:'싱가포르 달러 (SGD)', religion:'불교·기독교·이슬람교 등', gov:'공화제 (의원내각제)',
     nature:'작은 도시국가지만 깨끗하고 발전한 무역·금융 중심지예요.',
     korea:'물류·금융·무역에서 협력하는 중요한 파트너예요.',
@@ -550,7 +550,7 @@ const COUNTRIES = [
       '짧은 시간에 선진국으로 도약했어요.',
       '세계적인 물류·금융 중심지가 되었어요.'] },
 
-  { name:'뉴질랜드', en:'New Zealand', flag:'nz', region:'오세아니아', lat:-41, lng:174,
+  { name:'뉴질랜드', en:'New Zealand', flag:'nz', map:'nz', region:'오세아니아', lat:-41, lng:174,
     area:'약 27만 km²', pop:'약 520만 명', currency:'뉴질랜드 달러 (NZD)', religion:'기독교·무종교', gov:'입헌군주제',
     nature:'두 개의 큰 섬으로 이뤄졌어요. 초원·산·빙하와 양떼 등 깨끗한 자연이 유명해요.',
     korea:'농축산·청정에너지 분야에서 교류해요. 워킹홀리데이로 친숙한 나라예요.',
@@ -562,7 +562,7 @@ const COUNTRIES = [
       '세계 최초로 여성 참정권을 도입했어요(1893).',
       '청정 자연과 농업의 나라예요.'] },
 
-  { name:'대만', en:'Taiwan', flag:'tw', region:'아시아 · 동아시아', lat:23.7, lng:121,
+  { name:'대만', en:'Taiwan', flag:'tw', map:'tw', region:'아시아 · 동아시아', lat:23.7, lng:121,
     area:'약 3.6만 km²', pop:'약 2,340만 명', currency:'신대만달러 (TWD)', religion:'불교·도교·민간신앙', gov:'민주 공화제 (총통)',
     nature:'한국과 가까운 섬이에요. 산이 많고 아열대 기후이며 활기찬 야시장 문화로 유명해요.',
     korea:'반도체·전자 교역이 활발한 가까운 이웃이에요. 인기 여행지이기도 해요.',

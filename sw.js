@@ -1,5 +1,5 @@
 // 앱 셸 오프라인 캐시. 캐시 이름 바꾸면 옛 캐시 자동 폐기.
-const CACHE = 'card-atlas-v30';
+const CACHE = 'card-atlas-v31';
 self.addEventListener('message', e => { if (e.data === 'skip-waiting') self.skipWaiting(); });
 const KEYS=['doosan','lg','kiwoom','ssg','kt','hanwha','samsung','lotte','kia','nc'];
 const MASCOTS=['철웅이','럭키·스타','턱돌이','랜디','빅또','수리','블레오','누리·아라','호걸이','단디·쎄리'];
