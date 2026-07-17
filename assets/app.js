@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v32';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v33';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -225,7 +225,7 @@ function faceFoot(t, s){
 function faceWcHistory(s){
   if(!s){
     return `<div class="cardface foot wchist">
-      <div class="c-head"><img class="wch-emo-img" src="assets/wc.png" alt="FIFA 월드컵 트로피"><div class="c-title"><h2>월드컵 역사</h2><span class="c-en">1930 → 2022 · 22개 대회</span></div></div>
+      <div class="c-head"><img class="wch-emo-img" src="assets/wc-trophy.svg" alt="FIFA 월드컵 트로피"><div class="c-title"><h2>월드컵 역사</h2><span class="c-en">1930 → 2022 · 22개 대회</span></div></div>
       <ol class="wc-toc">${WORLD_CUPS.map(w=>`
         <li>
           <div class="toc-l"><span class="no">${String(w.no).padStart(2,'0')}회</span> <span class="ti">${w.yr}년 ${esc(w.host)} 월드컵</span></div>
@@ -235,7 +235,7 @@ function faceWcHistory(s){
     </div>`;
   }
   return `<div class="cardface backface foot wchist">
-    <div class="c-head sm"><img class="wch-emo-img" src="assets/wc.png" alt="FIFA 월드컵 트로피"><h2>월드컵 <small>기록</small></h2></div>
+    <div class="c-head sm"><img class="wch-emo-img" src="assets/wc-trophy.svg" alt="FIFA 월드컵 트로피"><h2>월드컵 <small>기록</small></h2></div>
     <div class="c-sec"><h3>👑 최다 우승국</h3><div class="chips">${['브라질 5회','독일 4회','이탈리아 4회','아르헨티나 3회','우루과이 2회','프랑스 2회','잉글랜드 1회','스페인 1회'].map(x=>`<span>${x}</span>`).join('')}</div></div>
     <div class="c-sec"><h3>🇰🇷 대한민국</h3><p>1954년 첫 출전 · 통산 11회 출전 · 최고 성적 <b>4위(2002)</b> · 원정 첫 16강(2010)</p></div>
     <div class="c-sec"><h3>ℹ️ 참고</h3><p>서독은 통일 전 독일(1954·1974·1990 우승)이에요. 2002년은 대한민국·일본 공동 개최였어요.</p></div>
@@ -428,7 +428,7 @@ function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':'<img class="bar-emb" src="assets/wc.png" alt=""> 월드컵'}</div>
+      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
       ${(KIND==='kbo'||KIND==='heroes')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
       <div class="bar-count" id="count"></div>
     </div>
@@ -464,7 +464,7 @@ function renderHome(){
       <div class="home-grid">
         <button class="home-card" data-k="world"><span class="hc-emo">🌍</span><b>세계 국가</b><small>48개국 · 기본정보 · 자연 · 역사</small></button>
         <button class="home-card" data-k="kbo"><span class="hc-emo">⚾</span><b>KBO 구단</b><small>10개 구단 · 정보 · 레전드 · 역사</small></button>
-        <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc.png" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
+        <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc-trophy.svg" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구</small></button>
