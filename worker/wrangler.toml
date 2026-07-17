@@ -1,0 +1,11 @@
+name = "card-atlas-img-api"
+main = "src/index.js"
+compatibility_date = "2025-05-01"
+
+# R2 버킷 — 카드도감 업로드 이미지(위인전 인물사진·KBO 유니폼·캐릭터·엠블럼)
+[[r2_buckets]]
+binding = "IMG"
+bucket_name = "card-atlas-img"
+
+# 편집 비밀번호는 secret 으로:
+#   npx wrangler secret put EDIT_TOKEN

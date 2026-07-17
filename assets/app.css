@@ -263,3 +263,16 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .soon{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--muted);padding:40px 12px}
 .soon-emo{font-size:3.4rem}
 .soon h2{color:var(--text)}
+
+/* ── 편집 모드 · 사진 업로드(+버튼) ── */
+.edit-btn{font-size:.82rem;padding:5px 10px;white-space:nowrap}
+.edit-btn.on{background:#2f80ed;color:#fff;border-color:#2f80ed}
+.up-host{position:relative}
+.up-ov{position:absolute;top:4px;right:4px;z-index:6;display:flex;gap:5px}
+.up-add,.up-del{width:30px;height:30px;border-radius:50%;border:none;font-size:1.15rem;font-weight:900;line-height:1;
+  cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.up-add{background:#2f80ed;color:#fff}
+.up-del{background:#e5484d;color:#fff;font-size:1rem}
+.up-add:active{transform:scale(.92)}
+/* 유니폼 이미지 없을 때(편집용 빈 프레임 유지) */
+.kb-uni.empty{min-height:70px;border:1.5px dashed rgba(255,255,255,.25);border-radius:10px;display:flex;align-items:flex-end;justify-content:center}

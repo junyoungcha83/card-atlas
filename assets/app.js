@@ -1,7 +1,81 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v27';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v28';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ── 이미지 업로드(R2 클라우드) · 편집 모드 ──
+const IMG_API = 'https://card-atlas-img-api.junyoung-cha83.workers.dev';
+let IMG_SET = new Set();       // 업로드된 slot 집합(서버 정본)
+let EDIT = false;              // 편집 모드(+버튼 노출)
+let _bust = Date.now();        // 캐시버스트(업로드/삭제 후 갱신)
+const editToken = () => localStorage.getItem('ca-edit') || '';
+// override 있으면 R2 URL, 없으면 기존 코드 경로(fallback)
+function imgURL(slot, fallback){ return IMG_SET.has(slot) ? `${IMG_API}/api/img/${slot}?v=${_bust}` : (fallback||''); }
+function loadImgSet(){ return fetch(IMG_API+'/api/img',{cache:'no-store'}).then(r=>r.json())
+  .then(d=>{ IMG_SET = new Set((d.items||[]).map(x=>x.slot)); }).catch(()=>{}); }
+function toggleEdit(){
+  if(!EDIT){
+    if(!editToken()){ const p=prompt('편집 비밀번호를 입력하세요 (사진 업로드용)'); if(!p) return; localStorage.setItem('ca-edit', p.trim()); }
+    EDIT=true;
+  } else EDIT=false;
+  route();
+}
+// 슬라이드 렌더 후 [data-upslot] 요소에 +버튼(편집 모드) 부착
+function decorateUploads(root){
+  if(!EDIT || !root) return;
+  root.querySelectorAll('[data-upslot]').forEach(el=>{
+    if(el.querySelector(':scope > .up-ov')) return;
+    const slot=el.dataset.upslot;
+    el.classList.add('up-host');
+    const ov=document.createElement('div'); ov.className='up-ov';
+    ov.innerHTML=`<button class="up-add" title="사진 업로드">＋</button>`+(IMG_SET.has(slot)?`<button class="up-del" title="삭제">×</button>`:'');
+    ov.querySelector('.up-add').onclick=e=>{ e.stopPropagation(); e.preventDefault(); pickUpload(slot); };
+    const del=ov.querySelector('.up-del'); if(del) del.onclick=e=>{ e.stopPropagation(); e.preventDefault(); removeUpload(slot); };
+    el.appendChild(ov);
+  });
+}
+let _pendingSlot=null, _fileInput=null;
+function fileInput(){
+  if(_fileInput) return _fileInput;
+  _fileInput=document.createElement('input'); _fileInput.type='file'; _fileInput.accept='image/*'; _fileInput.style.display='none';
+  _fileInput.onchange=()=>{ const f=_fileInput.files[0]; _fileInput.value=''; if(f&&_pendingSlot) uploadImage(_pendingSlot,f); };
+  document.body.appendChild(_fileInput); return _fileInput;
+}
+function pickUpload(slot){ _pendingSlot=slot; fileInput().click(); }
+// 큰 사진은 캔버스로 축소(최대 변 1600px, JPEG) 후 업로드
+function downscale(file, maxSide, q){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{ URL.revokeObjectURL(url);
+      let w=img.naturalWidth, h=img.naturalHeight; const m=Math.max(w,h);
+      if(m<=maxSide && file.size<=1.5*1024*1024){ res(file); return; }   // 이미 작으면 원본
+      const sc=Math.min(1,maxSide/m); w=Math.round(w*sc); h=Math.round(h*sc);
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      cv.toBlob(b=>b?res(b):rej(new Error('blob')), 'image/jpeg', q);
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('img')); };
+    img.src=url;
+  });
+}
+async function uploadImage(slot,file){
+  const tok=editToken(); if(!tok){ alert('편집 비밀번호가 필요해요.'); return; }
+  let blob=file; try{ blob=await downscale(file,1600,0.85); }catch(_){}
+  try{
+    const res=await fetch(`${IMG_API}/api/img/${slot}`,{method:'PUT',
+      headers:{'Content-Type':blob.type||'image/jpeg','X-Edit-Token':tok}, body:blob});
+    if(res.status===401){ alert('편집 비밀번호가 틀렸어요. 다시 켜서 입력해 주세요.'); localStorage.removeItem('ca-edit'); EDIT=false; route(); return; }
+    if(res.status===413){ alert('사진 용량이 너무 커요 (8MB 초과).'); return; }
+    if(!res.ok){ alert('업로드 실패 ('+res.status+')'); return; }
+    IMG_SET.add(slot); _bust=Date.now(); route();
+  }catch(e){ alert('업로드 실패 — 네트워크 오류'); }
+}
+async function removeUpload(slot){
+  if(!confirm('이 사진을 삭제하고 기본 이미지로 되돌릴까요?')) return;
+  const tok=editToken();
+  try{ await fetch(`${IMG_API}/api/img/${slot}`,{method:'DELETE',headers:{'X-Edit-Token':tok}}); }catch(_){}
+  IMG_SET.delete(slot); _bust=Date.now(); route();
+}
 
 let KIND=null, LIST=[], PAGE=0, FLAT=false;   // FLAT=단면 덱(위인전): 1인 1장, 플립 없음
 const item = () => FLAT ? PAGE : PAGE>>1;      // 일반: item=PAGE>>1, side=PAGE&1
@@ -67,9 +141,11 @@ function faceKbo(t, s){
     // 유니폼 좌/우 라벨 — 기본 왼쪽 홈·오른쪽 원정, 키움·한화는 반대
     const uniSwap=(t.key==='kiwoom'||t.key==='hanwha');
     const uniL=uniSwap?'원정':'홈', uniR=uniSwap?'홈':'원정';
+    const embSlot='kbo-'+t.key+'-emblem', mascotSlot='kbo-'+t.key+'-mascot', uniSlot='kbo-'+t.key+'-uni';
+    const embSrc=imgURL(embSlot, t.emblemImg);
     return `<div class="cardface" style="${style}">
-      <div class="k-head">
-        ${t.emblemImg?`<img class="k-emb-img" src="${t.emblemImg}" alt="${esc(t.name)} 엠블렘">`:`<span class="k-emb">${t.emb}</span>`}
+      <div class="k-head" data-upslot="${embSlot}">
+        ${embSrc?`<img class="k-emb-img" src="${embSrc}" alt="${esc(t.name)} 엠블렘">`:`<span class="k-emb">${t.emb}</span>`}
         <div class="c-title"><h2>${esc(t.name)}</h2><span class="c-en">${esc(t.city)} 연고</span></div>
         ${t.logoImg?`<img class="k-logo-img" src="${t.logoImg}" alt="${esc(t.name)} 로고">`:''}
       </div>
@@ -80,20 +156,21 @@ function faceKbo(t, s){
         <div class="k-col">
           ${t.stadiumImg ? `<img class="k-col-img cover" src="${t.stadiumImg}" alt="${esc(t.stadium)}">` : `<div class="k-ph">🏟️</div>`}
         </div>
-        <div class="k-col">
-          ${t.mascotImg ? `<img class="k-col-img contain" src="${t.mascotImg}" alt="${esc(mascotName)}">` : `<div class="k-ph">${t.emb}</div>`}
+        <div class="k-col" data-upslot="${mascotSlot}">
+          ${(function(){const src=imgURL(mascotSlot,t.mascotImg); return src?`<img class="k-col-img contain" src="${src}" alt="${esc(mascotName)}" onerror="this.style.display='none'">`:`<div class="k-ph">${t.emb}</div>`;})()}
           <div class="k-name">${esc(mascotName)}</div>
         </div>
       </div></div>
-      <div class="c-sec kb-uni">
-        <img class="kb-uni-img" src="assets/kbo/u_${t.key}.jpg" alt="${esc(t.name)} 유니폼" onerror="this.closest('.kb-uni').remove()">
+      <div class="c-sec kb-uni" data-upslot="${uniSlot}">
+        <img class="kb-uni-img" src="${imgURL(uniSlot,'assets/kbo/u_'+t.key+'.jpg')}" alt="${esc(t.name)} 유니폼" onerror="this.style.display='none';this.closest('.kb-uni').classList.add('empty')">
         <div class="kb-uni-labels"><span>${uniL}</span><span>${uniR}</span></div>
       </div>
       <div class="pageno">앞면 1/2 · 넘기면 역사 →</div>
     </div>`;
   }
+  const embSrcB=imgURL('kbo-'+t.key+'-emblem', t.emblemImg);
   return `<div class="cardface backface" style="${style}">
-    <div class="k-head sm">${t.emblemImg?`<img class="k-emb-img sm" src="${t.emblemImg}" alt="">`:`<span class="k-emb sm">${t.emb}</span>`}<h2>${esc(t.name)} <small>역사</small></h2>${t.logoImg?`<img class="k-logo-img sm" src="${t.logoImg}" alt="">`:''}</div>
+    <div class="k-head sm">${embSrcB?`<img class="k-emb-img sm" src="${embSrcB}" alt="">`:`<span class="k-emb sm">${t.emb}</span>`}<h2>${esc(t.name)} <small>역사</small></h2>${t.logoImg?`<img class="k-logo-img sm" src="${t.logoImg}" alt="">`:''}</div>
     <div class="c-sec"><h3>🏆 우승</h3><p>${esc(t.titles)}</p></div>
     <div class="c-sec"><h3>🎖️ 수상·명장면</h3><ul class="bul">${t.awards.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
     <div class="c-sec"><h3>⭐ 대표 레전드</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
@@ -244,8 +321,9 @@ const ROLE_SETS = {
 function heroRole(h){ for(const ic in ROLE_SETS){ if(ROLE_SETS[ic].includes(h.id)) return ic; } return '📖'; }
 // 사진: assets/heroes/{id}.jpg(.png). 없으면 '준비중' 빈칸 프레임.
 function heroPhoto(h){
-  return `<div class="h-photo">`+
-    `<img src="assets/heroes/${h.id}.jpg" alt="${esc(h.n)}" `+
+  const slot='hero-'+h.id;
+  return `<div class="h-photo" data-upslot="${slot}">`+
+    `<img src="${imgURL(slot,'assets/heroes/'+h.id+'.jpg')}" alt="${esc(h.n)}" `+
       `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/heroes/${h.id}.png'}else{this.style.display='none';this.nextElementSibling.style.display='flex'}">`+
     `<span class="h-photo-ph" style="display:none">📷<small>사진 준비중</small></span></div>`;
 }
@@ -309,6 +387,7 @@ function buildCard(){
     <div class="face back">${faces(data,1)}</div>
   </div>`;
   hydrateMaps();
+  decorateUploads(slide);
 }
 const curCard = () => { const s=document.getElementById('slide'); return s?s.firstElementChild:null; };
 
@@ -350,6 +429,7 @@ function renderDeck(){
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
       <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':'<img class="bar-emb" src="assets/wc.png" alt=""> 월드컵'}</div>
+      ${(KIND==='kbo'||KIND==='heroes')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -360,6 +440,7 @@ function renderDeck(){
     </div>
     <div class="hint" id="hint">${FLAT?'👉 옆으로 넘기면 <b>다음 인물</b> · 첫 장에서 <b>이름</b>을 누르면 바로 이동':`👉 옆으로 넘기면 <b>뒷면</b>, 한 번 더 넘기면 <b>다음 ${KIND==='kbo'?'구단':'나라'}</b>`}</div>`;
   document.getElementById('home').onclick=()=>{ history.replaceState(null,'','#'); renderHome(); };
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
   document.getElementById('prev').onclick=()=>go(-1);
   document.getElementById('next').onclick=()=>go(1);
   const deck=document.getElementById('deck');
@@ -465,7 +546,7 @@ document.addEventListener('click', e=>{
 });
 
 window.addEventListener('hashchange', route);
-route();
+loadImgSet().then(route);   // 업로드된 사진 목록 먼저 로드 후 렌더
 
 // 서비스워커
 if('serviceWorker' in navigator){
