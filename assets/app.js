@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v28';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v29';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -141,7 +141,7 @@ function faceKbo(t, s){
     // 유니폼 좌/우 라벨 — 기본 왼쪽 홈·오른쪽 원정, 키움·한화는 반대
     const uniSwap=(t.key==='kiwoom'||t.key==='hanwha');
     const uniL=uniSwap?'원정':'홈', uniR=uniSwap?'홈':'원정';
-    const embSlot='kbo-'+t.key+'-emblem', mascotSlot='kbo-'+t.key+'-mascot', uniSlot='kbo-'+t.key+'-uni';
+    const embSlot='kbo-'+t.key+'-emblem', mascotSlot='kbo-'+t.key+'-mascot', uniSlot='kbo-'+t.key+'-uni', stadiumSlot='kbo-'+t.key+'-stadium';
     const embSrc=imgURL(embSlot, t.emblemImg);
     return `<div class="cardface" style="${style}">
       <div class="k-head" data-upslot="${embSlot}">
@@ -153,8 +153,8 @@ function faceKbo(t, s){
         ${infoRow('연고지',t.city)}${infoRow('홈구장',t.stadium)}${infoRow('수용인원',t.capacity)}
       </div>
       <div class="c-sec"><div class="k-duo">
-        <div class="k-col">
-          ${t.stadiumImg ? `<img class="k-col-img cover" src="${t.stadiumImg}" alt="${esc(t.stadium)}">` : `<div class="k-ph">🏟️</div>`}
+        <div class="k-col" data-upslot="${stadiumSlot}">
+          ${(function(){const src=imgURL(stadiumSlot,t.stadiumImg); return src?`<img class="k-col-img cover" src="${src}" alt="${esc(t.stadium)}" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<div class=\\'k-ph\\'>🏟️</div>')">`:`<div class="k-ph">🏟️</div>`;})()}
         </div>
         <div class="k-col" data-upslot="${mascotSlot}">
           ${(function(){const src=imgURL(mascotSlot,t.mascotImg); return src?`<img class="k-col-img contain" src="${src}" alt="${esc(mascotName)}" onerror="this.style.display='none'">`:`<div class="k-ph">${t.emb}</div>`;})()}
@@ -175,8 +175,8 @@ function faceKbo(t, s){
     <div class="c-sec"><h3>🎖️ 수상·명장면</h3><ul class="bul">${t.awards.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
     <div class="c-sec"><h3>⭐ 대표 레전드</h3><div class="chips">${t.legends.map(l=>`<span>${esc(l)}</span>`).join('')}</div></div>
     <div class="c-sec"><h3>📖 구단의 역사</h3><ol class="timeline emb-tl">${(t.teamHistory||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
-    <div class="c-sec"><h3>🏷️ 구단 로고의 역사</h3>
-      <img class="kb-eh-img" src="assets/kbo/eh_${t.key}.jpg" alt="${esc(t.name)} 엠블럼 변천사" onerror="this.style.display='none';var f=this.nextElementSibling;if(f)f.style.display='block'">
+    <div class="c-sec" data-upslot="kbo-${t.key}-emblemhist"><h3>🏷️ 구단 로고의 역사</h3>
+      <img class="kb-eh-img" src="${imgURL('kbo-'+t.key+'-emblemhist','assets/kbo/eh_'+t.key+'.jpg')}" alt="${esc(t.name)} 엠블럼 변천사" onerror="this.style.display='none';var f=this.nextElementSibling;if(f)f.style.display='block'">
       <ol class="timeline emb-tl" style="display:none">${(t.emblems||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol></div>
     <div class="pageno">뒷면 2/2 · 넘기면 다음 구단 →</div>
   </div>`;
