@@ -274,6 +274,7 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .geo-tile{display:flex;flex-direction:column;align-items:center;gap:2px;background:#0f1630;border:1px solid var(--border);border-radius:14px;padding:10px 6px;color:var(--text);cursor:pointer}
 .geo-tile:active{border-color:#6ea8fe}
 .geo-tile img{height:52px;width:auto;object-fit:contain}
+.geo-tile .tile-emo{height:52px;display:flex;align-items:center;justify-content:center;font-size:2.6rem}
 .geo-tile b{font-size:.92rem;margin-top:3px}
 .geo-tile small{color:var(--muted);font-size:.68rem}
 /* 한국지리 — 상세 */

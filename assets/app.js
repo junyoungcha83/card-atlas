@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v37';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v38';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -510,8 +510,7 @@ function renderHome(){
         <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc-trophy.svg" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
-        <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구</small></button>
-        <button class="home-card" data-k="past"><span class="hc-emo">🏚️</span><b>과거도시</b><small>사라진·통합·이름 바뀐 도시</small></button>
+        <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
       </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>nav(b.dataset.k));
@@ -539,10 +538,14 @@ function renderGeoIndex(){
           <img src="assets/maps/geo/${code}_only.svg" alt="" loading="lazy">
           <b>${esc(r.name)}</b><small>${esc(r.type)}</small></button>`; }).join('')
       }</div></div>`).join('')}
+      <div class="geo-grp"><h3>그 밖에</h3><div class="geo-grid">
+        <button class="geo-tile" id="geoPast"><span class="tile-emo">🏚️</span><b>과거도시</b><small>사라진·통합·개명</small></button>
+      </div></div>
     </div>
     <div class="hint">👉 지역을 누르면 <b>지도·인구·역사</b>가 나와요</div>`;
   document.getElementById('home').onclick=()=>history.back();
-  APP.querySelectorAll('.geo-tile').forEach(b=>b.onclick=()=>nav('geo='+b.dataset.code));
+  APP.querySelectorAll('.geo-tile[data-code]').forEach(b=>b.onclick=()=>nav('geo='+b.dataset.code));
+  const gp=document.getElementById('geoPast'); if(gp) gp.onclick=()=>nav('past');
 }
 function renderGeoRegion(code){
   const r=GEO_SIDO[code]; if(!r){ renderGeoIndex(); return; }
