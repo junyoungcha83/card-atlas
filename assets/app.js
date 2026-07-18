@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v36';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v37';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -402,7 +402,36 @@ function buildCard(){
   </div>`;
   hydrateMaps();
   decorateUploads(slide);
+  bindPhotoZoom(slide);
 }
+// 카드 사진 클릭 → 전체화면 팝업(가로 긴 사진도 전체가 보이도록 contain)
+function bindPhotoZoom(root){
+  root.querySelectorAll('.h-photo img, .k-col-img, .kb-uni-img, .kb-eh-img').forEach(img=>{
+    img.classList.add('zoomable');
+    img.addEventListener('click', e=>{ e.stopPropagation(); openPhoto(img.currentSrc||img.getAttribute('src'), img.alt); });
+  });
+}
+let _photoOpen=false;
+function ensurePhotoViewer(){
+  let v=document.getElementById('photoViewer');
+  if(v) return v;
+  v=document.createElement('div'); v.id='photoViewer'; v.className='photo-viewer hidden';
+  v.innerHTML='<button class="pv-close" aria-label="닫기">✕</button><img alt="">';
+  document.body.appendChild(v);
+  v.addEventListener('click', e=>{ if(e.target===v || e.target.classList.contains('pv-close')) closePhotoBack(); });
+  return v;
+}
+function openPhoto(src, alt){
+  if(!src) return;
+  const v=ensurePhotoViewer(), img=v.querySelector('img');
+  img.src=src; img.alt=alt||'';
+  v.classList.remove('hidden'); _photoOpen=true;
+  history.pushState({photo:1},'');   // 뒤로가기/닫기로 팝업만 닫히도록
+}
+function closePhoto(){ if(!_photoOpen) return; _photoOpen=false; const v=document.getElementById('photoViewer'); if(v) v.classList.add('hidden'); }
+function closePhotoBack(){ if(_photoOpen) history.back(); }
+window.addEventListener('popstate', ()=>{ if(_photoOpen) closePhoto(); });
+window.addEventListener('keydown', e=>{ if(e.key==='Escape') closePhotoBack(); });
 const curCard = () => { const s=document.getElementById('slide'); return s?s.firstElementChild:null; };
 
 function flip(toBack){ const c=curCard(); if(c) c.classList.toggle('flipped', toBack); }

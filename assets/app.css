@@ -33,7 +33,7 @@ button{font-family:inherit}
 /* ── 덱 / 3D 플립 카드 ── */
 .deck{perspective:1800px;touch-action:pan-y}
 .slide{will-change:transform,opacity}
-.card3d{position:relative;width:100%;height:70vh;max-height:660px;min-height:440px;
+.card3d{position:relative;width:100%;height:76vh;max-height:720px;min-height:480px;
   transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .card3d.flipped{transform:rotateY(-180deg)}
 /* backface-hidden 제거: 3D 안에서 내부 스크롤이 막히는 버그 회피. 불투명 면 + translateZ로 겹침 처리 */
@@ -81,7 +81,7 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .k-duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
 .k-col{min-width:0;display:flex;flex-direction:column;gap:6px}
 .k-col-label{font-size:.8rem;color:var(--primary2);font-weight:800;border-left:4px solid var(--primary);padding-left:8px}
-.k-col-img{width:100%;height:130px;border-radius:12px;border:1px solid var(--border);background:#0f1630;display:block}
+.k-col-img{width:100%;height:190px;border-radius:12px;border:1px solid var(--border);background:#0f1630;display:block}
 .k-col-img.cover{object-fit:cover}
 .k-col-img.contain{object-fit:contain;padding:4px}
 .k-ph{width:100%;height:130px;border-radius:12px;border:1px dashed var(--border);background:#0f1630;
@@ -156,7 +156,7 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
   background:rgba(0,0,0,.22);border-radius:999px;padding:4px 9px;font-variant-numeric:tabular-nums}
 
 .h-body-top{display:flex;gap:14px;align-items:stretch;margin-bottom:16px}
-.h-photo{flex:0 0 46%;aspect-ratio:1/1;position:relative;overflow:hidden;border-radius:12px;
+.h-photo{flex:0 0 52%;aspect-ratio:3/4;position:relative;overflow:hidden;border-radius:12px;
   border:1px solid var(--border);background:var(--bg2)}
 .h-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .h-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -302,3 +302,11 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .up-add:active{transform:scale(.92)}
 /* 유니폼 이미지 없을 때(편집용 빈 프레임 유지) */
 .kb-uni.empty{min-height:70px;border:1.5px dashed rgba(255,255,255,.25);border-radius:10px;display:flex;align-items:flex-end;justify-content:center}
+
+/* 사진 클릭 → 전체화면 팝업 */
+.zoomable{cursor:zoom-in}
+.photo-viewer{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.93);display:flex;align-items:center;justify-content:center;padding:14px}
+.photo-viewer.hidden{display:none}
+.photo-viewer img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.pv-close{position:absolute;top:14px;right:16px;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.16);color:#fff;font-size:1.25rem;font-weight:800;cursor:pointer}
+.pv-close:active{background:rgba(255,255,255,.3)}
