@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v41';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v42';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -669,13 +669,29 @@ function renderGeoGu(code){
 }
 
 // ── 나의 도시 상세 ──
-// 나의 도시 — 수기 메모(이 기기에 저장)
-function myCityNotes(){ try{ return JSON.parse(localStorage.getItem('ca-mycity-notes')||'{}')||{}; }catch(_){ return {}; } }
-function saveMyCityNotes(o){ try{ localStorage.setItem('ca-mycity-notes', JSON.stringify(o)); }catch(_){} }
+// 나의 도시 — 수기 메모(R2 클라우드 동기화 + 로컬 캐시). 이미지 API에 JSON 슬롯으로 저장.
+const NOTES_SLOT='mycity_notes';
+let CITY_NOTES={};
+function loadCityNotes(){
+  try{ CITY_NOTES = JSON.parse(localStorage.getItem('ca-mycity-notes')||'{}')||{}; }catch(_){ CITY_NOTES={}; }
+  return fetch(`${IMG_API}/api/img/${NOTES_SLOT}?v=${Date.now()}`,{cache:'no-store'})
+    .then(r=> r.ok ? r.json() : null)
+    .then(o=>{ if(o && typeof o==='object' && !Array.isArray(o)){ CITY_NOTES={...CITY_NOTES, ...o};
+      try{ localStorage.setItem('ca-mycity-notes', JSON.stringify(CITY_NOTES)); }catch(_){} } })
+    .catch(()=>{});
+}
+function saveCityNotes(){
+  try{ localStorage.setItem('ca-mycity-notes', JSON.stringify(CITY_NOTES)); }catch(_){}
+  const tok=editToken(); if(!tok){ alert('편집 비밀번호가 필요해요 (✎ 편집 켜기).'); return; }
+  fetch(`${IMG_API}/api/img/${NOTES_SLOT}`,{method:'PUT',
+    headers:{'Content-Type':'application/json','X-Edit-Token':tok}, body:JSON.stringify(CITY_NOTES)})
+    .then(res=>{ if(res.status===401){ alert('편집 비밀번호가 틀렸어요. 다시 켜서 입력해 주세요.'); localStorage.removeItem('ca-edit'); EDIT=false; route(); } })
+    .catch(()=>alert('메모 저장 실패 — 네트워크 오류'));
+}
 function renderMyCity(id){
   const c=MY_CITIES[id]; if(!c){ renderGeoIndex(); return; }
   KIND='geo';
-  const notes=myCityNotes()[id]||[];
+  const notes=CITY_NOTES[id]||[];
   const notesSec=`<div class="c-sec"><h3>📝 나의 메모${EDIT?` <button class="mc-add" id="mcAdd" type="button">＋ 내용 추가</button>`:''}</h3>`
     +(notes.length
       ? `<ol class="timeline mc-notes">${notes.map((t,i)=>`<li>${esc(t)}${EDIT?` <button class="mc-del" data-i="${i}" type="button" title="삭제">×</button>`:''}</li>`).join('')}</ol>`
@@ -703,8 +719,8 @@ function renderMyCity(id){
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
   decorateUploads(APP);
   const addBtn=document.getElementById('mcAdd');
-  if(addBtn) addBtn.onclick=()=>{ const t=prompt('추가할 내용을 입력하세요'); if(t&&t.trim()){ const all=myCityNotes(); (all[id]=all[id]||[]).push(t.trim()); saveMyCityNotes(all); renderMyCity(id); } };
-  APP.querySelectorAll('.mc-del').forEach(b=>b.onclick=()=>{ const all=myCityNotes(); if(all[id]){ all[id].splice(+b.dataset.i,1); if(!all[id].length) delete all[id]; saveMyCityNotes(all); renderMyCity(id); } });
+  if(addBtn) addBtn.onclick=()=>{ const t=prompt('추가할 내용을 입력하세요'); if(t&&t.trim()){ (CITY_NOTES[id]=CITY_NOTES[id]||[]).push(t.trim()); saveCityNotes(); renderMyCity(id); } };
+  APP.querySelectorAll('.mc-del').forEach(b=>b.onclick=()=>{ const arr=CITY_NOTES[id]; if(arr){ arr.splice(+b.dataset.i,1); if(!arr.length) delete CITY_NOTES[id]; saveCityNotes(); renderMyCity(id); } });
   window.scrollTo(0,0);
 }
 
@@ -855,7 +871,7 @@ document.addEventListener('click', e=>{
 });
 
 window.addEventListener('hashchange', route);
-loadImgSet().then(route);   // 업로드된 사진 목록 먼저 로드 후 렌더
+Promise.all([loadImgSet(), loadCityNotes()]).then(route);   // 사진 목록 + 도시 메모 로드 후 렌더
 
 // 서비스워커
 if('serviceWorker' in navigator){
