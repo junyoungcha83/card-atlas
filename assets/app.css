@@ -70,6 +70,15 @@ button{font-family:inherit}
   background:rgba(8,12,20,.62);padding:2px 7px;border-radius:8px;max-width:calc(100% - 12px);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* 나의 도시: 옛 지도 업로드 셀 + 소개 */
+.mapbox.oldmap{border-style:dashed}
+.oldmap-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);text-align:center;padding:6px}
+.oldmap-ph .oh-emo{font-size:2rem;opacity:.85;line-height:1.1}
+.oldmap-ph b{font-size:.8rem;color:#cbd5e1}
+.oldmap-ph small{font-size:.6rem}
+.mycity-sub{font-size:.9rem;color:var(--muted);margin:0 2px 12px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mc-badge{font-size:.66rem;font-weight:800;color:#0b1020;background:var(--primary2,#7dd3fc);border-radius:999px;padding:2px 9px}
+
 /* 역사카드 워터마크(밝은 톤 중첩) */
 .wm{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;border-radius:20px}
 .wmi{position:absolute}

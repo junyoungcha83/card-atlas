@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v38';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v39';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -527,6 +527,52 @@ function comingSoon(kind){
   history.replaceState(null,'','#'+kind);
 }
 
+// ── 나의 도시 (한국지리 > 나의 도시) ──
+// svgMaps: 이미 생성된 지도(assets/maps/geo/*.svg). oldSlot: 옛 지도 이미지 업로드(R2) 슬롯.
+const MY_CITIES = {
+  masan: {
+    emoji:'⚓', title:'마산시', tileSub:'옛 마산 (합포·회원)',
+    sub:'통합 전 옛 마산시', badge:'2010 창원 통합',
+    svgMaps:[{src:'38113_only.svg',label:'마산합포구'},{src:'38114_only.svg',label:'마산회원구'}],
+    oldSlot:'mycity-masan-old',
+    info:[['옛 행정구역','마산시 (2010 폐지)'],['현재','창원시 마산합포구·마산회원구'],['통합','2010년 창원·마산·진해'],['상징','3·15 의거 · 마산항']],
+    history:['개항장 마산은 경남을 대표하던 항구·공업 도시였어요.','옛 마산은 3·15 의거(1960)가 일어난 민주화의 도시예요.','2010년 창원·마산·진해가 합쳐 통합 창원시가 되며 마산시는 사라졌어요.','지금은 마산합포구·마산회원구로 이름이 남아 있어요.'],
+  },
+  cheongju: {
+    emoji:'🖨️', title:'청주시', tileSub:'통합 청주 (흥덕 포함)',
+    sub:'청원군과 통합한 청주', badge:'2014 청원 통합',
+    svgMaps:[{src:'cheongju_only.svg',label:'청주시'},{src:'cheongju_up.svg',label:'충북 안에서'},{src:'33043_only.svg',label:'흥덕구'}],
+    oldSlot:'mycity-cheongju-old',
+    info:[['행정구역','청주시 (충북)'],['구','상당 · 서원 · 흥덕 · 청원'],['통합','2014년 청주시 + 청원군'],['상징','직지 · 고인쇄']],
+    history:['세계에서 가장 오래된 금속활자 「직지」를 만든 인쇄의 도시예요.','2014년 청주시와 청원군이 하나로 통합됐어요.','흥덕구는 오송 바이오단지가 있는 인구 최다 구예요.','청주국제공항이 있어요.'],
+  },
+  icheon: {
+    emoji:'🌾', title:'이천시', tileSub:'경기 남동부',
+    sub:'구 없는 쌀·도자기의 고장', badge:'경기도',
+    svgMaps:[{src:'icheon_only.svg',label:'이천시'},{src:'icheon_up.svg',label:'경기 안에서'}],
+    oldSlot:'mycity-icheon-old',
+    info:[['행정구역','이천시 (경기)'],['유형','시 (구 없음)'],['청 소재지','중리동'],['상징','이천쌀 · 도자기']],
+    history:['질 좋은 "이천쌀"로 유명한 고장이에요.','도자기 축제로도 잘 알려져 있어요.','구가 없이 읍·면·동으로 이뤄져 있어요.'],
+  },
+  yongsan: {
+    emoji:'🚆', title:'용산구', tileSub:'서울특별시',
+    sub:'서울 한복판, 교통·군사 요지', badge:'서울특별시',
+    svgMaps:[{src:'11_only.svg',label:'서울특별시'}],
+    oldSlot:'mycity-yongsan-old',
+    info:[['행정구역','서울특별시 용산구'],['상징','용산역 · 이태원'],['특징','한강 ~ 남산 사이']],
+    history:['서울역·용산역이 있는 교통의 중심이에요.','이태원 등 국제적인 동네가 있어요.','옛 미군기지 터가 용산공원으로 바뀌고 있어요.'],
+  },
+  mapo: {
+    emoji:'🌉', title:'마포구', tileSub:'서울특별시',
+    sub:'한강·홍대의 문화 중심', badge:'서울특별시',
+    svgMaps:[{src:'11_only.svg',label:'서울특별시'}],
+    oldSlot:'mycity-mapo-old',
+    info:[['행정구역','서울특별시 마포구'],['상징','홍대 · 상암 DMC'],['특징','한강 북서쪽']],
+    history:['옛 마포나루가 있던 한강 포구 지역이에요.','홍대 앞은 젊음과 예술의 거리예요.','상암 DMC에 방송·미디어 기업이 모여 있어요.'],
+  },
+};
+const MY_CITY_ORDER = ['masan','cheongju','icheon','yongsan','mapo'];
+
 // ── 한국지리 (계층 드릴다운) ──
 function renderGeoIndex(){
   KIND='geo';
@@ -538,6 +584,10 @@ function renderGeoIndex(){
           <img src="assets/maps/geo/${code}_only.svg" alt="" loading="lazy">
           <b>${esc(r.name)}</b><small>${esc(r.type)}</small></button>`; }).join('')
       }</div></div>`).join('')}
+      <div class="geo-grp"><h3>📍 나의 도시</h3><div class="geo-grid">${
+        MY_CITY_ORDER.map(id=>{ const c=MY_CITIES[id]; return `<button class="geo-tile" data-mycity="${id}">
+          <span class="tile-emo">${c.emoji||'📍'}</span><b>${esc(c.title)}</b><small>${esc(c.tileSub||'')}</small></button>`; }).join('')
+      }</div></div>
       <div class="geo-grp"><h3>그 밖에</h3><div class="geo-grid">
         <button class="geo-tile" id="geoPast"><span class="tile-emo">🏚️</span><b>과거도시</b><small>사라진·통합·개명</small></button>
       </div></div>
@@ -545,6 +595,7 @@ function renderGeoIndex(){
     <div class="hint">👉 지역을 누르면 <b>지도·인구·역사</b>가 나와요</div>`;
   document.getElementById('home').onclick=()=>history.back();
   APP.querySelectorAll('.geo-tile[data-code]').forEach(b=>b.onclick=()=>nav('geo='+b.dataset.code));
+  APP.querySelectorAll('.geo-tile[data-mycity]').forEach(b=>b.onclick=()=>nav('mycity='+b.dataset.mycity));
   const gp=document.getElementById('geoPast'); if(gp) gp.onclick=()=>nav('past');
 }
 function renderGeoRegion(code){
@@ -617,6 +668,33 @@ function renderGeoGu(code){
   window.scrollTo(0,0);
 }
 
+// ── 나의 도시 상세 ──
+function renderMyCity(id){
+  const c=MY_CITIES[id]; if(!c){ renderGeoIndex(); return; }
+  KIND='geo';
+  const svgCells=(c.svgMaps||[]).map(m=>
+    `<div class="mapbox"><img class="c-map" src="assets/maps/geo/${m.src}" alt="${esc(m.label)} 지도" loading="lazy"><span class="mlabel">${esc(m.label)}</span></div>`).join('');
+  const oldHas=IMG_SET.has(c.oldSlot);
+  const oldCell=`<div class="mapbox oldmap" data-upslot="${esc(c.oldSlot)}">
+      ${oldHas
+        ? `<img class="c-map" src="${imgURL(c.oldSlot,'')}" alt="${esc(c.title)} 옛 지도">`
+        : `<div class="oldmap-ph"><span class="oh-emo">🗺️</span><b>옛 지도</b><small>✎ 편집 켜고 ＋로 추가</small></div>`}
+      <span class="mlabel">옛 지도</span></div>`;
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ 한국지리</button><div class="bar-title">${c.emoji||'📍'} ${esc(c.title)}</div>
+      <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="옛 지도 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button></div>
+    <div class="geo-detail">
+      ${c.sub?`<div class="mycity-sub">${esc(c.sub)}${c.badge?`<span class="mc-badge">${esc(c.badge)}</span>`:''}</div>`:''}
+      <div class="geo-maps">${svgCells}${oldCell}</div>
+      <div class="info-grid">${(c.info||[]).map(kv=>infoRow(kv[0],kv[1])).join('')}</div>
+      <div class="c-sec"><h3>📖 이야기</h3><ol class="timeline">${(c.history||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ol></div>
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  decorateUploads(APP);
+  window.scrollTo(0,0);
+}
+
 // 앞으로 이동: 히스토리에 새 항목을 쌓고 해당 화면 렌더(뒤로가기로 이전 단계 복귀)
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
 
@@ -640,6 +718,8 @@ function route(){
     else if(typeof GEO_GU!=='undefined' && GEO_GU[x]) renderGeoGu(x);
     else renderGeoIndex();
     return; }
+  const mc=h.match(/^mycity(?:=([a-z]+))?$/i);
+  if(mc){ if(mc[1] && MY_CITIES[mc[1]]) renderMyCity(mc[1]); else renderGeoIndex(); return; }
   const m=h.match(/^(world|kbo|foot|heroes|korhist|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
