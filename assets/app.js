@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v40';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v41';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -669,9 +669,18 @@ function renderGeoGu(code){
 }
 
 // ── 나의 도시 상세 ──
+// 나의 도시 — 수기 메모(이 기기에 저장)
+function myCityNotes(){ try{ return JSON.parse(localStorage.getItem('ca-mycity-notes')||'{}')||{}; }catch(_){ return {}; } }
+function saveMyCityNotes(o){ try{ localStorage.setItem('ca-mycity-notes', JSON.stringify(o)); }catch(_){} }
 function renderMyCity(id){
   const c=MY_CITIES[id]; if(!c){ renderGeoIndex(); return; }
   KIND='geo';
+  const notes=myCityNotes()[id]||[];
+  const notesSec=`<div class="c-sec"><h3>📝 나의 메모${EDIT?` <button class="mc-add" id="mcAdd" type="button">＋ 내용 추가</button>`:''}</h3>`
+    +(notes.length
+      ? `<ol class="timeline mc-notes">${notes.map((t,i)=>`<li>${esc(t)}${EDIT?` <button class="mc-del" data-i="${i}" type="button" title="삭제">×</button>`:''}</li>`).join('')}</ol>`
+      : `<div class="geo-more">${EDIT?'＋ 내용 추가 로 나만의 설명을 적어 보세요.':'✎ 편집 을 켜면 나만의 설명을 추가할 수 있어요.'}</div>`)
+    +`</div>`;
   const svgCells=(c.svgMaps||[]).map(m=>
     `<div class="mapbox"><img class="c-map" src="assets/maps/geo/${m.src}" alt="${esc(m.label)} 지도" loading="lazy"><span class="mlabel">${esc(m.label)}</span></div>`).join('');
   const oldHas=IMG_SET.has(c.oldSlot);
@@ -688,10 +697,14 @@ function renderMyCity(id){
       <div class="geo-maps">${svgCells}${oldCell}</div>
       <div class="info-grid">${(c.info||[]).map(kv=>infoRow(kv[0],kv[1])).join('')}</div>
       <div class="c-sec"><h3>📖 이야기</h3><ol class="timeline">${(c.history||[]).map(h=>`<li>${esc(h)}</li>`).join('')}</ol></div>
+      ${notesSec}
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
   decorateUploads(APP);
+  const addBtn=document.getElementById('mcAdd');
+  if(addBtn) addBtn.onclick=()=>{ const t=prompt('추가할 내용을 입력하세요'); if(t&&t.trim()){ const all=myCityNotes(); (all[id]=all[id]||[]).push(t.trim()); saveMyCityNotes(all); renderMyCity(id); } };
+  APP.querySelectorAll('.mc-del').forEach(b=>b.onclick=()=>{ const all=myCityNotes(); if(all[id]){ all[id].splice(+b.dataset.i,1); if(!all[id].length) delete all[id]; saveMyCityNotes(all); renderMyCity(id); } });
   window.scrollTo(0,0);
 }
 
