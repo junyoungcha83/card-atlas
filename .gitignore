@@ -1,4 +1,4 @@
 .DS_Store
 _*.html
 .wrangler/
-scripts/_*.json
+tools/_*.json
