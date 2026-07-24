@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v39';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v40';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -695,6 +695,73 @@ function renderMyCity(id){
   window.scrollTo(0,0);
 }
 
+// ── 한국역사 (① 시대별 역사 · ② 왕 계보) ──
+function khEraHTML(){
+  return `<div class="era-list">${KH_ERAS.map(e=>`
+    <div class="era-card">
+      <button class="era-head" type="button">
+        <span class="era-emo">${e.emoji}</span>
+        <span class="era-tt"><b>${esc(e.name)}</b><small>${esc(e.period)}</small></span>
+        <span class="era-caret">▾</span>
+      </button>
+      <div class="era-sum">${esc(e.summary)}</div>
+      <div class="era-body">
+        <ol class="timeline">${e.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>
+        ${(e.keywords&&e.keywords.length)?`<div class="chips">${e.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`:''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+function khDynHTML(){
+  return `<div class="geo-grid">${KH_DYN_ORDER.map(id=>{ const d=KH_DYN[id]; return `
+    <button class="geo-tile" data-dyn="${id}"><span class="tile-emo">${d.emoji}</span><b>${esc(d.name)}</b><small>${esc(d.period)}</small></button>`; }).join('')}</div>
+    <div class="hint">👉 나라를 누르면 <b>대수·이름·재위연도</b> 계보가 나와요</div>`;
+}
+function renderKorHist(tab){
+  KIND='korhist';
+  tab = (tab==='dyn') ? 'dyn' : 'era';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🇰🇷 한국역사</div></div>
+    <div class="kh-wrap">
+      <div class="kbs-tabs" role="tablist">
+        <button class="kbs-tab ${tab==='era'?'on':''}" type="button" data-khtab="era">📖 시대별 역사</button>
+        <button class="kbs-tab ${tab==='dyn'?'on':''}" type="button" data-khtab="dyn">👑 왕 계보</button>
+      </div>
+      <div class="kh-body" id="khBody">${tab==='era'?khEraHTML():khDynHTML()}</div>
+    </div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  function wireBody(){
+    APP.querySelectorAll('.era-card .era-head').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+    APP.querySelectorAll('.geo-tile[data-dyn]').forEach(b=>b.onclick=()=>nav('khking='+b.dataset.dyn));
+  }
+  APP.querySelectorAll('.kbs-tab').forEach(t=>t.onclick=()=>{
+    const which=t.dataset.khtab;
+    APP.querySelectorAll('.kbs-tab').forEach(x=>x.classList.toggle('on',x===t));
+    document.getElementById('khBody').innerHTML = which==='era'?khEraHTML():khDynHTML();
+    history.replaceState(null,'','#korhist'+(which==='dyn'?'=dyn':''));
+    wireBody();
+  });
+  wireBody();
+  window.scrollTo(0,0);
+}
+function renderKorDynasty(id){
+  const d=KH_DYN[id]; if(!d){ renderKorHist('dyn'); return; }
+  KIND='korhist';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ 왕 계보</button><div class="bar-title">${d.emoji} ${esc(d.name)}</div><div class="bar-count">${d.kings.length}대</div></div>
+    <div class="geo-detail">
+      <div class="kh-sub">${esc(d.period)}${d.note?` · ${esc(d.note)}`:''}</div>
+      <ol class="king-list">${d.kings.map(k=>`
+        <li class="king-row">
+          <span class="king-n">${k.n}대</span>
+          <span class="king-name">${esc(k.name)}</span>
+          <span class="king-reign">${esc(k.reign)}</span>
+          ${k.note?`<span class="king-note">${esc(k.note)}</span>`:''}
+        </li>`).join('')}</ol>
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  window.scrollTo(0,0);
+}
+
 // 앞으로 이동: 히스토리에 새 항목을 쌓고 해당 화면 렌더(뒤로가기로 이전 단계 복귀)
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
 
@@ -720,7 +787,11 @@ function route(){
     return; }
   const mc=h.match(/^mycity(?:=([a-z]+))?$/i);
   if(mc){ if(mc[1] && MY_CITIES[mc[1]]) renderMyCity(mc[1]); else renderGeoIndex(); return; }
-  const m=h.match(/^(world|kbo|foot|heroes|korhist|past)(?:=(\d+)\.(\d+))?$/);
+  const kh=h.match(/^korhist(?:=([a-z]+))?$/i);
+  if(kh){ renderKorHist(kh[1]||'era'); return; }
+  const kd=h.match(/^khking=([a-z]+)$/i);
+  if(kd){ if(typeof KH_DYN!=='undefined' && KH_DYN[kd[1]]) renderKorDynasty(kd[1]); else renderKorHist('dyn'); return; }
+  const m=h.match(/^(world|kbo|foot|heroes|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }
