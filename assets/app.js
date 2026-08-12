@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v42';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v43';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -67,15 +67,18 @@ async function uploadImage(slot,file){
     if(res.status===401){ alert('편집 비밀번호가 틀렸어요. 다시 켜서 입력해 주세요.'); localStorage.removeItem('ca-edit'); EDIT=false; route(); return; }
     if(res.status===413){ alert('사진 용량이 너무 커요 (8MB 초과).'); return; }
     if(!res.ok){ alert('업로드 실패 ('+res.status+')'); return; }
-    IMG_SET.add(slot); _bust=Date.now(); route();
+    IMG_SET.add(slot); _bust=Date.now(); route(); afterImgChange();
   }catch(e){ alert('업로드 실패 — 네트워크 오류'); }
 }
 async function removeUpload(slot){
   if(!confirm('이 사진을 삭제하고 기본 이미지로 되돌릴까요?')) return;
   const tok=editToken();
   try{ await fetch(`${IMG_API}/api/img/${slot}`,{method:'DELETE',headers:{'X-Edit-Token':tok}}); }catch(_){}
-  IMG_SET.delete(slot); _bust=Date.now(); route();
+  IMG_SET.delete(slot); _bust=Date.now(); route(); afterImgChange();
 }
+// 업로드/삭제 뒤 한 번만 실행되는 후처리(모달처럼 route()로 다시 그려지지 않는 화면 갱신용)
+let _afterImgChange=null;
+function afterImgChange(){ const f=_afterImgChange; _afterImgChange=null; if(f) f(); }
 
 let KIND=null, LIST=[], PAGE=0, FLAT=false;   // FLAT=단면 덱(위인전): 1인 1장, 플립 없음
 const item = () => FLAT ? PAGE : PAGE>>1;      // 일반: item=PAGE>>1, side=PAGE&1
@@ -214,8 +217,8 @@ function faceFoot(t, s){
   return `<div class="cardface backface foot">
     <div class="c-head sm"><img class="c-flag sm" src="https://flagcdn.com/w320/${t.flag}.png" alt="" onerror="this.style.visibility='hidden'"><h2>${esc(t.n)} <small>레전드</small></h2></div>
     <div class="c-sec"><h3>⭐ 레전드 선수</h3>
-      <div class="legend-list">${t.legends.map(l=>`<button class="legend-item" data-q="${esc(l)}"><span>${esc(l)}</span><i>ⓘ 사진·이력</i></button>`).join('')}</div>
-      <p class="legend-hint">선수를 누르면 사진과 이력을 볼 수 있어요 (출처: 위키백과)</p>
+      <div class="legend-list">${t.legends.map(l=>`<button class="legend-item${legendCustom(l)?' mine':''}" data-q="${esc(l)}"><span>${esc(l)}</span><i>${legendCustom(l)?'✎ 직접 등록':'ⓘ 사진·이력'}</i></button>`).join('')}</div>
+      <p class="legend-hint">선수를 누르면 사진과 이력을 볼 수 있어요 (출처: 위키백과)<br>${EDIT?'✎ 편집중 — 선수를 눌러 사진·이력을 직접 넣을 수 있어요.':'✎ 편집 을 켜면 사진·이력을 직접 넣을 수 있어요.'}</p>
     </div>
     <div class="pageno">뒷면 2/2 · 넘기면 다음 나라 →</div>
   </div>`;
@@ -472,7 +475,7 @@ function renderDeck(){
     <div class="bar">
       <button class="bar-btn" id="home">‹ 홈</button>
       <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':KIND==='past'?'🏚️ 과거도시':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
-      ${(KIND==='kbo'||KIND==='heroes')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
+      ${(KIND==='kbo'||KIND==='heroes'||KIND==='foot')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진·이력 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
       <div class="bar-count" id="count"></div>
     </div>
     <div class="deck" id="deck"><div class="slide" id="slide"></div></div>
@@ -824,7 +827,39 @@ function route(){
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
 }
-// 레전드 선수 클릭 → 위키백과 사진·이력 모달
+// ── 월드컵 레전드 인물 — 수동 편집(사진은 R2 업로드, 이력은 직접 입력) ──
+// 슬롯 이름은 ASCII만 허용(worker 규칙)이라 한글 선수 이름을 FNV-1a 해시로 고정 변환한다.
+function legendSlot(name){
+  let h=0x811c9dc5;
+  for(let i=0;i<name.length;i++){ h^=name.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; }
+  return 'legend-'+h.toString(16).padStart(8,'0');
+}
+// 직접 쓴 이력 — 나의 도시 메모와 같은 방식(R2 JSON 슬롯 + 로컬 캐시). { '메시': {t:'표시 이름', bio:'이력'} }
+const LEGEND_SLOT='legend_notes';
+let LEGEND_NOTES={};
+function loadLegendNotes(){
+  try{ LEGEND_NOTES = JSON.parse(localStorage.getItem('ca-legend-notes')||'{}')||{}; }catch(_){ LEGEND_NOTES={}; }
+  return fetch(`${IMG_API}/api/img/${LEGEND_SLOT}?v=${Date.now()}`,{cache:'no-store'})
+    .then(r=> r.ok ? r.json() : null)
+    .then(o=>{ if(o && typeof o==='object' && !Array.isArray(o)){ LEGEND_NOTES={...LEGEND_NOTES, ...o};
+      try{ localStorage.setItem('ca-legend-notes', JSON.stringify(LEGEND_NOTES)); }catch(_){} } })
+    .catch(()=>{});
+}
+function saveLegendNotes(){
+  try{ localStorage.setItem('ca-legend-notes', JSON.stringify(LEGEND_NOTES)); }catch(_){}
+  const tok=editToken(); if(!tok){ alert('편집 비밀번호가 필요해요 (✎ 편집 켜기).'); return Promise.resolve(); }
+  return fetch(`${IMG_API}/api/img/${LEGEND_SLOT}`,{method:'PUT',
+    headers:{'Content-Type':'application/json','X-Edit-Token':tok}, body:JSON.stringify(LEGEND_NOTES)})
+    .then(res=>{ if(res.status===401){ alert('편집 비밀번호가 틀렸어요. 다시 켜서 입력해 주세요.'); localStorage.removeItem('ca-edit'); EDIT=false; route(); } })
+    .catch(()=>alert('이력 저장 실패 — 네트워크 오류'));
+}
+// 이 선수에 직접 넣은 사진이나 이력이 있는지
+function legendCustom(name){
+  const n=LEGEND_NOTES[name];
+  return !!((n && (n.bio || n.t)) || IMG_SET.has(legendSlot(name)));
+}
+
+// 레전드 선수 클릭 → 사진·이력 모달 (직접 등록분 > 오프라인 데이터 > 위키백과)
 function openLegend(q){
   let ov=document.getElementById('lmodal');
   if(!ov){
@@ -835,24 +870,77 @@ function openLegend(q){
     ov.querySelector('.lclose').onclick=()=>{ ov.style.display='none'; };
   }
   const body=ov.querySelector('.lbody'); ov.style.display='flex';
-  const render=(title,img,bio)=>{
-    body.innerHTML='<h3>'+esc(title)+'</h3>'+
-      (img?'<img class="lphoto" src="'+esc(img)+'" alt="">':'')+
-      (bio?'<p class="ltext">'+esc(bio)+'</p>':'<p class="lmuted">이력 정보가 없어요.</p>')+
-      '<a class="llink" href="https://ko.wikipedia.org/wiki/'+encodeURIComponent(title)+'" target="_blank" rel="noopener">위키백과에서 더 보기 →</a>'+
-      '<p class="lcredit">사진·글 출처: 위키백과 (CC BY-SA)</p>';
-  };
   const L = (typeof LEGENDS!=='undefined' && LEGENDS[q]) ? LEGENDS[q] : null;
-  if(L && (L.bio || L.img)){ render(L.t||q, L.img||'', L.bio||''); return; }  // 오프라인(로컬) 우선
-  body.innerHTML='<p class="lmuted">불러오는 중…</p>';                          // 로컬에 없으면 온라인 폴백
+  const base = { title:(L&&L.t)||q, img:(L&&L.img)||'', bio:(L&&L.bio)||'' };
+  if(base.bio || base.img || legendCustom(q)){ paintLegend(q, base); return; }   // 로컬(직접 등록 포함) 우선
+  body.innerHTML='<p class="lmuted">불러오는 중…</p>';                            // 로컬에 없으면 온라인 폴백
   const url='https://ko.wikipedia.org/w/api.php?action=query&prop=extracts%7Cpageimages&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=360&redirects=1&format=json&origin=*&titles='+encodeURIComponent(q);
   fetch(url).then(r=>r.json()).then(d=>{
     const pages=(d.query&&d.query.pages)||{}, p=Object.values(pages)[0]||{};
     const title=p.title||q, img=(p.thumbnail&&p.thumbnail.source)||''; let ex=(p.extract||'').replace(/\s+/g,' ').trim();
-    if(!ex&&!img){ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">위키백과에서 정보를 찾지 못했어요.</p>'; return; }
     if(ex.length>700) ex=ex.slice(0,700)+'…';
-    render(title,img,ex);
-  }).catch(()=>{ body.innerHTML='<h3>'+esc(q)+'</h3><p class="lmuted">불러오기 실패 — 인터넷 연결을 확인하세요.</p>'; });
+    paintLegend(q, {title, img, bio:ex}, (!ex&&!img)?'위키백과에서 정보를 찾지 못했어요.':'');
+  }).catch(()=>paintLegend(q, base, '불러오기 실패 — 인터넷 연결을 확인하세요.'));
+}
+// base = 위키백과/오프라인에서 온 원본. 직접 등록분이 있으면 그것을 덮어써서 보여준다.
+function paintLegend(q, base, warn){
+  const ov=document.getElementById('lmodal'); if(!ov || ov.style.display!=='flex') return;   // 닫힌 뒤 늦게 온 갱신은 무시
+  const body=ov.querySelector('.lbody');
+  const slot=legendSlot(q), note=LEGEND_NOTES[q]||{};
+  const myImg=IMG_SET.has(slot), myBio=!!note.bio;
+  const title=note.t||base.title||q;
+  const img=myImg?imgURL(slot,''):base.img;
+  const bio=myBio?note.bio:base.bio;
+  const credit = (myImg&&myBio) ? '사진·이력: 직접 등록'
+    : myImg ? '사진: 직접 등록 · 글 출처: 위키백과 (CC BY-SA)'
+    : myBio ? '이력: 직접 등록 · 사진 출처: 위키백과 (CC BY-SA)'
+    : '사진·글 출처: 위키백과 (CC BY-SA)';
+  body.innerHTML='<h3>'+esc(title)+'</h3>'+
+    (img?'<img class="lphoto" src="'+esc(img)+'" alt="'+esc(title)+'">'
+        :'<div class="lphoto-ph">📷<small>사진 없음</small></div>')+
+    (warn?'<p class="lmuted">'+esc(warn)+'</p>':'')+
+    (bio?'<p class="ltext">'+esc(bio)+'</p>':'<p class="lmuted">이력 정보가 없어요.</p>')+
+    (EDIT?`<div class="ledit">
+        <button class="lbtn" type="button" data-act="photo">📷 사진 ${myImg?'바꾸기':'올리기'}</button>
+        ${myImg?'<button class="lbtn del" type="button" data-act="photodel">사진 지우기</button>':''}
+        <button class="lbtn" type="button" data-act="bio">✏️ 이력 ${myBio?'고치기':'직접 쓰기'}</button>
+        ${myBio||note.t?'<button class="lbtn del" type="button" data-act="biodel">원래대로</button>':''}
+      </div>`:'')+
+    '<a class="llink" href="https://ko.wikipedia.org/wiki/'+encodeURIComponent(base.title||q)+'" target="_blank" rel="noopener">위키백과에서 더 보기 →</a>'+
+    '<p class="lcredit">'+credit+'</p>';
+  body.querySelectorAll('.lbtn').forEach(b=>b.onclick=()=>{
+    const act=b.dataset.act;
+    _afterImgChange=()=>paintLegend(q, base, warn);            // 업로드/삭제 후 모달 다시 그리기
+    if(act==='photo'){ pickUpload(slot); }
+    else if(act==='photodel'){ removeUpload(slot); }
+    else if(act==='bio'){ _afterImgChange=null; editLegendBio(q, base); }
+    else if(act==='biodel'){ _afterImgChange=null;
+      if(!confirm('직접 쓴 이력을 지우고 원래 내용으로 되돌릴까요?')) return;
+      delete LEGEND_NOTES[q]; saveLegendNotes().then(()=>{ paintLegend(q, base, warn); route(); });
+    }
+  });
+}
+// 이력 직접 입력 화면(모달 안에서 전환) — 이름·이력을 함께 고칠 수 있다
+function editLegendBio(q, base){
+  const ov=document.getElementById('lmodal'); if(!ov) return;
+  const body=ov.querySelector('.lbody'), note=LEGEND_NOTES[q]||{};
+  body.innerHTML=`<h3>${esc(q)} <small class="ledit-tag">이력 직접 쓰기</small></h3>
+    <label class="lfield"><span>이름(표시용)</span>
+      <input class="linput" id="lTitle" type="text" value="${esc(note.t||base.title||q)}" placeholder="예) 손흥민"></label>
+    <label class="lfield"><span>이력</span>
+      <textarea class="ltarea" id="lBio" rows="9" placeholder="선수의 경력·기록·이야기를 자유롭게 적어 보세요.">${esc(note.bio||base.bio||'')}</textarea></label>
+    <div class="ledit">
+      <button class="lbtn save" type="button" id="lSave">저장</button>
+      <button class="lbtn" type="button" id="lCancel">취소</button>
+    </div>`;
+  body.querySelector('#lCancel').onclick=()=>paintLegend(q, base, '');
+  body.querySelector('#lSave').onclick=()=>{
+    const t=body.querySelector('#lTitle').value.trim(), bio=body.querySelector('#lBio').value.trim();
+    if(!bio && (!t || t===(base.title||q))) delete LEGEND_NOTES[q];   // 둘 다 비면 원래대로
+    else LEGEND_NOTES[q]={ t:t||base.title||q, bio };
+    saveLegendNotes().then(()=>{ paintLegend(q, base, ''); route(); });
+  };
+  body.querySelector('#lBio').focus();
 }
 document.addEventListener('click', e=>{ const b=e.target.closest&&e.target.closest('.legend-item'); if(b){ e.preventDefault(); openLegend(b.dataset.q); } });
 // 위인전 목차 이름 클릭 → 해당 인물 카드로 이동
@@ -871,7 +959,7 @@ document.addEventListener('click', e=>{
 });
 
 window.addEventListener('hashchange', route);
-Promise.all([loadImgSet(), loadCityNotes()]).then(route);   // 사진 목록 + 도시 메모 로드 후 렌더
+Promise.all([loadImgSet(), loadCityNotes(), loadLegendNotes()]).then(route);   // 사진 목록 + 도시 메모 + 레전드 이력 로드 후 렌더
 
 // 서비스워커
 if('serviceWorker' in navigator){

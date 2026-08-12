@@ -267,6 +267,26 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .lmuted{color:var(--muted)}
 .llink{display:inline-block;margin-top:14px;color:var(--primary2);font-weight:700;text-decoration:none}
 .lcredit{margin-top:12px;color:var(--muted);font-size:.7rem}
+/* 직접 등록한 사진·이력 표시 + 모달 안 편집 UI */
+.legend-item.mine{border-color:var(--primary2)}
+.legend-item.mine i{color:#ffd66b}
+.lphoto-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  width:100%;max-width:230px;height:150px;margin:0 auto 14px;border-radius:12px;
+  border:1px dashed var(--border);background:var(--bg2);color:var(--muted);font-size:1.6rem}
+.lphoto-ph small{font-size:.72rem}
+.ledit{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.lbtn{flex:1 1 auto;background:var(--bg2);border:1px solid var(--border);color:var(--text);
+  border-radius:999px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer}
+.lbtn.save{background:#2f80ed;border-color:#2f80ed;color:#fff}
+.lbtn.del{background:#3a1622;border-color:#5c2233;color:#ff9db0}
+.lbtn:active{transform:scale(.97)}
+.ledit-tag{font-size:.72rem;font-weight:800;color:var(--primary2)}
+.lfield{display:block;margin-bottom:12px}
+.lfield>span{display:block;margin-bottom:5px;font-size:.78rem;font-weight:800;color:var(--muted)}
+.linput,.ltarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);padding:10px 12px;font:inherit;font-size:.9rem;line-height:1.55}
+.ltarea{resize:vertical;min-height:120px}
+.linput:focus,.ltarea:focus{outline:2px solid var(--primary2);outline-offset:1px}
 
 /* ⚽ 연맹 엠블렘(헤더 오른쪽) + 역대 월드컵 성적 칩 */
 .foot .c-head .c-title{flex:1;min-width:0}
