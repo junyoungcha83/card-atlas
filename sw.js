@@ -1,5 +1,5 @@
 // 앱 셸 오프라인 캐시. 캐시 이름 바꾸면 옛 캐시 자동 폐기.
-const CACHE = 'card-atlas-v44';
+const CACHE = 'card-atlas-v45';
 self.addEventListener('message', e => { if (e.data === 'skip-waiting') self.skipWaiting(); });
 const KEYS=['doosan','lg','kiwoom','ssg','kt','hanwha','samsung','lotte','kia','nc'];
 const MASCOTS=['철웅이','럭키·스타','턱돌이','랜디','빅또','수리','블레오','누리·아라','호걸이','단디·쎄리'];
@@ -10,12 +10,14 @@ const KBO_IMGS = [].concat(
   KEYS.map(k=>`./assets/kbo/eh_${k}.jpg`),
   ['e_doosan','e_lg','e_kiwoom','e_ssg','e_kt','e_samsung','e_lotte','e_kia','e_nc'].map(n=>`./assets/kbo/${n}.png`)
 );
-const CORE = ['./','./index.html','./assets/app.css','./assets/app.js','./assets/data.js','./assets/heroes.js','./manifest.webmanifest','./assets/icon.svg',
+const CORE = ['./','./index.html','./assets/app.css','./assets/app.js','./assets/data.js','./assets/heroes.js','./assets/korhist.js','./manifest.webmanifest','./assets/icon.svg',
   './assets/world.jpg','./assets/worldmap.svg','./assets/legends.js',
   './assets/kr/hunmin.jpg','./assets/kr/semicon.jpg','./assets/kr/goguryeo.png','./assets/kr/dangun.jpg','./assets/kr/geobukseon.jpg','./assets/kr/ahn.jpg',
   ...KBO_IMGS];
 // 한국위인전 인물 사진(있는 것만 캐시 — 없으면 자동 무시)
 const HERO_IMGS = Array.from({length:74}, (_,i)=>`./assets/heroes/${i+1}.jpg`);
+// 역대 대통령 사진(있는 것만 캐시 — 없으면 자동 무시)
+const PRES_IMGS = Array.from({length:15}, (_,i)=>`./assets/pres/${i+1}.jpg`);
 const MAP_CODES = ['kr','us','jp','cn','gb','fr','de','it','es','ru','ca','au','in','br','mx','eg','za','sa','th','vn'];
 const MAPS = MAP_CODES.map(c => `./assets/maps/${c}.svg`);
 const CONF_IMGS=['uefa','conmebol','concacaf','afc','caf'].map(n=>`./assets/conf/${n}.png`);
@@ -28,6 +30,7 @@ self.addEventListener('install', e => {
     await Promise.all(LEGEND_IMGS.map(u => c.add(u).catch(()=>{})));
     await Promise.all(CONF_IMGS.map(u => c.add(u).catch(()=>{})));
     await Promise.all(HERO_IMGS.map(u => c.add(u).catch(()=>{})));
+    await Promise.all(PRES_IMGS.map(u => c.add(u).catch(()=>{})));
   }));
   self.skipWaiting();
 });

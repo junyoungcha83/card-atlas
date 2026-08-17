@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v44';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v45';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -746,7 +746,32 @@ function khEraHTML(){
 function khDynHTML(){
   return `<div class="geo-grid">${KH_DYN_ORDER.map(id=>{ const d=KH_DYN[id]; return `
     <button class="geo-tile" data-dyn="${id}"><span class="tile-emo">${d.emoji}</span><b>${esc(d.name)}</b><small>${esc(d.period)}</small></button>`; }).join('')}</div>
-    <div class="hint">👉 나라를 누르면 <b>대수·이름·재위연도</b> 계보가 나와요</div>`;
+    <div class="hint">👉 나라를 누르면 <b>대수·이름·재위연도</b> 계보가 나와요<br>🇰🇷 대한민국은 <b>역대 대통령</b>이 사진과 함께 나와요</div>`;
+}
+// 대통령 사진: assets/pres/{pid}.jpg(.png) 또는 R2 업로드(slot pres-{pid}). 없으면 빈 프레임.
+function presPhoto(p){
+  const slot='pres-'+p.pid;
+  return `<div class="p-photo" data-upslot="${slot}">`+
+    `<img src="${imgURL(slot,'assets/pres/'+p.pid+'.jpg')}" alt="${esc(p.name)}" loading="lazy" `+
+      `onerror="if(!this.dataset.p){this.dataset.p=1;this.src='assets/pres/${p.pid}.png'}else{this.style.display='none';this.nextElementSibling.style.display='flex'}">`+
+    `<span class="p-photo-ph" style="display:none">📷<small>사진 준비중</small></span></div>`;
+}
+// 대통령 계보 — 묶음(임시정부/정부) 제목 + 사진·업적 카드
+function khPresHTML(d){
+  let html='', g='';
+  d.kings.forEach(p=>{
+    if(p.g!==g){ g=p.g; html+=`<div class="pres-group">${esc(g)}</div>`; }
+    html+=`<div class="pres-card">
+      ${presPhoto(p)}
+      <div class="pres-body">
+        <div class="pres-top"><span class="king-n">${esc(p.n)}</span><b class="pres-name">${esc(p.name)}</b></div>
+        <div class="pres-reign">${esc(p.reign)}</div>
+        ${p.note?`<div class="pres-tag">${esc(p.note)}</div>`:''}
+        <ul class="pres-pts">${(p.points||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  });
+  return `<div class="pres-list">${html}</div>`;
 }
 function renderKorHist(tab){
   KIND='korhist';
@@ -756,7 +781,7 @@ function renderKorHist(tab){
     <div class="kh-wrap">
       <div class="kbs-tabs" role="tablist">
         <button class="kbs-tab ${tab==='era'?'on':''}" type="button" data-khtab="era">📖 시대별 역사</button>
-        <button class="kbs-tab ${tab==='dyn'?'on':''}" type="button" data-khtab="dyn">👑 왕 계보</button>
+        <button class="kbs-tab ${tab==='dyn'?'on':''}" type="button" data-khtab="dyn">👑 왕·대통령 계보</button>
       </div>
       <div class="kh-body" id="khBody">${tab==='era'?khEraHTML():khDynHTML()}</div>
     </div>`;
@@ -778,19 +803,25 @@ function renderKorHist(tab){
 function renderKorDynasty(id){
   const d=KH_DYN[id]; if(!d){ renderKorHist('dyn'); return; }
   KIND='korhist';
+  const isPres = d.type==='pres';   // 대한민국 = 대통령(사진+업적), 그 외 = 왕 계보 목록
   APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="back">‹ 왕 계보</button><div class="bar-title">${d.emoji} ${esc(d.name)}</div><div class="bar-count">${d.kings.length}대</div></div>
+    <div class="bar"><button class="bar-btn" id="back">‹ 왕 계보</button><div class="bar-title">${d.emoji} ${esc(d.name)}</div>
+      ${isPres
+        ? `<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="대통령 사진 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`
+        : `<div class="bar-count">${d.kings.length}대</div>`}</div>
     <div class="geo-detail">
       <div class="kh-sub">${esc(d.period)}${d.note?` · ${esc(d.note)}`:''}</div>
-      <ol class="king-list">${d.kings.map(k=>`
+      ${isPres ? khPresHTML(d) : `<ol class="king-list">${d.kings.map(k=>`
         <li class="king-row">
           <span class="king-n">${k.n}대</span>
           <span class="king-name">${esc(k.name)}</span>
           <span class="king-reign">${esc(k.reign)}</span>
           ${k.note?`<span class="king-note">${esc(k.note)}</span>`:''}
-        </li>`).join('')}</ol>
+        </li>`).join('')}</ol>`}
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  decorateUploads(APP);
   window.scrollTo(0,0);
 }
 

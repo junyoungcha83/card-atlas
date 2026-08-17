@@ -111,6 +111,30 @@ button{font-family:inherit}
 .king-reign{grid-area:reign;font-size:.78rem;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .king-note{grid-area:note;font-size:.76rem;color:var(--muted);line-height:1.4}
 
+/* 대한민국 — 역대 대통령(사진 + 주요 업적) */
+.pres-list{display:flex;flex-direction:column;gap:10px}
+.pres-group{font-size:.78rem;font-weight:800;color:var(--primary2);letter-spacing:.02em;
+  margin:8px 2px 0;display:flex;align-items:center;gap:8px}
+.pres-group:first-child{margin-top:0}
+.pres-group::after{content:'';flex:1;height:1px;background:var(--border)}
+.pres-card{display:flex;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
+.p-photo{flex:0 0 84px;width:84px;aspect-ratio:3/4;position:relative;overflow:hidden;border-radius:10px;
+  background:var(--bg2);border:1px solid var(--border)}
+.p-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.p-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;color:var(--muted);font-size:1.4rem}
+.p-photo-ph small{font-size:.6rem;font-weight:700}
+.pres-body{flex:1;min-width:0}
+.pres-top{display:flex;align-items:center;gap:8px}
+.pres-top .king-n{padding:4px 7px;flex:none}
+.pres-name{font-size:1.02rem;font-weight:800}
+.pres-reign{margin-top:3px;font-size:.76rem;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.pres-tag{margin-top:6px;display:inline-block;font-size:.68rem;font-weight:800;color:var(--primary2);
+  background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:3px 9px}
+.pres-pts{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.pres-pts li{position:relative;padding-left:11px;font-size:.79rem;color:var(--text);line-height:1.45;opacity:.92}
+.pres-pts li::before{content:'';position:absolute;left:0;top:.5em;width:4px;height:4px;border-radius:50%;background:var(--primary2)}
+
 /* 역사카드 워터마크(밝은 톤 중첩) */
 .wm{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;border-radius:20px}
 .wmi{position:absolute}
