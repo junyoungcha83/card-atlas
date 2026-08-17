@@ -248,6 +248,12 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 
 /* ⚽ 레전드 리스트 + 상세 모달 */
 .legend-list{display:flex;flex-direction:column;gap:8px}
+/* 편집 모드에서 선수 오른쪽에 ＋ 버튼 — 목록의 다른 ＋(.up-add)와 같은 생김새 */
+.legend-row{display:flex;align-items:stretch;gap:8px}
+.legend-row>.legend-item{flex:1;min-width:0}
+.legend-add{flex:0 0 auto;width:44px;border:none;border-radius:12px;cursor:pointer;
+  background:#2f80ed;color:#fff;font-size:1.25rem;font-weight:900;line-height:1}
+.legend-add:active{transform:scale(.94)}
 .legend-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;
   background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);
   font-weight:700;font-size:.98rem;cursor:pointer}
@@ -283,6 +289,8 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .ledit-tag{font-size:.72rem;font-weight:800;color:var(--primary2)}
 .lfield{display:block;margin-bottom:12px}
 .lfield>span{display:block;margin-bottom:5px;font-size:.78rem;font-weight:800;color:var(--muted)}
+.lfield-tip{display:block;margin-top:2px;font-weight:600;font-size:.72rem;color:var(--muted);opacity:.85;line-height:1.5}
+.lfield .lphoto,.lfield .lphoto-ph{margin-bottom:8px}
 .linput,.ltarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;
   color:var(--text);padding:10px 12px;font:inherit;font-size:.9rem;line-height:1.55}
 .ltarea{resize:vertical;min-height:120px}
