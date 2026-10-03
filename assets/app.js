@@ -912,7 +912,10 @@ function renderTLSection(dsk, sid){
       <div class="kh-sub">${D.blkHint}
         <span class="tl-rotate-tip">📱 폰을 <b>가로로 돌리면</b> 더 많은 칸이 한눈에 보여요.</span></div>
       <div class="wh-scroll">
-        <div class="wh-axis" style="height:${H}px">${ticks}</div>
+        <div class="wh-axis-col">
+          <div class="wh-corner"></div>
+          <div class="wh-axis" style="height:${H}px">${ticks}</div>
+        </div>
         <div class="wh-cols">${cols}</div>
       </div>
     </div>`;
