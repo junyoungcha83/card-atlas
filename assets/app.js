@@ -909,7 +909,8 @@ function renderTLSection(dsk, sid){
   APP.innerHTML=`
     <div class="bar"><button class="bar-btn" id="back">‹ ${esc(D.backTitle)}</button><div class="bar-title">${sec.emoji} ${esc(sec.name)}</div></div>
     <div class="wh-wrap">
-      <div class="kh-sub">${D.blkHint}</div>
+      <div class="kh-sub">${D.blkHint}
+        <span class="tl-rotate-tip">📱 폰을 <b>가로로 돌리면</b> 더 많은 칸이 한눈에 보여요.</span></div>
       <div class="wh-scroll">
         <div class="wh-axis" style="height:${H}px">${ticks}</div>
         <div class="wh-cols">${cols}</div>
@@ -917,6 +918,7 @@ function renderTLSection(dsk, sid){
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
   APP.querySelectorAll('.wh-blk').forEach(b=>b.onclick=()=>nav(D.stRoute+'='+b.dataset.whst));
+  document.body.classList.add('tl-wide');   // 가로보기에서 폭 제한을 푼다(세로는 그대로)
   window.scrollTo(0,0);
 }
 const renderWorldSection = sid=>renderTLSection('worldhist', sid);
@@ -978,6 +980,8 @@ function openDeck(kind, it=0, sd=0){
 }
 
 function route(){
+  // 가로보기에서 화면 폭을 전부 쓰는 건 비교 타임라인뿐이다. 매번 끄고 그 화면에서만 켠다.
+  document.body.classList.remove('tl-wide');
   const h=location.hash.slice(1);
   const gm=h.match(/^geo(?:=([a-z0-9]+))?$/i);
   if(gm){ const x=gm[1];
