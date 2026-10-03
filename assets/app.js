@@ -513,6 +513,7 @@ function renderHome(){
         <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc-trophy.svg" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
+        <button class="home-card" data-k="worldhist"><span class="hc-emo">🌏</span><b>세계역사</b><small>우리 역사와 나란히 비교</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
       </div>
     </div>`;
@@ -825,6 +826,114 @@ function renderKorDynasty(id){
   window.scrollTo(0,0);
 }
 
+// ── 세계역사 (섹션 4칸 → 비교 타임라인 → 나라별 주요사건) ──
+function renderWorldHist(){
+  KIND='worldhist';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🌏 세계역사</div></div>
+    <div class="geo-detail">
+      <div class="kh-sub">지역을 고르면 여러 나라의 역사를 <b>같은 시간축 위에</b> 나란히 놓고 볼 수 있어요.</div>
+      <div class="geo-grid">${WH_SECTIONS.map(s=>{
+        const ready = s.countries.length>0;
+        return `<button class="geo-tile${ready?'':' wh-soon'}" data-whsec="${s.id}"${ready?'':' disabled'}>
+          <span class="tile-emo">${s.emoji}</span><b>${esc(s.name)}</b>
+          <small>${ready?esc(s.sub):'준비 중'}</small></button>`;
+      }).join('')}</div>
+    </div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  APP.querySelectorAll('.geo-tile[data-whsec]:not([disabled])').forEach(b=>b.onclick=()=>nav('wh='+b.dataset.whsec));
+  window.scrollTo(0,0);
+}
+
+// 비교 타임라인 — 세로축이 시간, 나라가 가로 열. 같은 높이면 같은 시대다.
+function renderWorldSection(sid){
+  const sec = WH_SECTIONS.find(s=>s.id===sid);
+  if(!sec || !sec.countries.length){ renderWorldHist(); return; }
+  KIND='worldhist';
+  const H = WH_SCALE[WH_SCALE.length-1][1];   // 축 전체 높이(px)
+  const NOW = 2026;
+
+  const ticks = WH_TICKS.map(([y,lab])=>
+    `<div class="wh-tick" style="top:${whY(y)}px"><span>${esc(lab)}</span></div>`).join('');
+
+  const cols = sec.countries.map(ck=>{
+    const c = WH_COUNTRIES[ck]; if(!c) return '';
+    const blocks = c.states.map(st=>{
+      const top = whY(st.from);
+      const end = (st.to==null) ? NOW : st.to;
+      const real = whY(end) - top;
+      const h   = Math.max(real, 22);               // 너무 짧은 왕조도 글자가 보이게 최소 높이
+      // 늘어난 블록은 다음 블록 위를 조금 침범한다. 짧을수록 위로 올려 라벨이 가려지지 않게 한다.
+      const z   = real < 22 ? 3 : 1;
+      // 2줄(이름+연도)이 안 들어가는 높이면 한 줄짜리 compact 모양으로 바꾼다.
+      // 그냥 두면 두 번째 줄(연도)이 통째로 잘려 안 보인다.
+      // 32px 기준: 2줄(이름+연도)에 약 29px 필요하므로 그 아래만 한 줄 모드로 내린다.
+      const isShort = real < 32;
+      // 한 줄 모드는 폭이 빠듯해서 물결표 양옆 공백까지 뺀다(1573 ~ 1603 → 1573~1603).
+      const txt = (st.short || st.label).replace(isShort ? / ~ /g : /(?!)/g, '~');
+      return `<button class="wh-blk${isShort?' short':''}" data-whst="${st.id}" style="top:${top}px;height:${h}px;z-index:${z};--c:${c.color}">
+        <span class="wh-blk-emo">${st.emoji}</span>
+        <span class="wh-blk-tt"><b>${esc(st.name)}</b><small>${esc(txt)}</small></span>
+      </button>`;
+    }).join('');
+    return `<div class="wh-col">
+      <div class="wh-col-head"><span>${c.emoji}</span><b>${esc(c.name)}</b></div>
+      <div class="wh-col-body" style="height:${H}px">${blocks}</div>
+    </div>`;
+  }).join('');
+
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ 세계역사</button><div class="bar-title">${sec.emoji} ${esc(sec.name)}</div></div>
+    <div class="wh-wrap">
+      <div class="kh-sub">👉 나라 블록을 누르면 <b>주요 사건</b>이 나와요. 가로로 같은 줄에 있으면 <b>같은 시대</b>예요.</div>
+      <div class="wh-scroll">
+        <div class="wh-axis" style="height:${H}px">${ticks}</div>
+        <div class="wh-cols">${cols}</div>
+      </div>
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  APP.querySelectorAll('.wh-blk').forEach(b=>b.onclick=()=>nav('whst='+b.dataset.whst));
+  window.scrollTo(0,0);
+}
+
+// 나라(왕조) 상세 — 주요 사건. 그림은 R2 업로드 슬롯(편집 모드에서 채움).
+function renderWorldState(stid){
+  const hit = WH_STATE_INDEX[stid];
+  if(!hit){ renderWorldHist(); return; }
+  KIND='worldhist';
+  const c = WH_COUNTRIES[hit.ck], st = hit.s;
+  const sec = WH_SECTIONS.find(s=>s.countries.indexOf(hit.ck)>=0);
+  const slot = 'wh-'+st.id.replace(/[^A-Za-z0-9_-]/g,'');
+
+  APP.innerHTML=`
+    <div class="bar">
+      <button class="bar-btn" id="back">‹ ${esc(sec?sec.name:'세계역사')}</button>
+      <div class="bar-title">${st.emoji} ${esc(st.name)}</div>
+      <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="그림 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>
+    </div>
+    <div class="geo-detail">
+      <div class="wh-head">
+        <span class="wh-head-flag">${c.emoji}</span>
+        <div><b>${esc(c.name)}</b><small>${esc(st.label)}</small></div>
+      </div>
+      <div class="wh-pic" data-upslot="${slot}">
+        <img src="${imgURL(slot,'')}" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             ${IMG_SET.has(slot)?'':'style="display:none"'}>
+        <span class="wh-pic-ph" ${IMG_SET.has(slot)?'style="display:none"':''}>${st.emoji}<small>그림 준비중</small></span>
+      </div>
+      <div class="wh-sum">${esc(st.summary)}</div>
+      ${st.note?`<div class="wh-note">💡 ${esc(st.note)}</div>`:''}
+      <h3 class="wh-h3">주요 사건</h3>
+      <ol class="wh-events">${st.events.map(([y,t])=>`
+        <li>${y?`<span class="wh-ev-y">${esc(y)}</span>`:'<span class="wh-ev-y dim">·</span>'}<span class="wh-ev-t">${esc(t)}</span></li>`).join('')}</ol>
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  decorateUploads(APP);
+  window.scrollTo(0,0);
+}
+
 // 앞으로 이동: 히스토리에 새 항목을 쌓고 해당 화면 렌더(뒤로가기로 이전 단계 복귀)
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
 
@@ -854,6 +963,11 @@ function route(){
   if(kh){ renderKorHist(kh[1]||'era'); return; }
   const kd=h.match(/^khking=([a-z]+)$/i);
   if(kd){ if(typeof KH_DYN!=='undefined' && KH_DYN[kd[1]]) renderKorDynasty(kd[1]); else renderKorHist('dyn'); return; }
+  if(h==='worldhist'){ renderWorldHist(); return; }
+  const ws=h.match(/^wh=([a-z]+)$/i);
+  if(ws){ renderWorldSection(ws[1]); return; }
+  const wt=h.match(/^whst=([a-z0-9-]+)$/i);
+  if(wt){ renderWorldState(wt[1]); return; }
   const m=h.match(/^(world|kbo|foot|heroes|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
