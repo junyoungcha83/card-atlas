@@ -466,3 +466,9 @@ img.wmi{opacity:.16;filter:grayscale(.1) brightness(1.35) contrast(.85);mix-blen
 .wh-ev-y{flex:0 0 76px;font-size:.72rem;font-weight:800;color:var(--primary2);line-height:1.5;padding-top:1px}
 .wh-ev-y.dim{color:var(--border)}
 .wh-ev-t{font-size:.86rem;line-height:1.5}
+
+/* 세계종교 — 믿는 나라 */
+.wh-where{display:flex;align-items:baseline;gap:8px;margin-top:8px;background:#0f1630;
+  border:1px solid var(--border);border-radius:12px;padding:9px 12px}
+.wh-where span{flex:0 0 auto;font-size:.72rem;font-weight:800;color:var(--muted)}
+.wh-where b{font-size:.84rem;line-height:1.5;word-break:keep-all}

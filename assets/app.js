@@ -514,6 +514,7 @@ function renderHome(){
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
         <button class="home-card" data-k="worldhist"><span class="hc-emo">🌏</span><b>세계역사</b><small>우리 역사와 나란히 비교</small></button>
+        <button class="home-card" data-k="religion"><span class="hc-emo">🙏</span><b>세계종교</b><small>우리나라 · 세계 종교의 흐름</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
       </div>
     </div>`;
@@ -826,43 +827,65 @@ function renderKorDynasty(id){
   window.scrollTo(0,0);
 }
 
-// ── 세계역사 (섹션 4칸 → 비교 타임라인 → 나라별 주요사건) ──
-function renderWorldHist(){
-  KIND='worldhist';
+// ── 비교 타임라인 엔진 (세계역사·세계종교가 함께 쓴다) ──
+// 두 화면이 구조가 같아서 렌더 코드를 한 벌만 두고 데이터셋만 갈아 끼운다.
+// 데이터는 스크립트 로드 순서를 타지 않도록 함수로 늦게 꺼낸다.
+const TL_DS = {
+  worldhist: {
+    title:'🌏 세계역사', backTitle:'세계역사',
+    hint:'지역을 고르면 여러 나라의 역사를 <b>같은 시간축 위에</b> 나란히 놓고 볼 수 있어요.',
+    blkHint:'👉 나라 블록을 누르면 <b>주요 사건</b>이 나와요. 가로로 같은 줄에 있으면 <b>같은 시대</b>예요.',
+    secRoute:'wh', stRoute:'whst', slot:'wh-', defW:165,
+    sections:()=>WH_SECTIONS, items:()=>WH_COUNTRIES, index:()=>WH_STATE_INDEX,
+    y:y=>whY(y), ticks:()=>WH_TICKS, H:()=>WH_SCALE[WH_SCALE.length-1][1],
+  },
+  religion: {
+    title:'🙏 세계종교', backTitle:'세계종교',
+    hint:'우리나라와 세계의 종교가 <b>언제 생기고 어떻게 퍼졌는지</b> 같은 시간축 위에서 볼 수 있어요.',
+    blkHint:'👉 블록을 누르면 <b>주요 사건</b>과 <b>믿는 나라</b>가 나와요. 가로로 같은 줄이면 같은 시대예요.',
+    secRoute:'rel', stRoute:'relst', slot:'rel-', defW:140,
+    sections:()=>REL_SECTIONS, items:()=>REL_ITEMS, index:()=>REL_STATE_INDEX,
+    y:y=>relY(y), ticks:()=>REL_TICKS, H:()=>REL_SCALE[REL_SCALE.length-1][1],
+  },
+};
+
+function renderTLIndex(dsk){
+  const D=TL_DS[dsk]; KIND=dsk;
   APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🌏 세계역사</div></div>
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">${D.title}</div></div>
     <div class="geo-detail">
-      <div class="kh-sub">지역을 고르면 여러 나라의 역사를 <b>같은 시간축 위에</b> 나란히 놓고 볼 수 있어요.</div>
-      <div class="geo-grid">${WH_SECTIONS.map(s=>{
+      <div class="kh-sub">${D.hint}</div>
+      <div class="geo-grid">${D.sections().map(s=>{
         const ready = s.countries.length>0;
-        return `<button class="geo-tile${ready?'':' wh-soon'}" data-whsec="${s.id}"${ready?'':' disabled'}>
+        return `<button class="geo-tile${ready?'':' wh-soon'}" data-tlsec="${s.id}"${ready?'':' disabled'}>
           <span class="tile-emo">${s.emoji}</span><b>${esc(s.name)}</b>
           <small>${ready?esc(s.sub):'준비 중'}</small></button>`;
       }).join('')}</div>
     </div>`;
   document.getElementById('home').onclick=()=>history.back();
-  APP.querySelectorAll('.geo-tile[data-whsec]:not([disabled])').forEach(b=>b.onclick=()=>nav('wh='+b.dataset.whsec));
+  APP.querySelectorAll('.geo-tile[data-tlsec]:not([disabled])').forEach(b=>b.onclick=()=>nav(D.secRoute+'='+b.dataset.tlsec));
   window.scrollTo(0,0);
 }
+const renderWorldHist = ()=>renderTLIndex('worldhist');
 
-// 비교 타임라인 — 세로축이 시간, 나라가 가로 열. 같은 높이면 같은 시대다.
-function renderWorldSection(sid){
-  const sec = WH_SECTIONS.find(s=>s.id===sid);
-  if(!sec || !sec.countries.length){ renderWorldHist(); return; }
-  KIND='worldhist';
-  const H = WH_SCALE[WH_SCALE.length-1][1];   // 축 전체 높이(px)
-  const NOW = 2026;
+// 비교 타임라인 — 세로축이 시간, 항목이 가로 열. 같은 높이면 같은 시대다.
+function renderTLSection(dsk, sid){
+  const D=TL_DS[dsk];
+  const sec = D.sections().find(s=>s.id===sid);
+  if(!sec || !sec.countries.length){ renderTLIndex(dsk); return; }
+  KIND=dsk;
+  const ITEMS=D.items(), H=D.H(), NOW=2026;
 
-  const ticks = WH_TICKS.map(([y,lab])=>
-    `<div class="wh-tick" style="top:${whY(y)}px"><span>${esc(lab)}</span></div>`).join('');
+  const ticks = D.ticks().map(([y,lab])=>
+    `<div class="wh-tick" style="top:${D.y(y)}px"><span>${esc(lab)}</span></div>`).join('');
 
-  const colW = sec.colW || 165;   // 나라가 많은 섹션(유럽 7개국)은 열을 좁힌다
+  const colW = sec.colW || D.defW;   // 항목이 많은 섹션(유럽 7개국)은 열을 좁힌다
   const cols = sec.countries.map(ck=>{
-    const c = WH_COUNTRIES[ck]; if(!c) return '';
+    const c = ITEMS[ck]; if(!c) return '';
     const blocks = c.states.map(st=>{
-      const top = whY(st.from);
+      const top = D.y(st.from);
       const end = (st.to==null) ? NOW : st.to;
-      const real = whY(end) - top;
+      const real = D.y(end) - top;
       const h   = Math.max(real, 22);               // 너무 짧은 왕조도 글자가 보이게 최소 높이
       // 늘어난 블록은 다음 블록 위를 조금 침범한다. 짧을수록 위로 올려 라벨이 가려지지 않게 한다.
       const z   = real < 22 ? 3 : 1;
@@ -884,31 +907,34 @@ function renderWorldSection(sid){
   }).join('');
 
   APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="back">‹ 세계역사</button><div class="bar-title">${sec.emoji} ${esc(sec.name)}</div></div>
+    <div class="bar"><button class="bar-btn" id="back">‹ ${esc(D.backTitle)}</button><div class="bar-title">${sec.emoji} ${esc(sec.name)}</div></div>
     <div class="wh-wrap">
-      <div class="kh-sub">👉 나라 블록을 누르면 <b>주요 사건</b>이 나와요. 가로로 같은 줄에 있으면 <b>같은 시대</b>예요.</div>
+      <div class="kh-sub">${D.blkHint}</div>
       <div class="wh-scroll">
         <div class="wh-axis" style="height:${H}px">${ticks}</div>
         <div class="wh-cols">${cols}</div>
       </div>
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
-  APP.querySelectorAll('.wh-blk').forEach(b=>b.onclick=()=>nav('whst='+b.dataset.whst));
+  APP.querySelectorAll('.wh-blk').forEach(b=>b.onclick=()=>nav(D.stRoute+'='+b.dataset.whst));
   window.scrollTo(0,0);
 }
+const renderWorldSection = sid=>renderTLSection('worldhist', sid);
 
-// 나라(왕조) 상세 — 주요 사건. 그림은 R2 업로드 슬롯(편집 모드에서 채움).
-function renderWorldState(stid){
-  const hit = WH_STATE_INDEX[stid];
-  if(!hit){ renderWorldHist(); return; }
-  KIND='worldhist';
-  const c = WH_COUNTRIES[hit.ck], st = hit.s;
-  const sec = WH_SECTIONS.find(s=>s.countries.indexOf(hit.ck)>=0);
-  const slot = 'wh-'+st.id.replace(/[^A-Za-z0-9_-]/g,'');
+// 상세 — 주요 사건. 그림은 R2 업로드 슬롯(편집 모드에서 채움).
+function renderTLState(dsk, stid){
+  const D=TL_DS[dsk];
+  const hit = D.index()[stid];
+  if(!hit){ renderTLIndex(dsk); return; }
+  KIND=dsk;
+  const c = D.items()[hit.ck], st = hit.s;
+  const sec = D.sections().find(s=>s.countries.indexOf(hit.ck)>=0);
+  const slot = D.slot+st.id.replace(/[^A-Za-z0-9_-]/g,'');
+  const where = st.where || c.where;   // 믿는 나라 — 블록에 없으면 종교 전체 값을 쓴다
 
   APP.innerHTML=`
     <div class="bar">
-      <button class="bar-btn" id="back">‹ ${esc(sec?sec.name:'세계역사')}</button>
+      <button class="bar-btn" id="back">‹ ${esc(sec?sec.name:D.backTitle)}</button>
       <div class="bar-title">${st.emoji} ${esc(st.name)}</div>
       <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="그림 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>
     </div>
@@ -925,6 +951,7 @@ function renderWorldState(stid){
         <span class="wh-pic-ph" ${IMG_SET.has(slot)?'style="display:none"':''}>${st.emoji}<small>그림 준비중</small></span>
       </div>
       <div class="wh-sum">${esc(st.summary)}</div>
+      ${where?`<div class="wh-where"><span>🌐 믿는 나라</span><b>${esc(where)}</b></div>`:''}
       ${st.note?`<div class="wh-note">💡 ${esc(st.note)}</div>`:''}
       <h3 class="wh-h3">주요 사건</h3>
       <ol class="wh-events">${st.events.map(([y,t])=>`
@@ -935,6 +962,7 @@ function renderWorldState(stid){
   decorateUploads(APP);
   window.scrollTo(0,0);
 }
+const renderWorldState = stid=>renderTLState('worldhist', stid);
 
 // 앞으로 이동: 히스토리에 새 항목을 쌓고 해당 화면 렌더(뒤로가기로 이전 단계 복귀)
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
@@ -965,11 +993,16 @@ function route(){
   if(kh){ renderKorHist(kh[1]||'era'); return; }
   const kd=h.match(/^khking=([a-z]+)$/i);
   if(kd){ if(typeof KH_DYN!=='undefined' && KH_DYN[kd[1]]) renderKorDynasty(kd[1]); else renderKorHist('dyn'); return; }
-  if(h==='worldhist'){ renderWorldHist(); return; }
+  if(h==='worldhist'){ renderTLIndex('worldhist'); return; }
   const ws=h.match(/^wh=([a-z]+)$/i);
-  if(ws){ renderWorldSection(ws[1]); return; }
+  if(ws){ renderTLSection('worldhist', ws[1]); return; }
   const wt=h.match(/^whst=([a-z0-9-]+)$/i);
-  if(wt){ renderWorldState(wt[1]); return; }
+  if(wt){ renderTLState('worldhist', wt[1]); return; }
+  if(h==='religion'){ renderTLIndex('religion'); return; }
+  const rs=h.match(/^rel=([a-z]+)$/i);
+  if(rs){ renderTLSection('religion', rs[1]); return; }
+  const rt=h.match(/^relst=([a-z0-9-]+)$/i);
+  if(rt){ renderTLState('religion', rt[1]); return; }
   const m=h.match(/^(world|kbo|foot|heroes|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();
