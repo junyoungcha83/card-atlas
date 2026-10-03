@@ -513,7 +513,7 @@ function renderHome(){
         <button class="home-card" data-k="foot"><img class="hc-emo hc-emo-img" src="assets/wc-trophy.svg" alt="월드컵 트로피"><b>월드컵</b><small>48개국 · 월드컵 기록 · 레전드 · 위치</small></button>
         <button class="home-card" data-k="heroes"><span class="hc-emo">👑</span><b>한국위인전</b><small>인물 · 시대 · 주요 업적</small></button>
         <button class="home-card" data-k="korhist"><span class="hc-emo">🇰🇷</span><b>한국역사</b><small>단군부터 대한민국까지</small></button>
-        <button class="home-card" data-k="worldhist"><img class="hc-emo hc-emo-img" src="assets/parthenon.svg" alt="파르테논 신전"><b>세계역사</b><small>우리 역사와 나란히 비교</small></button>
+        <button class="home-card" data-k="worldhist"><img class="hc-emo hc-emo-img" src="assets/parthenon.svg" alt="파르테논 신전"><b>역사연표</b><small>우리 역사와 나란히 비교</small></button>
         <button class="home-card" data-k="religion"><span class="hc-emo">🙏</span><b>세계종교</b><small>우리나라 · 세계 종교의 흐름</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
       </div>
@@ -832,7 +832,7 @@ function renderKorDynasty(id){
 // 데이터는 스크립트 로드 순서를 타지 않도록 함수로 늦게 꺼낸다.
 const TL_DS = {
   worldhist: {
-    title:'<img class="bar-ico" src="assets/parthenon.svg" alt=""> 세계역사', backTitle:'세계역사',
+    title:'<img class="bar-ico" src="assets/parthenon.svg" alt=""> 역사연표', backTitle:'역사연표',
     hint:'지역을 고르면 여러 나라의 역사를 <b>같은 시간축 위에</b> 나란히 놓고 볼 수 있어요.',
     blkHint:'👉 나라 블록을 누르면 <b>주요 사건</b>이 나와요. 가로로 같은 줄에 있으면 <b>같은 시대</b>예요.',
     secRoute:'wh', stRoute:'whst', slot:'wh-', defW:165,
