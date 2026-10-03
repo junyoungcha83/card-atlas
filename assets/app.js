@@ -856,6 +856,7 @@ function renderWorldSection(sid){
   const ticks = WH_TICKS.map(([y,lab])=>
     `<div class="wh-tick" style="top:${whY(y)}px"><span>${esc(lab)}</span></div>`).join('');
 
+  const colW = sec.colW || 165;   // 나라가 많은 섹션(유럽 7개국)은 열을 좁힌다
   const cols = sec.countries.map(ck=>{
     const c = WH_COUNTRIES[ck]; if(!c) return '';
     const blocks = c.states.map(st=>{
@@ -873,10 +874,10 @@ function renderWorldSection(sid){
       const txt = (st.short || st.label).replace(isShort ? / ~ /g : /(?!)/g, '~');
       return `<button class="wh-blk${isShort?' short':''}" data-whst="${st.id}" style="top:${top}px;height:${h}px;z-index:${z};--c:${c.color}">
         <span class="wh-blk-emo">${st.emoji}</span>
-        <span class="wh-blk-tt"><b>${esc(st.name)}</b><small>${esc(txt)}</small></span>
+        <span class="wh-blk-tt"><b>${esc(st.tlName || st.name)}</b><small>${esc(txt)}</small></span>
       </button>`;
     }).join('');
-    return `<div class="wh-col">
+    return `<div class="wh-col" style="flex-basis:${colW}px">
       <div class="wh-col-head"><span>${c.emoji}</span><b>${esc(c.name)}</b></div>
       <div class="wh-col-body" style="height:${H}px">${blocks}</div>
     </div>`;
@@ -916,6 +917,7 @@ function renderWorldState(stid){
         <span class="wh-head-flag">${c.emoji}</span>
         <div><b>${esc(c.name)}</b><small>${esc(st.label)}</small></div>
       </div>
+      ${c.note?`<div class="wh-note" style="margin:0 0 10px">🗺️ ${esc(c.note)}</div>`:''}
       <div class="wh-pic" data-upslot="${slot}">
         <img src="${imgURL(slot,'')}" alt="" loading="lazy"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
