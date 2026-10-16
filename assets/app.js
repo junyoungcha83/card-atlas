@@ -897,7 +897,7 @@ function renderTLSection(dsk, sid){
       const txt = (st.short || st.label).replace(isShort ? / ~ /g : /(?!)/g, '~');
       return `<button class="wh-blk${isShort?' short':''}" data-whst="${st.id}" style="top:${top}px;height:${h}px;z-index:${z};--c:${c.color}">
         <span class="wh-blk-emo">${st.emoji}</span>
-        <span class="wh-blk-tt"><b>${esc(st.tlName || st.name)}</b><small>${esc(txt)}</small></span>
+        <span class="wh-blk-tt"><b>${esc(st.tlName || st.name)}</b>${st.tlTag && !isShort ? `<small class="wh-blk-tag">${esc(st.tlTag)}</small>` : ''}<small>${esc(txt)}</small></span>
       </button>`;
     }).join('');
     return `<div class="wh-col" style="flex-basis:${colW}px">
