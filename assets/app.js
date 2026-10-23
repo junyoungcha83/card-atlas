@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v45';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v46';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -516,6 +516,7 @@ function renderHome(){
         <button class="home-card" data-k="worldhist"><img class="hc-emo hc-emo-img" src="assets/parthenon.svg" alt="파르테논 신전"><b>역사연표</b><small>우리 역사와 나란히 비교</small></button>
         <button class="home-card" data-k="religion"><span class="hc-emo">🙏</span><b>세계종교</b><small>우리나라 · 세계 종교의 흐름</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
+        <button class="home-card" data-k="liq"><span class="hc-emo">🍷</span><b>세계의 술</b><small>${LIQUORS.length}종 · 원료·제조법·숙성·향미</small></button>
       </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>nav(b.dataset.k));
@@ -970,6 +971,204 @@ function renderTLState(dsk, stid){
 const renderWorldState = stid=>renderTLState('worldhist', stid);
 
 // 앞으로 이동: 히스토리에 새 항목을 쌓고 해당 화면 렌더(뒤로가기로 이전 단계 복귀)
+// ── 세계의 술 (분류 사전 liquor-tax.js · 데이터 liquor.js) ──
+// 필터: 같은 항목 안에서는 하나라도 맞으면(OR), 항목끼리는 모두 맞아야(AND). 상세에서 돌아와도 유지되게 sessionStorage 에 둔다.
+const LQ_FKEYS = ['region','kinds','methods','materials','styles','aging','flavors','uses'];
+function lqEmptyFilter(){ const f={q:'',abvMin:'',abvMax:''}; LQ_FKEYS.forEach(k=>f[k]=[]); return f; }
+let LQF = (()=>{ try{ const s=JSON.parse(sessionStorage.getItem('ca-lq-filter')); if(s) return Object.assign(lqEmptyFilter(), s); }catch(_){} return lqEmptyFilter(); })();
+let LQ_PANEL = false;
+function lqSave(){ try{ sessionStorage.setItem('ca-lq-filter', JSON.stringify(LQF)); }catch(_){} }
+const lqStyleGroup = id => LQ_STYLES.find(g=>g.id===id);
+const lqMatGroup = id => LQ_MATERIALS.find(g=>g.id===id);
+function lqLabel(key, v){
+  switch(key){
+    case 'region': { const r=LQ_REGIONS.find(x=>x.id===v); if(r) return r.name; const c=LQ_COUNTRY[v]; return c?`${c.flag} ${c.name}`:v; }
+    case 'kinds': return LQ_KINDS[v]||v;
+    case 'methods': return LQ_METHODS[v]||v;
+    case 'materials': { const g=lqMatGroup(v); if(g) return g.name+'(전체)'; return (LQ_MATERIAL[v]||{}).name||v; }
+    case 'styles': { const g=lqStyleGroup(v); if(g) return g.emoji+' '+g.name+'(전체)'; return LQ_STYLE_NAMES[v]||v; }
+    case 'aging': return LQ_AGING[v]||v;
+    case 'flavors': return LQ_FLAVORS[v]||v;
+    case 'uses': return LQ_USES[v]||v;
+  }
+  return v;
+}
+function lqMatch(d, f){
+  const has = (arr, v) => (arr||[]).includes(v);
+  const ok = {
+    region: v => { if(LQ_REGIONS.some(r=>r.id===v)) return (d.origin.countries||[]).some(c=>LQ_CONTINENT_OF[c]===v); return has(d.origin.countries, v); },
+    kinds: v => d.kind===v,
+    methods: v => has(d.methods, v),
+    materials: v => { const g=lqMatGroup(v); return g ? (d.materials||[]).some(m=>LQ_MATERIAL[m] && LQ_MATERIAL[m].group===v) : has(d.materials, v); },
+    styles: v => { const g=lqStyleGroup(v); return g ? (d.styles||[]).some(s=>g.items.includes(s)) : has(d.styles, v); },
+    aging: v => has(d.aging && d.aging.methods, v),
+    flavors: v => has(d.flavors, v),
+    uses: v => has(d.uses, v),
+  };
+  for(const k of LQ_FKEYS){ if(f[k].length && !f[k].some(v=>ok[k](v))) return false; }   // 항목끼리 AND, 항목 안 OR
+  // 도수: 확인된 범위가 조건 안에 '다' 들어올 때만 보여 준다. 법정 최소만 아는 술(와인 8.5% 이상 등)은
+  // 위쪽을 모르므로 '○% 이하' 조건에서 빠진다 — 모르는 값을 짐작해 넣지 않기 위해서다.
+  if(f.abvMin!=='' || f.abvMax!==''){
+    if(!d.abv) return false;
+    if(f.abvMin!=='' && !(d.abv.min!=null && d.abv.min >= +f.abvMin)) return false;
+    if(f.abvMax!=='' && !(d.abv.max!=null && d.abv.max <= +f.abvMax)) return false;
+  }
+  const q=f.q.trim().toLowerCase();
+  if(q){
+    // 설명 문장은 검색하지 않는다 — '쌀' 로 찾을 때 '쌉쌀하다' 가 걸리는 식의 오검색을 막는다
+    const hay=[d.name,d.local,d.en,...(d.styles||[]).map(s=>LQ_STYLE_NAMES[s]),...(d.origin.countries||[]).map(c=>(LQ_COUNTRY[c]||{}).name),...(d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name)].join(' ').toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+function lqAbvText(d){
+  if(!d.abv) return '정보 확인 필요';
+  const a=d.abv, n=x=>(+x).toString();
+  const v = a.min!=null && a.max!=null ? (a.min===a.max?`${n(a.min)}%`:`${n(a.min)}~${n(a.max)}%`) : a.min!=null ? `${n(a.min)}% 이상` : `${n(a.max)}% ${a.maxText||'이하'}`;
+  return v + ({law:' (법정 기준)',style:' (스타일 범위)',product:' (제품 표기)'}[a.basis]||'');
+}
+const lqCountries = d => (d.origin.countries||[]).length ? d.origin.countries.map(c=>{ const x=LQ_COUNTRY[c]; return x?`${x.flag} ${x.name}`:c; }).join(' · ') : (d.origin.note||'정보 확인 필요');
+const lqSlot = d => 'lq-'+d.id.replace(/[^A-Za-z0-9_-]/g,'');
+function lqPic(d, cls){
+  const slot=lqSlot(d), up=IMG_SET.has(slot);
+  return `<div class="${cls}" data-upslot="${slot}">
+    <img src="${imgURL(slot,'')}" alt="" loading="lazy" ${up?'':'style="display:none"'} onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <span class="lq-ph" ${up?'style="display:none"':''}>${d.emoji||'🍶'}</span></div>`;
+}
+
+function renderLiqIndex(){
+  KIND='liq';
+  const total=LIQUORS.length, hits=LIQUORS.filter(d=>lqMatch(d,LQF));
+  const nf = LQ_FKEYS.reduce((t,k)=>t+LQF[k].length,0) + (LQF.abvMin!==''||LQF.abvMax!==''?1:0);
+  const chip = (key,v,label) => `<button class="lq-chip${LQF[key].includes(v)?' on':''}" data-fk="${key}" data-fv="${esc(v)}">${esc(label||lqLabel(key,v))}</button>`;
+  const grp = (title, body) => `<div class="lq-fgrp"><h4>${title}</h4><div class="lq-chips">${body}</div></div>`;
+  // 지역: 대륙을 고르면 그 대륙의 나라가 펼쳐진다
+  const regionBody = LQ_REGIONS.map(r=>chip('region',r.id)).join('') +
+    LQ_REGIONS.filter(r=>LQF.region.includes(r.id) || r.countries.some(c=>LQF.region.includes(c[0]))).map(r=>
+      `<div class="lq-sub">${r.countries.map(c=>chip('region',c[0])).join('')}</div>`).join('');
+  const styleBody = LQ_STYLES.map(g=>chip('styles',g.id)).join('') +
+    LQ_STYLES.filter(g=>LQF.styles.includes(g.id) || g.items.some(s=>LQF.styles.includes(s))).map(g=>
+      `<div class="lq-sub">${g.items.map(s=>chip('styles',s)).join('')}</div>`).join('');
+  const matBody = LQ_MATERIALS.map(g=>chip('materials',g.id)).join('') +
+    LQ_MATERIALS.filter(g=>LQF.materials.includes(g.id) || Object.keys(g.items).some(m=>LQF.materials.includes(m))).map(g=>
+      `<div class="lq-sub">${Object.keys(g.items).map(m=>chip('materials',m)).join('')}</div>`).join('');
+  const panel = `<div class="lq-panel">
+    ${grp('🌍 국가·지역', regionBody)}
+    ${grp('🧪 제조 방식', Object.keys(LQ_METHODS).map(k=>chip('methods',k)).join(''))}
+    ${grp('🌾 원료', matBody)}
+    ${grp('🍶 주종', styleBody)}
+    ${grp('🛢️ 숙성 방식', Object.keys(LQ_AGING).map(k=>chip('aging',k)).join(''))}
+    ${grp('👃 향미', Object.keys(LQ_FLAVORS).map(k=>chip('flavors',k)).join(''))}
+    ${grp('🍽️ 음용 목적', Object.keys(LQ_USES).map(k=>chip('uses',k)).join(''))}
+    ${grp('📇 종류', Object.keys(LQ_KINDS).map(k=>chip('kinds',k)).join(''))}
+    <div class="lq-fgrp"><h4>🌡️ 알코올 도수(%)</h4>
+      <div class="lq-abv"><input id="lqMin" type="number" inputmode="decimal" min="0" max="100" placeholder="최소" value="${esc(LQF.abvMin)}"><span>~</span>
+        <input id="lqMax" type="number" inputmode="decimal" min="0" max="100" placeholder="최대" value="${esc(LQF.abvMax)}"></div>
+      <div class="lq-chips">${[['','10','10% 이하'],['10','20','10~20%'],['20','40','20~40%'],['40','','40% 이상']].map(([a,b,l])=>
+        `<button class="lq-chip${LQF.abvMin===a&&LQF.abvMax===b?' on':''}" data-abv="${a}|${b}">${l}</button>`).join('')}</div>
+      <p class="lq-note">확인된 도수 범위가 조건 안에 다 들어오는 술만 보여요. 예: 와인은 '8.5% 이상'만 확인되어 '10% 이하'에는 나오지 않아요.</p></div>
+    <p class="lq-note">같은 항목 안에서는 <b>하나라도</b> 맞으면, 서로 다른 항목끼리는 <b>모두</b> 맞아야 보여요.</p>
+    <button class="bar-btn on lq-done" id="lqDone">결과 ${hits.length}종 보기</button>
+  </div>`;
+  const active = [].concat(...LQ_FKEYS.map(k=>LQF[k].map(v=>`<button class="lq-chip on sm" data-fk="${k}" data-fv="${esc(v)}">${esc(lqLabel(k,v))} ×</button>`)))
+    .concat(LQF.abvMin!==''||LQF.abvMax!==''?[`<button class="lq-chip on sm" data-abv="|">도수 ${esc(LQF.abvMin||'0')}~${esc(LQF.abvMax||'100')}% ×</button>`]:[]).join('');
+  const card = d => `<button class="lq-card" data-id="${d.id}">
+      ${lqPic(d,'lq-pic')}
+      <div class="lq-cbody">
+        <div class="lq-ctop"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}</div>
+        <small class="lq-local">${esc(d.local)}</small>
+        <div class="lq-meta">${esc(lqCountries(d))}</div>
+        <div class="lq-tags">${(d.styles||[]).slice(0,3).map(s=>`<span>${esc(LQ_STYLE_NAMES[s])}</span>`).join('')}</div>
+        <div class="lq-meta">🌾 ${esc((d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name).join(', ')||'정보 확인 필요')} · 🌡️ ${esc(lqAbvText(d))}</div>
+        <p class="lq-sum">${esc(d.summary)}</p>
+      </div></button>`;
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🍷 세계의 술</div><div class="bar-count">${hits.length}/${total}</div>
+      <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
+    <div class="lq-wrap">
+      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료로 찾기 (예: 쌀, 프랑스, 위스키)" value="${esc(LQF.q)}">
+        <button class="bar-btn ${LQ_PANEL?'on':''}" id="lqToggle">필터${nf?` ${nf}`:''}</button>${nf||LQF.q?'<button class="bar-btn" id="lqReset">초기화</button>':''}</div>
+      ${LQ_PANEL?panel:''}
+      ${active?`<div class="lq-chips lq-active">${active}</div>`:''}
+      <div class="lq-grid">${hits.map(card).join('') || '<p class="lq-empty">조건에 맞는 술이 없어요. 필터를 줄여 보세요.</p>'}</div>
+      <p class="lq-note lq-foot">술의 유형·제조 원리를 배우는 교육용 백과입니다. 각 카드의 출처에서 확인한 내용만 담았고, 확인하지 못한 칸은 '정보 확인 필요'로 표시해요.</p>
+    </div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  document.getElementById('lqToggle').onclick=()=>{ LQ_PANEL=!LQ_PANEL; renderLiqIndex(); };
+  const dn=document.getElementById('lqDone'); if(dn) dn.onclick=()=>{ LQ_PANEL=false; renderLiqIndex(); window.scrollTo(0,0); };
+  const rs=document.getElementById('lqReset'); if(rs) rs.onclick=()=>{ LQF=lqEmptyFilter(); lqSave(); renderLiqIndex(); };
+  const qi=document.getElementById('lqQ');
+  qi.oninput=()=>{ LQF.q=qi.value; lqSave(); clearTimeout(qi._t); qi._t=setTimeout(()=>{ const pos=qi.selectionStart; renderLiqIndex(); const n=document.getElementById('lqQ'); n.focus(); try{ n.setSelectionRange(pos,pos); }catch(_){} }, 250); };
+  APP.querySelectorAll('[data-fk]').forEach(b=>b.onclick=()=>{ const k=b.dataset.fk, v=b.dataset.fv, a=LQF[k];
+    const i=a.indexOf(v); if(i>=0) a.splice(i,1); else a.push(v); lqSave(); renderLiqIndex(); });
+  APP.querySelectorAll('[data-abv]').forEach(b=>b.onclick=()=>{ const [a,c]=b.dataset.abv.split('|');
+    if(LQF.abvMin===a && LQF.abvMax===c){ LQF.abvMin=''; LQF.abvMax=''; } else { LQF.abvMin=a; LQF.abvMax=c; } lqSave(); renderLiqIndex(); });
+  const setAbv=()=>{ LQF.abvMin=document.getElementById('lqMin').value; LQF.abvMax=document.getElementById('lqMax').value; lqSave(); renderLiqIndex(); };
+  const mn=document.getElementById('lqMin'), mx=document.getElementById('lqMax'); if(mn){ mn.onchange=setAbv; mx.onchange=setAbv; }
+  APP.querySelectorAll('.lq-card').forEach(b=>b.onclick=e=>{ if(e.target.closest('.up-ov')) return; nav('liqd='+b.dataset.id); });
+  decorateUploads(APP);
+}
+
+function renderLiqDetail(id){
+  const d=LIQUORS.find(x=>x.id===id); if(!d){ renderLiqIndex(); return; }
+  KIND='liq';
+  const x=d.detail||{}, miss=new Set(d.missing||[]);
+  const NA='<span class="lq-na">정보 확인 필요</span>';
+  // 상세의 분류 칩을 누르면 그 조건 하나로 목록을 보여 준다 — 한 술이 여러 분류에 걸려 있음을 바로 확인할 수 있게
+  const tag=(key,v,label)=>`<button class="lq-chip" data-go="${key}" data-gv="${esc(v)}">${esc(label||lqLabel(key,v))}</button>`;
+  const tags=(key,arr)=> (arr||[]).length ? `<div class="lq-chips">${arr.map(v=>tag(key,v)).join('')}</div>` : '';
+  const sec=(n,title,body,core)=> body ? `<div class="c-sec"><h3>${n}. ${title}</h3>${body}</div>` : (core||miss.has(title)?`<div class="c-sec"><h3>${n}. ${title}</h3><p>${NA}</p></div>`:'');
+  const p=t=>t?`<p>${esc(t)}</p>`:'';
+  const a=d.aging||{};
+  const props=d.props||{}, PROP={carbonation:'탄산',color:'색',turbidity:'탁도',filtration:'여과',sweetness:'당도',acidity:'산도'};
+  const lg=d.legal||{};
+  const basis={general:'일반적으로 알려진 특성',style:'스타일 가이드 기준',product:'제품 설명 기준'}[d.flavorBasis]||'';
+  const matText=(d.materials||[]).map(m=>{ const o=LQ_MATERIAL[m]; if(!o) return m; return `${o.name}(${(lqMatGroup(o.group)||{}).name})`; }).join(', ');
+  const recipe = d.recipe ? `<div class="c-sec"><h3>🍸 레시피 <small>IBA 공식</small></h3>
+      <table class="lq-recipe">${d.recipe.items.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</table>
+      ${(d.recipe.base||[]).length?`<p class="lq-sm">베이스 주종: ${d.recipe.base.map(b=>tag('styles',b,LQ_STYLE_NAMES[b])).join(' ')}</p>`:''}
+      <p><b>만드는 법</b> ${esc(d.recipe.method)}</p></div>` : '';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ 세계의 술</button><div class="bar-title">${d.emoji||''} ${esc(d.name)}</div>
+      <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
+    <div class="geo-detail lq-detail">
+      <div class="lq-dhead">${lqPic(d,'lq-dpic')}
+        <div><h2>${esc(d.name)}</h2><div class="c-en">${esc(d.local)}${d.en&&d.en!==d.local?` · ${esc(d.en)}`:''}</div>
+          <span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span></div></div>
+      <p class="wh-sum">${esc(d.summary)}</p>
+      ${recipe}
+      <div class="c-sec"><h3>1. 기본 정보</h3><dl class="info-grid">
+        ${infoRow('대표 국가·지역', lqCountries(d)+(d.origin.note&&(d.origin.countries||[]).length?` (${d.origin.note})`:''))}
+        ${infoRow('주종', (d.styles||[]).map(s=>LQ_STYLE_NAMES[s]).join(', '))}
+        ${infoRow('주요 원료', matText||'정보 확인 필요')}
+        ${infoRow('제조 방식', (d.methods||[]).map(m=>LQ_METHODS[m]).join(', '))}
+        ${infoRow('알코올 도수', lqAbvText(d))}
+        ${infoRow('종류', LQ_KINDS[d.kind])}
+        ${Object.keys(props).map(k=>infoRow(PROP[k]||k, props[k])).join('')}
+      </dl></div>
+      ${sec(2,'제조 방식', tags('methods',d.methods)+p(x.making), true)}
+      ${sec(3,'원료와 제조 공정', tags('materials',d.materials)+((d.tech||[]).length?`<div class="lq-chips">${d.tech.map(t=>`<span class="lq-chip ro">${esc(LQ_TECH_NAME[t])}</span>`).join('')}</div>`:'')+p(x.process), true)}
+      ${sec(4,'역사와 문화', p(x.history))}
+      ${sec(5,'지역적 특징', p(x.region))}
+      ${sec(6,'향과 맛', ((d.flavors||[]).length?tags('flavors',d.flavors)+`<p class="lq-sm">근거: ${basis}</p>`:'')+p(x.taste), true)}
+      ${sec(7,'대표적인 세부 유형', (x.subtypes||[]).length?`<ul class="lq-ul">${x.subtypes.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`:'')}
+      ${sec(8,'대표 브랜드 및 제품 사례', (d.brands||[]).length?`<p>${d.brands.map(esc).join(' · ')}</p>`:'')}
+      ${sec(9,'숙성 및 저장', ((a.methods||[]).length?tags('aging',a.methods):'')+(a.period?infoLine('기간',a.period):'')+(a.vessel?infoLine('용기',a.vessel):'')+p(x.aging))}
+      ${sec(10,'일반적인 도수', `<p>${esc(lqAbvText(d))}${d.abv&&d.abv.note?` — ${esc(d.abv.note)}`:''}</p>`, true)}
+      ${sec(11,'음식 페어링과 음용 방법', tags('uses',d.uses)+p(x.pairing))}
+      ${sec(12,'다른 술과의 차이', p(x.diff))}
+      ${sec('⚖️','법적 지위·원산지 보호', (lg.protected?infoLine('보호 명칭',lg.protected):'')+((lg.rules||[]).length?`<ul class="lq-ul">${lg.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'')+((lg.grades||[]).length?infoLine('공식 등급',lg.grades.join(' · ')):'')+p(x.legal))}
+      <div class="c-sec"><h3>13. 출처 및 참고 자료</h3><ol class="lq-src">${(d.sources||[]).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> <small>확인 ${esc(s.checked)}</small></li>`).join('')}</ol></div>
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  APP.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ LQF=lqEmptyFilter(); LQF[b.dataset.go]=[b.dataset.gv]; lqSave(); LQ_PANEL=false; nav('liq'); });
+  decorateUploads(APP);
+  window.scrollTo(0,0);
+}
+function infoLine(k,v){ return `<p class="lq-sm"><b>${esc(k)}</b> ${esc(v)}</p>`; }
+
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
 
 function openDeck(kind, it=0, sd=0){
@@ -1005,6 +1204,9 @@ function route(){
   if(ws){ renderTLSection('worldhist', ws[1]); return; }
   const wt=h.match(/^whst=([a-z0-9-]+)$/i);
   if(wt){ renderTLState('worldhist', wt[1]); return; }
+  if(h==='liq'){ renderLiqIndex(); return; }
+  const lq=h.match(/^liqd=([a-z0-9_]+)$/i);
+  if(lq){ renderLiqDetail(lq[1]); return; }
   if(h==='religion'){ renderTLIndex('religion'); return; }
   const rs=h.match(/^rel=([a-z]+)$/i);
   if(rs){ renderTLSection('religion', rs[1]); return; }
