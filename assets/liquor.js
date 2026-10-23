@@ -2,7 +2,8 @@
 //
 // ★ 이 파일을 고칠 때 지킬 것 ★
 //  1. 출처(sources)에서 확인한 내용만 쓴다. 모르는 칸은 비워 둔다 — 화면에 '정보 확인 필요'로 나온다.
-//  2. 도수(abv)는 숫자만. basis 로 근거를 밝힌다: law(법정 기준) · style(스타일 가이드 범위) · product(제품 표기).
+//  2. 도수(abv)는 숫자만. basis 로 근거를 밝힌다: law(법정 기준) · style(스타일 가이드 범위) · product(제품 표기)
+//     · typical(공식 자료가 밝힌 일반값) · measured(연구 논문의 측정값).
 //     상한만 있으면 maxText 로 '미만'·'이하'를 구분한다(사케 22% 미만, 본격 소주 45% 이하).
 //  3. 향미(flavors)는 flavorBasis 로 근거를 밝힌다: general(일반적으로 알려진 특성) · style(스타일 가이드) · product(그 제품 설명).
 //  4. 술의 '유형'(kind:type)과 '개별 제품'(product), '칵테일'(cocktail)을 섞지 않는다.
@@ -66,6 +67,50 @@ const LQS = {
   feni: lqs('인도 지리적 표시 등록부 — Feni (신청 번호 120)', 'https://search.ipindia.gov.in/GIRPublicSearch/Application/Details/120'),
   airag: lqs('UNESCO 인류무형문화유산 — 허후르에서 아이락을 만드는 전통 기술', 'https://ich.unesco.org/en/RL/traditional-technique-of-making-airag-in-khokhuur-and-its-associated-customs-01172'),
   palm: lqs('Microbial Diversity and Metabolite Profiles of Palm Wine … in Côte d’Ivoire (PMC)', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6997158/'),
+  // 3차 확장(2026-10-23)
+  gyodong_her: lqs('국가유산청 — 국가무형유산 경주교동법주', 'https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1273700860300'),
+  shaoxing_water: lqs('Brewing water affects microbial community and aromatic profiles during Shaoxing rice wine fermentation (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13168412/'),
+  shaoxing_rice: lqs('Unraveling the difference in flavor characteristics of Huangjiu fermented with different rice varieties (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10324613/'),
+  sauce_factors: lqs('What Are the Main Factors That Affect the Flavor of Sauce-Aroma Baijiu (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9657106/'),
+  maotai_style: lqs('Integrated metagenomic and metabolomic analysis reveals regional style differences in Maotai-flavour Baijiu (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12907668/'),
+  moutai: lqs('Kweichow Moutai 공식 사이트(브랜드 예시)', 'https://www.moutaichina.com/'),
+  tsingtao: lqs('Tsingtao Brewery 공식 — 회사 소개', 'https://www.tsingtao.com.cn/EN/about/about.html'),
+  nta_mirin: lqs('일본 국세청 — 본미린의 역사와 제조법', 'https://www.nta.go.jp/taxes/sake/koujikin/pdf/0021012-102_05.pdf'),
+  nta_doburoku: lqs('일본 국세청 — 구조개혁 특구의 탁주(도부로쿠) 제조 면허 안내', 'https://www.nta.go.jp/taxes/sake/menkyo/tebiki/menkyo2.pdf'),
+  jp_whisky: lqs('일본양주주조조합 — 재패니즈 위스키 표시에 관한 기준(2021)', 'https://www.yoshu.or.jp/files/libs/550/202303291553482719.pdf'),
+  campari_story: lqs('Campari Group — 회사 이야기', 'https://www.camparigroup.com/en/page/group/our-story'),
+  prosecco: lqs('Consorzio Prosecco DOC — 프로세코', 'https://www.prosecco.wine/en/prosecco/'),
+  prosecco_glera: lqs('Consorzio Prosecco DOC — 글레라 품종', 'https://www.prosecco.wine/en/whole-glera-grape-variety-minute-minute/'),
+  eu251: lqs('EU 가향 와인 규정 (EU) No 251/2014 (EUR-Lex)', 'https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32014R0251'),
+  marsala: lqs('Britannica — Marsala', 'https://www.britannica.com/topic/Marsala-wine'),
+  madeira_abv: lqs('IVBAM — 마데이라 와인 양조(포르투갈어 PDF)', 'https://vinhomadeira.com/assets/front/vinhoMadeira/locale/pt/vinification.pdf'),
+  vdn_cdc: lqs('INAO — AOP Rivesaltes 생산 명세서', 'https://extranet.inao.gouv.fr/fichier/PNO2022AOPRivesaltes.pdf'),
+  prosecco_reg: lqs('Consorzio Prosecco DOC — 생산 규정', 'https://www.prosecco.wine/en/prosecco/production-regulation/'),
+  campari_prod: lqs('Campari 공식 — Campari', 'https://www.campari.com/en-us/'),
+  eu251_sum: lqs('EUR-Lex 요약 — 가향 와인 제품', 'https://eur-lex.europa.eu/EN/legal-content/summary/aromatised-wine-products.html'),
+  // 2차 보강(2026-10-23)
+  soju_hist: lqs('국가유산청 — 전라남도 무형유산 진도홍주', 'https://www.heritage.go.kr/heri/cul/culSelectDetail.do?pageNo=1_1_2_0&ccbaCpno=2223600260000'),
+  pmc_baijiu_abv: lqs('Chinese Baijiu and Whisky: Research Reservoirs for Flavor and Functional Food (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10417287/'),
+  pmc_huangjiu_abv: lqs('The way of Qu-making significantly affected the volatile flavor compounds in Huangjiu (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9281927'),
+  champ_faq: lqs('Comité Champagne — 자주 묻는 질문', 'https://www.champagne.fr/en/champagne-frequently-asked-questions'),
+  cognac_abv: lqs('BNIC — 지리적 표시와 라벨', 'https://www.cognac.fr/en/discover/a-unique-spirit/a-protected-origin/'),
+  cognac_aroma: lqs('BNIC — 코냑 아로마 휠', 'https://www.cognac.fr/en/tasting/the-art-of-tasting/aroma-wheel/'),
+  calvados_cdc: lqs('INAO — AOC Calvados 생산 명세서', 'https://extranet.inao.gouv.fr/fichier/PNOCDC-Calvados.pdf'),
+  chartreuse_y: lqs('Chartreuse 공식 — 옐로 샤르트뢰즈', 'https://www.chartreuse.fr/en/produit/yellow-chartreuse/'),
+  benedictine_dom: lqs('Bénédictine 공식 — Bénédictine D.O.M', 'https://www.benedictinedom.com/our-liqueurs/benedictine-dom-liqueur/'),
+  port_pdo: lqs('IVDP — 원산지 명칭 Porto 명세서', 'https://www.ivdp.pt/media/pnwe55km/pdo-pt-a1540-porto.pdf'),
+  port_sens: lqs('IVDP — 포트와인의 색과 단맛(관능 특성)', 'https://www.ivdp.pt/pt/vinhos/vinhos-do-porto/perfil-sensorial/'),
+  swa_cat: lqs('Scotch Whisky Association — 스카치위스키의 다섯 가지 범주', 'https://www.scotch-whisky.org.uk/discover-scotch/enjoying-scotch/scotch-whisky-categories/'),
+  ttb_whisky: lqs('미국 연방규정 27 CFR §5.143 — Whisky (eCFR)', 'https://www.ecfr.gov/current/title-27/chapter-I/subchapter-A/part-5/subpart-I/section-5.143'),
+  nom006_dof: lqs('멕시코 관보 — NOM-006-SCFI-2012 데킬라 규격', 'https://dof.gob.mx/nota_detalle.php?codigo=5282165&fecha=13%2F12%2F2012'),
+  nom070_dof: lqs('멕시코 관보 — NOM-070-SCFI-2016 메스칼 규격', 'https://dof.gob.mx/nota_detalle.php?codigo=5472787&fecha=23%2F02%2F2017'),
+  airag_abv: lqs('Characterization of airag collected in Ulaanbaatar, Mongolia (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4782302/'),
+  tej_abv: lqs('Microbial, physicochemical and proximate analysis of Tej … Amhara (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10275989'),
+  negroni_hist: lqs('Campari 공식 — 네그로니의 역사', 'https://negroni.campari.com/history/'),
+  campari_hist: lqs('Campari 공식 — 캄파리의 역사', 'https://www.campari.com/our-history/'),
+  aperol_hist: lqs('Aperol 공식 — 아페롤 이야기', 'https://www.aperol.com/en-au/blog/the-story-of-aperol/'),
+  maitai_hist: lqs('Trader Vic’s — 마이타이의 역사', 'https://tradervics.com/pages/history-of-the-mai-tai'),
+  daiquiri_hist: lqs('Trader Vic’s — National Daiquiri Day', 'https://tradervics.com/blogs/news/national-daiquiri-day'),
   tej: lqs('Development of mixed starter culture for the fermentation of Ethiopian honey wine, Tej (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9352660/'),
 };
 
@@ -73,12 +118,14 @@ const LIQUORS = [
 // ══════════════ 한국 ══════════════
 { id:'makgeolli', kind:'type', emoji:'🍶', name:'막걸리', local:'막걸리 · 탁주(濁酒)', en:'Makgeolli',
   origin:{ countries:['kr'] }, methods:['fermented'], materials:['rice','grain'], styles:['makgeolli'],
-  tech:['nuruk','koji'], aging:{ methods:[] }, abv:null,
-  props:{ turbidity:'뿌옇게 흐림', filtration:'거르기만 하고 앙금을 남김' }, flavors:[], uses:[],
+  tech:['nuruk','koji'], aging:{ methods:[] }, abv:{ min:4.5, max:4.5, unit:'%', basis:'typical', note:'백과사전 설명: 알코올 농도 4.5도 정도(제품마다 다름)' },
+  props:{ turbidity:'뿌옇게 흐림', filtration:'거르기만 하고 앙금을 남김' }, flavors:['sour'], flavorBasis:'general', uses:[],
   summary:'곡물과 누룩으로 빚은 술을 앙금째 걸러 뿌옇고 도수가 낮은 우리 술이에요.',
   detail:{
     making:'발효주. 주세법은 녹말이 든 재료와 국(麴)·물을 원료로 발효시킨 술덧을 여과하지 않고 혼탁하게 만든 술을 탁주로 나눈다.',
     process:'녹말이 든 곡물, 누룩, 물로 빚는다. 주식이 쌀이었기 때문에 쌀을 많이 썼다. 전통적으로는 날곡물을 빻아 단단히 디뎌 띄운 누룩을 썼고, 1960년대 이후 양조장에서는 흰 누룩곰팡이를 접종한 입국(粒麴)을 주로 쓴다.',
+    history:'문헌상 ≪양주방≫에 「혼돈주(混沌酒)」라는 이름으로 처음 나온다.',
+    taste:'신 냄새와 신맛이 센 편이다.',
     region:'한국 전역의 양조장에서 만든다.',
     diff:'같은 술덧을 맑게 걸러 낸 것이 약주·청주이고, 앙금째 거른 것이 막걸리(탁주)다.' },
   sources:[ enc('E0017498','막걸리'), enc('E0058756','탁주'), LQS.jusebeop ] },
@@ -111,9 +158,9 @@ const LIQUORS = [
   summary:'곡물 등 녹말 원료를 발효시킨 술덧을 증류해 만든 소주예요.',
   detail:{
     making:'증류주. 주세법은 녹말이 든 재료와 국(누룩)·효모·물 등을 원료로 발효시켜 단식 증류기 등으로 증류한 소주를 증류식 소주로 분류한다.',
+    history:'고려 때 중국 원나라에서 들어왔다고 전해진다. 안동소주·진도홍주·문배주 같은 지역 증류주가 이 전통을 잇는다.',
     diff:'주정(중성 알코올)을 물로 희석해 만드는 희석식 소주와 만드는 방식이 다르다.' },
-  missing:['history'],
-  sources:[ LQS.jusebeop ] },
+  sources:[ LQS.jusebeop, LQS.soju_hist ] },
 
 { id:'soju_diluted', kind:'type', emoji:'🥃', name:'희석식 소주', local:'희석식 소주', en:'Diluted soju',
   origin:{ countries:['kr'] }, methods:['distilled','compound'], materials:['neutral'], styles:['soju','soju_diluted'],
@@ -122,12 +169,13 @@ const LIQUORS = [
   detail:{
     making:'주정을 물로 희석해 만든다(주세법상 희석식 소주).',
     diff:'술덧을 직접 증류하는 증류식 소주와 달리, 이미 정제한 주정을 물로 묽혀 만든다.' },
-  sources:[ LQS.jusebeop ] },
+  brands:['참이슬(하이트진로)'],
+  sources:[ LQS.jusebeop, lqs('하이트진로 공식 사이트(브랜드 예시)', 'https://www.hitejinro.com/') ] },
 
 // ══════════════ 중국 ══════════════
 { id:'baijiu', kind:'type', emoji:'🏺', name:'백주', local:'白酒 (바이주)', en:'Baijiu',
   origin:{ countries:['cn'] }, methods:['distilled'], materials:['sorghum','rice','wheat'], styles:['baijiu'],
-  tech:['qu','solid_ferm','blending'], aging:{ methods:['varies'] }, abv:null,
+  tech:['qu','solid_ferm','blending'], aging:{ methods:['varies'] }, abv:{ min:38, max:55, unit:'%', basis:'typical', note:'18~78%까지 있으나 38~55%가 흔하다' },
   flavors:[], flavorBasis:'general', uses:[],
   summary:'수수·쌀·밀 같은 곡물을 고체 상태로 발효시켜 증류한 중국의 대표 증류주예요.',
   detail:{
@@ -135,18 +183,19 @@ const LIQUORS = [
     process:'주로 수수·쌀·밀을 원료로 한다. 효모·곰팡이·세균이 함께 자란 발효제 "곡(麴)"을 쓰며, 곡은 대곡·소곡·부곡으로 나뉜다.',
     subtypes:['장향(醬香)','농향(濃香)','청향(淸香)','미향(米香) 등 — 향의 특징으로 12가지 향형으로 나누며, 농향·청향·장향이 기본 3대 향형이다'],
     taste:'향은 주로 발효 중 미생물이 만드는 에스터·알코올·산·알데하이드 등에서 나온다.' },
-  sources:[ LQS.pmc_baijiu, LQS.pmc_baijiu_flavor, enc('E0022395','백주') ] },
+  brands:['우량예(五粮液)'],
+  sources:[ LQS.pmc_baijiu, LQS.pmc_baijiu_flavor, LQS.pmc_baijiu_abv, enc('E0022395','백주'), lqs('우량예 공식 사이트(브랜드 예시)', 'https://www.wuliangye.com.cn/') ] },
 
 { id:'huangjiu', kind:'type', emoji:'🏺', name:'황주', local:'黃酒 (황주)', en:'Huangjiu',
   origin:{ countries:['cn'] }, methods:['fermented'], materials:['rice','millet','corn'], styles:['huangjiu','rice_wine'],
-  tech:['qu','yeast','parallel'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  tech:['qu','yeast','parallel'], aging:{ methods:[] }, abv:{ min:15.6, max:17.1, unit:'%', basis:'measured', note:'한 연구에서 밀 곡 종류에 따라 15.6%·17.1%로 측정' }, flavors:[], uses:[],
   summary:'찹쌀 등 곡물을 곡(麴)으로 당화하면서 효모로 발효시킨 중국 전통 발효주예요.',
   detail:{
     making:'발효주. 곡이 녹말을 당으로 바꾸는 일(당화)과 효모의 발효가 함께 진행된다.',
     process:'찹쌀을 주로 쓰고 기장·옥수수 등 곡물도 쓴다. 밀로 만든 곡이나 소곡으로 당화하고 효모(사카로미세스 세레비시아)로 발효시킨다.',
     history:'중국을 대표하는 술 가운데 하나로, 빚어 온 역사가 매우 길다고 알려져 있다.',
     diff:'같은 곡물로 만들지만 증류하지 않는다는 점에서 백주와 다르다.' },
-  sources:[ LQS.pmc_huangjiu ] },
+  sources:[ LQS.pmc_huangjiu, LQS.pmc_huangjiu_abv ] },
 
 // ══════════════ 일본 ══════════════
 { id:'sake', kind:'type', emoji:'🍶', name:'사케', local:'日本酒 · 清酒 (니혼슈·세이슈)', en:'Sake',
@@ -160,7 +209,8 @@ const LIQUORS = [
     legal:'지리적 표시 「日本酒」는 일본산 쌀을 쓰고 일본에서 만든 청주에만 쓸 수 있다.',
     diff:'한국의 약주·청주와 같이 맑게 거른 곡물 발효주지만, 발효제로 쌀 코지를 쓴다.' },
   legal:{ protected:'지리적 표시 「日本酒」' },
-  sources:[ LQS.nta_seishu, LQS.nta_def ] },
+  brands:['닷사이(獺祭, 아사히주조)'],
+  sources:[ LQS.nta_seishu, LQS.nta_def, lqs('아사히주조(닷사이) 공식 사이트(브랜드 예시)', 'https://www.asahishuzo.ne.jp/') ] },
 
 { id:'shochu', kind:'type', emoji:'🥃', name:'본격 소주', local:'本格焼酎 (혼카쿠쇼추)', en:'Honkaku shochu',
   origin:{ countries:['jp'] }, methods:['distilled'], materials:['barley','sweet_potato','rice','sugarcane'], styles:['shochu'],
@@ -171,11 +221,12 @@ const LIQUORS = [
     making:'증류주. 녹말 원료(곡류·고구마)나 당 원료(흑설탕 등)를 발효시켜 증류한다.',
     subtypes:['쌀 소주','고구마 소주','보리 소주','흑설탕 소주'],
     diff:'일본 주세법은 소주를 연속식 증류 소주(36도 미만, 갑류)와 단식 증류 소주(45도 이하)로 나눈다. 본격 소주는 단식 증류 소주다.' },
-  sources:[ LQS.jss_honkaku, LQS.nta_shochu ] },
+  brands:['이이치코(いいちこ)'],
+  sources:[ LQS.jss_honkaku, LQS.nta_shochu, lqs('이이치코 공식 사이트(브랜드 예시)', 'https://www.iichiko.co.jp/') ] },
 
 { id:'awamori', kind:'type', emoji:'🏺', name:'아와모리', local:'泡盛 (류큐 아와모리)', en:'Awamori',
   origin:{ countries:['jp'], note:'오키나와' }, methods:['distilled'], materials:['rice'], styles:['awamori','shochu'],
-  tech:['koji','pot'], aging:{ methods:['varies'], period:'3년 이상 숙성하면 「고주(쿠스)」' }, abv:null,
+  tech:['koji','pot'], aging:{ methods:['varies'], period:'3년 이상 숙성하면 「고주(쿠스)」' }, abv:{ max:45, maxText:'이하', unit:'%', basis:'law', note:'단식 증류 소주(아와모리 포함)는 45도 이하' },
   flavors:['vanilla'], flavorBasis:'general', uses:[],
   summary:'흑국균으로 띄운 쌀 코지만으로 빚어 단식 증류하는 오키나와의 술이에요.',
   detail:{
@@ -185,7 +236,7 @@ const LIQUORS = [
     taste:'코지에서 오는 부드러운 맛이 있고, 숙성한 고주는 바닐라·송이버섯 같은 향이 나며 복잡하고 깊은 맛을 낸다고 설명된다.',
     region:'일본 오키나와현.' },
   legal:{ protected:'지리적 표시 「琉球」', rules:['흑국균 쌀 코지만 사용','오키나와 물 사용','단식 증류','오키나와현 안에서 발효·증류'] },
-  sources:[ LQS.nta_ryukyu ] },
+  sources:[ LQS.nta_ryukyu, LQS.nta_shochu ] },
 
 { id:'umeshu', kind:'type', emoji:'🍑', name:'우메슈', local:'梅酒 (우메슈)', en:'Umeshu',
   origin:{ countries:['jp'] }, methods:['liqueur','infused'], materials:['ume'], styles:['umeshu'],
@@ -210,7 +261,7 @@ const LIQUORS = [
 { id:'champagne', kind:'type', emoji:'🥂', name:'샴페인', local:'Champagne', en:'Champagne',
   origin:{ countries:['fr'], note:'샹파뉴 지방' }, methods:['fermented'], materials:['grape'], styles:['sparkling','wine'],
   tech:['yeast','second_bottle','blending'], aging:{ methods:['bottle'], period:'최소 15개월(빈티지는 3년 이상)', vessel:'병(효모 앙금과 함께)' },
-  abv:null, props:{ carbonation:'있음(병 속 2차 발효로 생긴 거품)' },
+  abv:{ min:12, max:12, unit:'%', basis:'typical', note:'약 12%(종류에 따라 ±0.7%)' }, props:{ carbonation:'있음(병 속 2차 발효로 생긴 거품)' },
   flavors:['citrus','floral','berry'], flavorBasis:'general', uses:[],
   summary:'병 안에서 두 번째 발효를 시켜 거품을 만드는 프랑스 샹파뉴 지방의 스파클링 와인이에요.',
   detail:{
@@ -220,25 +271,28 @@ const LIQUORS = [
     taste:'샤르도네는 신선함과 꽃·감귤 향, 피노 누아는 바디와 붉은 과일·꽃 향, 뫼니에는 부드러움과 노란 과일 향을 더한다고 설명된다.',
     region:'프랑스 샹파뉴 원산지 명칭 지역. 주요 품종은 피노 누아(재배 면적 38%), 샤르도네(31%), 뫼니에(31%).' },
   legal:{ protected:'AOC Champagne', rules:['병 속 2차 발효','최소 15개월 숙성(빈티지 3년)'] },
-  sources:[ LQS.champ_2nd, LQS.champ_lees, LQS.champ_grapes ] },
+  brands:['모엣 & 샹동'],
+  sources:[ LQS.champ_2nd, LQS.champ_lees, LQS.champ_grapes, LQS.champ_faq, lqs('Moët & Chandon 공식 사이트(브랜드 예시)', 'https://www.moet.com/') ] },
 
 { id:'cognac', kind:'type', emoji:'🥃', name:'코냑', local:'Cognac', en:'Cognac',
   origin:{ countries:['fr'], note:'코냑 지방' }, methods:['distilled'], materials:['grape'], styles:['cognac','brandy'],
-  tech:['double','copper_pot','pot'], aging:{ methods:['oak'], period:'최소 2년', vessel:'오크통' }, abv:null,
-  flavors:[], uses:[],
+  tech:['double','copper_pot','pot'], aging:{ methods:['oak'], period:'최소 2년', vessel:'오크통' }, abv:{ min:40, unit:'%', basis:'law', note:'판매 최소 40%' },
+  flavors:['floral','oak','spice','vanilla'], flavorBasis:'general', uses:[],
   summary:'위니 블랑 포도로 만든 와인을 샤랑트식 구리 증류기로 두 번 증류해 오크통에서 숙성한 브랜디예요.',
   detail:{
     making:'증류주(브랜디). 와인을 구리 증류기로 두 번 증류해 와인 증류주를 얻고, 오크통에서 최소 2년 숙성한다.',
     process:'첫 번째 증류(프르미에르 쇼프)로 "브루이"를 얻고, 이를 다시 증류(두 번째 쇼프)하면서 처음과 끝 부분을 잘라 내 코냑 원액을 얻는다. 원료 포도는 위니 블랑이 98% 이상으로, 산도가 높고 도수가 낮은(8~9%) 와인을 만든다.',
     subtypes:['VS — 가장 어린 원액이 2년 이상','VSOP — 4년 이상','XO — 10년 이상'],
+    taste:'꽃·과일·오크·향신료 향이 폭넓게 나타난다. BNIC는 전문가 50명이 코냑 100종을 시음한 기록 5,000건으로 「아로마 휠」을 만들었다.',
     region:'프랑스 코냑 지리적 표시 지역.',
     diff:'같은 프랑스 포도 브랜디인 아르마냑은 대부분 연속식 증류기로 한 번 증류한다.' },
   legal:{ protected:'AOC Cognac', grades:['VS','VSOP','XO'] },
-  sources:[ LQS.cognac_prod, LQS.cognac_aoc, LQS.cognac_grapes ] },
+  brands:['레미 마르탱'],
+  sources:[ LQS.cognac_prod, LQS.cognac_aoc, LQS.cognac_grapes, LQS.cognac_abv, LQS.cognac_aroma, lqs('Rémy Martin 공식 사이트(브랜드 예시)', 'https://www.remymartin.com/') ] },
 
 { id:'armagnac', kind:'type', emoji:'🥃', name:'아르마냑', local:'Armagnac', en:'Armagnac',
   origin:{ countries:['fr'], note:'가스코뉴 지방' }, methods:['distilled'], materials:['grape'], styles:['armagnac','brandy'],
-  tech:['continuous','copper_pot'], aging:{ methods:['oak'], vessel:'400L 오크통(가스코뉴·리무쟁산 참나무)' }, abv:null,
+  tech:['continuous','copper_pot'], aging:{ methods:['oak'], vessel:'400L 오크통(가스코뉴·리무쟁산 참나무)' }, abv:{ min:40, unit:'%', basis:'law', note:'병입 최소 40%(아르마냑과 증류수를 섞은 「쁘띠트 오」로 낮춤)' },
   flavors:['vanilla','dried_fruit'], flavorBasis:'general', uses:[],
   summary:'약 95%를 순동으로 된 아르마냑식 연속 증류기로 만드는 프랑스 가스코뉴의 브랜디예요.',
   detail:{
@@ -252,46 +306,48 @@ const LIQUORS = [
 
 { id:'calvados', kind:'type', emoji:'🍎', name:'칼바도스', local:'Calvados', en:'Calvados',
   origin:{ countries:['fr'], note:'노르망디' }, methods:['distilled'], materials:['apple','pear'], styles:['calvados','brandy'],
-  tech:['pot','double'], aging:{ methods:['oak'], period:'최소 2년', vessel:'오크통' }, abv:null, flavors:[], uses:[],
+  tech:['pot','double'], aging:{ methods:['oak'], period:'최소 2년', vessel:'오크통' }, abv:{ min:40, unit:'%', basis:'law', note:'판매 최소 40%' }, flavors:[], uses:[],
   summary:'사과와 배로 만든 사이다를 증류해 오크통에서 2년 이상 숙성한 노르망디의 브랜디예요.',
   detail:{
     making:'증류주. 사과(사이다용)와 배(페리용)로 만든 사이다를 증류해 오크통에서 최소 2년 숙성한다.',
     subtypes:['Calvados','Calvados Pays d’Auge — 단식 증류기로 반드시 두 번 증류, 페리용 배 30% 이상','Calvados Domfrontais'],
+    process:'구리 증류기로 72% 이하에서 증류해 향 성분을 많이 남긴다.',
     region:'프랑스 노르망디 원산지 명칭 지역.' },
   legal:{ protected:'AOC Calvados · Calvados Pays d’Auge · Calvados Domfrontais' },
-  sources:[ LQS.calvados_inao, LQS.calvados_idac ] },
+  sources:[ LQS.calvados_inao, LQS.calvados_idac, LQS.calvados_cdc ] },
 
 { id:'chartreuse', kind:'product', emoji:'🌿', name:'샤르트뢰즈', local:'Chartreuse', en:'Chartreuse',
   origin:{ countries:['fr'] }, methods:['liqueur','infused','distilled'], materials:['herb'], styles:['chartreuse','herbal_liqueur'],
-  tech:['infusion'], aging:{ methods:[] }, abv:null, flavors:['herbal','spice'], flavorBasis:'product', uses:[],
+  tech:['infusion'], aging:{ methods:[] }, abv:{ min:43, max:55, unit:'%', basis:'product', note:'옐로 43%, 그린 55%' }, flavors:['herbal','spice'], flavorBasis:'product', uses:[],
   brands:['그린 샤르트뢰즈','옐로 샤르트뢰즈'],
   summary:'카르투시오회 수도사들이 130가지 식물로 만드는 프랑스의 허브 리큐르예요.',
   detail:{
     making:'리큐르. 130가지 식물·꽃·나무껍질·뿌리·향신료로 만들며, 어떤 식물을 쓰는지와 섞는 법은 수도사 두 명만 안다.',
     history:'1605년 데스트레 공작이 카르투시오회에 "장수의 묘약" 처방이 담긴 문서를 맡겼고, 1737년 그랑드 샤르트뢰즈 수도원으로 옮겨졌다. 1764년 「그랑드 샤르트뢰즈 식물 엘릭시르」로 완성되었다.',
     subtypes:['그린 — 자연스러운 초록빛과 강한 향','옐로 — 단맛과 향신료 향'] },
-  sources:[ LQS.chartreuse, LQS.chartreuse_g ] },
+  sources:[ LQS.chartreuse, LQS.chartreuse_g, LQS.chartreuse_y ] },
 
 { id:'benedictine', kind:'product', emoji:'🌿', name:'베네딕틴', local:'Bénédictine D.O.M', en:'Bénédictine',
   origin:{ countries:['fr'], note:'노르망디 페캉' }, methods:['liqueur'], materials:['herb'], styles:['benedictine','herbal_liqueur'],
-  tech:[], aging:{ methods:[] }, abv:null, flavors:['herbal','spice'], flavorBasis:'product', uses:[],
+  tech:[], aging:{ methods:[] }, abv:{ min:40, max:40, unit:'%', basis:'product' }, flavors:['herbal','spice','citrus','honey','nutty'], flavorBasis:'product', uses:[],
   summary:'27가지 식물과 향신료로 만드는, 프랑스 페캉의 허브 리큐르예요.',
   detail:{
     making:'리큐르. 27가지 식물·향신료로 만든다.',
     history:'1510년 페캉 수도원의 베네딕토회 수도사 돔 베르나르도 빈첼리의 비법에서 비롯되었다고 전해진다. 프랑스 혁명 때 잊혔던 처방을 1863년 와인 상인 알렉상드르 르그랑이 되살렸다.',
+    taste:'구릿빛에 금빛이 돌고, 허브·향신료 향에 귤 껍질·소나무 향이 살짝 나며, 꿀·감귤·아몬드 맛이 부드럽게 난다(제품 설명).',
     region:'프랑스 노르망디 페캉의 「팔레 베네딕틴」에서 만든다.' },
-  sources:[ LQS.benedictine ] },
+  sources:[ LQS.benedictine, LQS.benedictine_dom ] },
 
 { id:'vdn', kind:'type', emoji:'🍇', name:'뱅 두 나튀렐', local:'Vin doux naturel', en:'Vin doux naturel',
   origin:{ countries:['fr'], note:'루시용 등' }, methods:['fermented','fortified'], materials:['grape'], styles:['vdn','fortified_wine'],
-  tech:['mutage'], aging:{ methods:['varies'] }, abv:null, flavors:['sweet'], flavorBasis:'general', uses:[],
+  tech:['mutage'], aging:{ methods:['varies'] }, abv:{ min:15, unit:'%', basis:'law', note:'리브잘트·바뉠스: 실제 알코올 15% 이상(총 21.5% 이상)' }, flavors:['sweet'], flavorBasis:'general', uses:[],
   summary:'발효 도중 포도 알코올을 넣어 발효를 멈춰, 포도의 단맛을 남긴 프랑스의 강화 와인이에요.',
   detail:{
     making:'강화주. 발효 중 96도 포도 알코올을 머스트 부피의 5~10%(순알코올 최대 10%)만큼 넣는 "뮤타주"로 효모의 활동을 멈춘다.',
     process:'효모가 당을 모두 알코올로 바꾸기 전에 멈추기 때문에 포도의 천연 당 일부가 남는다.',
     subtypes:['리브잘트','뮈스카 드 리브잘트','모리','바뉠스'],
     diff:'포르투갈의 포트도 발효 중 포도 브랜디를 넣어 단맛을 남기는 강화 와인이다.' },
-  sources:[ LQS.vdn_rivesaltes, LQS.vdn_maury ] },
+  sources:[ LQS.vdn_rivesaltes, LQS.vdn_maury, LQS.vdn_cdc ] },
 
 // ══════════════ 이탈리아 ══════════════
 { id:'grappa', kind:'type', emoji:'🥃', name:'그라파', local:'Grappa', en:'Grappa',
@@ -302,7 +358,8 @@ const LIQUORS = [
     making:'증류주(포도 찌꺼기 증류주). 발효했거나 반쯤 발효한 포도 찌꺼기를 증기로 직접, 또는 증류기에 물을 더해 증류한다.',
     legal:'이탈리아에서 재배·양조한 포도의 찌꺼기를 이탈리아 안에서 증류·병입한 것만 그라파라 부를 수 있다. 시판 도수는 37.5% 이상.' },
   legal:{ protected:'지리적 표시 Grappa' },
-  sources:[ LQS.grappa, LQS.grappa_abv ] },
+  brands:['노니노'],
+  sources:[ LQS.grappa, LQS.grappa_abv, lqs('Nonino 공식 사이트(브랜드 예시)', 'https://www.grappanonino.it/') ] },
 
 { id:'limoncello', kind:'type', emoji:'🍋', name:'리몬첼로', local:'Limoncello', en:'Limoncello',
   origin:{ countries:['it'], note:'아말피 해안·시칠리아·나폴리만 일대' }, methods:['liqueur','infused'], materials:['citrus','neutral'], styles:['limoncello','herbal_liqueur'],
@@ -314,7 +371,8 @@ const LIQUORS = [
     aging:'병에 담아 최대 약 45일 숙성한다.',
     pairing:'전통적으로 차갑게 해서 식후주로 마신다.',
     region:'이탈리아 남부 — 아말피 해안, 시칠리아, 나폴리만 일대.' },
-  sources:[ LQS.limoncello ] },
+  brands:['빌라 마사'],
+  sources:[ LQS.limoncello, lqs('Villa Massa 공식 사이트(브랜드 예시)', 'https://www.villamassa.com/') ] },
 
 { id:'amaro', kind:'type', emoji:'🌿', name:'아마로', local:'Amaro', en:'Amaro',
   origin:{ countries:['it'] }, methods:['liqueur','infused'], materials:['herb'], styles:['amaro','herbal_liqueur'],
@@ -324,7 +382,8 @@ const LIQUORS = [
     making:'리큐르. 비터스는 쓴 약초·잎·열매·씨앗·뿌리로 만든 술로, 레시피는 대개 비밀이다.',
     taste:'오렌지 껍질·용담 뿌리·대황 뿌리·키나 껍질 같은 재료가 쓴맛을 낸다.',
     pairing:'식전주나 식후 소화를 돕는 술로 마신다.' },
-  sources:[ LQS.bitters ] },
+  brands:['아베르나'],
+  sources:[ LQS.bitters, lqs('Averna 공식 사이트(브랜드 예시)', 'https://www.averna.com/') ] },
 
 // ══════════════ 영국·아일랜드 ══════════════
 { id:'scotch', kind:'type', emoji:'🥃', name:'스카치 위스키', local:'Scotch Whisky', en:'Scotch whisky',
@@ -335,13 +394,15 @@ const LIQUORS = [
   detail:{
     making:'증류주. 스코틀랜드에서 생산하고 스코틀랜드에서만 숙성해야 한다.',
     aging:'용량 700리터 이하의 오크통에서 3년 이상 숙성한다.',
-    legal:'The Scotch Whisky Regulations 2009가 정의한다. 최소 도수 40%.' },
+    subtypes:['싱글 몰트 — 한 증류소에서 물과 맥아 보리만으로 구리 단식 증류기에 증류','싱글 그레인 — 한 증류소, 다른 곡물도 사용','블렌디드 몰트 — 여러 증류소의 싱글 몰트를 섞음','블렌디드 그레인','블렌디드 스카치 — 싱글 몰트와 싱글 그레인을 섞음(세계 판매의 약 90%)'],
+    legal:'The Scotch Whisky Regulations 2009가 정의한다. 최소 도수 40%. 범주를 병 앞면에 표시해야 한다.' },
   legal:{ protected:'Scotch Whisky (법률로 정의)', rules:['스코틀랜드에서 생산·숙성','700L 이하 오크통 3년 이상','도수 40% 이상'] },
-  sources:[ LQS.scotch ] },
+  brands:['조니워커'],
+  sources:[ LQS.scotch, LQS.swa_cat, lqs('Johnnie Walker 공식 사이트(브랜드 예시)', 'https://www.johnniewalker.com/') ] },
 
 { id:'irish_whiskey', kind:'type', emoji:'🥃', name:'아이리시 위스키', local:'Irish Whiskey · Uisce Beatha Éireannach', en:'Irish whiskey',
   origin:{ countries:['ie'], note:'아일랜드섬(북아일랜드 포함)' }, methods:['distilled'], materials:['barley','grain'], styles:['whisky'],
-  tech:['yeast'], aging:{ methods:['oak'], period:'최소 3년', vessel:'700L 이하 나무통(오크 등)' }, abv:null, flavors:[], uses:[],
+  tech:['yeast'], aging:{ methods:['oak'], period:'최소 3년', vessel:'700L 이하 나무통(오크 등)' }, abv:{ min:40, unit:'%', basis:'law' }, flavors:[], uses:[],
   summary:'아일랜드섬에서 몰트 곡물로 증류해 나무통에서 3년 이상 숙성한 위스키예요.',
   detail:{
     making:'증류주. 몰트(싹 틔운 곡물)의 효소로 당화하고 효모로 발효시켜, 94.8% 미만으로 증류해 원료의 향을 살린다.',
@@ -358,52 +419,58 @@ const LIQUORS = [
   detail:{
     making:'EU 규정상 진은 농산물에서 얻은 에틸 알코올에 주니퍼베리(Juniperus communis)로 향을 낸 술이며, 최소 도수는 37.5%다.',
     pairing:'네그로니·마티니 같은 칵테일의 베이스로 쓰인다.' },
-  sources:[ LQS.eu787 ] },
+  brands:['탱커레이'],
+  sources:[ LQS.eu787, lqs('Tanqueray 공식 사이트(브랜드 예시)', 'https://www.tanqueray.com/') ] },
 
 { id:'vodka', kind:'type', emoji:'🥃', name:'보드카', local:'Vodka', en:'Vodka',
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['distilled'], materials:['grain','potato'], styles:['vodka'],
   tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 규정 최소 37.5%' }, flavors:[], uses:['cocktail_base'],
   summary:'농산물에서 얻은 알코올로 만드는 증류주로, EU 규정상 37.5% 이상이에요.',
   detail:{ making:'증류주. EU 규정상 보드카의 최소 도수는 37.5%다.' },
-  missing:['history','region'],
-  sources:[ LQS.eu787 ] },
+  brands:['스미노프'],
+  sources:[ LQS.eu787, lqs('Smirnoff 공식 사이트(브랜드 예시)', 'https://www.smirnoff.com/') ] },
 
 // ══════════════ 포르투갈·스페인 ══════════════
 { id:'port', kind:'type', emoji:'🍷', name:'포트', local:'Vinho do Porto', en:'Port',
   origin:{ countries:['pt'], note:'도루 지정 지역' }, methods:['fermented','fortified'], materials:['grape'], styles:['port','fortified_wine'],
-  tech:['mutage'], aging:{ methods:['varies'] }, abv:null, flavors:['sweet'], flavorBasis:'general', uses:[],
+  tech:['mutage'], aging:{ methods:['varies'] }, abv:{ min:19, max:22, unit:'%', basis:'law', note:'라이트 드라이 화이트 포트는 16.5% 이상' }, flavors:['sweet','berry','dried_fruit','nutty'], flavorBasis:'general', uses:[],
   summary:'발효 중인 와인에 포도 브랜디를 넣어 발효를 멈춘, 포르투갈 도루 지방의 강화 와인이에요.',
   detail:{
     making:'강화주. 머스트의 당이 절반쯤 발효되었을 때 포도 브랜디(아구아르덴테)를 넣어 발효를 일찍 멈춘다. 이를 "베네피시우"라 한다.',
+    subtypes:['루비 — 짙은 붉은색, 신선한 검은 과일 맛(리저브·LBV·빈티지 포함)','토니 — 숙성으로 황갈색, 견과·아몬드·캐러멜·말린 무화과 맛','화이트','로제 — 체리·라즈베리·딸기 향'],
     region:'포르투갈 도루 지정 지역에서만 만든다.',
     legal:'1933년 설립된 IVDP가 포트와 도루 와인의 품질·생산을 관리하고 원산지 명칭을 보호한다.',
     diff:'셰리는 발효를 마친 와인에 알코올을 더하지만, 포트는 발효 도중에 넣어 단맛을 남긴다.' },
   legal:{ protected:'원산지 명칭 Porto' },
-  sources:[ LQS.port, LQS.port_gl ] },
+  brands:['테일러스'],
+  sources:[ LQS.port, LQS.port_gl, LQS.port_pdo, LQS.port_sens, lqs('Taylor’s 공식 사이트(브랜드 예시)', 'https://www.taylor.pt/') ] },
 
 { id:'sherry', kind:'type', emoji:'🍷', name:'셰리', local:'Jerez · Xérès · Sherry', en:'Sherry',
   origin:{ countries:['es'], note:'헤레스 지역(마르코 데 헤레스)' }, methods:['fermented','fortified'], materials:['grape'], styles:['sherry','fortified_wine'],
   tech:['yeast'], aging:{ methods:['solera','biological','oxidative','oak'], vessel:'길들인 아메리칸 오크통' },
-  abv:{ min:15, unit:'%', basis:'law', note:'피노는 약 15%로 강화' }, flavors:[], uses:[],
+  abv:{ min:15, unit:'%', basis:'law', note:'피노는 약 15%로 강화' }, flavors:['nutty','yeasty','herbal'], flavorBasis:'general', uses:[],
   summary:'스페인 헤레스 지역에서 팔로미노 포도로 만들어 솔레라 방식으로 숙성하는 강화 와인이에요.',
   detail:{
     making:'강화주. 팔로미노 포도즙을 완전히 발효시킨 뒤, 피노는 플로르(효모막)가 잘 자라도록 15%로 강화한다.',
     aging:'발효 뒤 와인 표면에 "플로르"라는 효모막이 생겨 산화를 막으며 숙성시킨다(생물학적 숙성). 대부분 아메리칸 오크통에서 "크리아데라스 이 솔레라" 방식으로 오래 숙성한다.',
     region:'스페인 남부 헤레스·산루카르 데 바라메다 등을 잇는 "마법의 삼각지대".',
+    taste:'피노는 연한 볏짚색에 아몬드·갓 구운 빵 반죽·들풀 향이 나고, 아주 드라이하며 짭짤한 여운이 있다.',
     subtypes:['피노','만사니야','아몬티야도','올로로소','팔로 코르타도'] },
   legal:{ protected:'원산지 명칭 Jerez-Xérès-Sherry' },
-  sources:[ LQS.sherry, LQS.sherry_fino ] },
+  brands:['곤살레스 비아스'],
+  sources:[ LQS.sherry, LQS.sherry_fino, lqs('González Byass 공식 사이트(브랜드 예시)', 'https://www.gonzalezbyass.com/') ] },
 
 { id:'madeira', kind:'type', emoji:'🍷', name:'마데이라', local:'Vinho da Madeira', en:'Madeira',
   origin:{ countries:['pt'], note:'마데이라섬' }, methods:['fermented','fortified'], materials:['grape'], styles:['madeira','fortified_wine'],
-  tech:[], aging:{ methods:['heated','oxidative','oak'] }, abv:null, flavors:[], uses:[],
+  tech:['mutage'], aging:{ methods:['heated','oxidative','oak'] }, abv:{ min:17, max:18, unit:'%', basis:'typical', note:'강화 후 약 17~18%' }, flavors:[], uses:[],
   summary:'와인을 데우거나(에스투파젱) 따뜻한 곳에 두어 숙성하는 포르투갈 마데이라섬의 강화 와인이에요.',
   detail:{
-    making:'강화주.',
+    making:'강화주. 96% 중성 포도 알코올을 넣어 발효를 멈추며, 넣는 때에 따라 드라이·미디엄 드라이·미디엄 리치·리치 네 가지가 된다.',
     aging:'에스투파젱: 스테인리스 통을 45~50℃의 뜨거운 물로 3개월 이상 데운 뒤 90일 이상 쉬게 한다. 칸테이루: 저장고 위층의 따뜻한 곳에서 나무통에 2년 이상 두며 산화 숙성한다.',
     subtypes:['세르시알 — 드라이','베르델류 — 오프드라이','보알 — 세미스위트','말바지아 — 스위트','틴타 네그라'] },
   legal:{ protected:'원산지 명칭 Madeira' },
-  sources:[ LQS.madeira, LQS.madeira_v ] },
+  brands:['블랜디스'],
+  sources:[ LQS.madeira, LQS.madeira_v, LQS.madeira_abv, lqs('Blandy’s 공식 사이트(브랜드 예시)', 'https://www.blandys.com/') ] },
 
 // ══════════════ 그리스 ══════════════
 { id:'ouzo', kind:'type', emoji:'🥃', name:'우조', local:'Ούζο', en:'Ouzo',
@@ -418,13 +485,13 @@ const LIQUORS = [
 
 { id:'tsipouro', kind:'type', emoji:'🥃', name:'치푸로', local:'Τσίπουρο', en:'Tsipouro',
   origin:{ countries:['gr'] }, methods:['distilled'], materials:['grape'], styles:['tsipouro'],
-  tech:[], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 포도 찌꺼기 증류주 최소 37.5%' }, flavors:[], uses:[],
   summary:'포도 찌꺼기로 만드는 그리스의 지리적 표시 증류주예요.',
   detail:{
     making:'EU 분류상 "포도 찌꺼기 증류주(grape marc spirit)"에 속한다. 치쿠디아도 같은 분류다.',
     diff:'이탈리아의 그라파와 같은 포도 찌꺼기 증류주 분류에 속한다.' },
   legal:{ protected:'지리적 표시 Tsipouro' },
-  sources:[ LQS.eu_ouzo ] },
+  sources:[ LQS.eu_ouzo, LQS.eu787 ] },
 
 // ══════════════ 사이다·맥주 ══════════════
 { id:'cider', kind:'type', emoji:'🍏', name:'사이다', local:'Cider · Cidre · Sidra', en:'Hard cider',
@@ -445,7 +512,7 @@ const LIQUORS = [
     making:'발효주(라거 맥주).',
     taste:'몰트 풍미가 복합적이고 쓴맛이 강하면서도 깔끔하다.',
     history:'1842년 플젠에서 처음 양조된 필스너 우르켈과 흔히 연결되며, 바이에른 출신 양조사 요제프 그롤이 처음 만든 것으로 알려져 있다.' },
-  sources:[ LQS.bjcp ] },
+  sources:[ LQS.bjcp, lqs('Pilsner Urquell 공식 사이트(브랜드 예시)', 'https://www.pilsnerurquell.com/') ] },
 
 { id:'german_pils', kind:'type', emoji:'🍺', name:'저먼 필스', local:'Pils · Pilsner', en:'German Pils',
   origin:{ countries:['de'] }, methods:['fermented'], materials:['barley'], styles:['pilsner','lager'],
@@ -466,7 +533,7 @@ const LIQUORS = [
   detail:{
     making:'발효주(라거 맥주).', taste:'몰트 위주지만 달지 않고, 쓴맛을 절제해 매일 마시기 좋은 맥주로 설명된다.',
     history:'1894년 뮌헨에서 필스너 계열 맥주와 경쟁하려고 만들어졌으며, 흔히 슈파텐이 처음 만든 것으로 꼽힌다.' },
-  sources:[ LQS.bjcp ] },
+  sources:[ LQS.bjcp, lqs('Spaten 공식 사이트(브랜드 예시)', 'https://www.spatenbraeu.de/') ] },
 
 { id:'weissbier', kind:'type', emoji:'🍺', name:'바이스비어', local:'Weißbier · Weizen', en:'Weissbier',
   origin:{ countries:['de'], note:'바이에른' }, methods:['fermented'], materials:['wheat','barley'], styles:['wheat','ale'],
@@ -476,7 +543,7 @@ const LIQUORS = [
   detail:{
     making:'발효주(밀맥주).', taste:'홉은 가볍고 탄산이 많으며, 바이첸 효모가 내는 바나나·정향 향이 특징이다.',
     history:'바이에른의 밀맥주 전통은 1500년대 이전으로 거슬러 올라가며, 한때 왕실만 양조할 수 있었다. 오늘날의 바이스비어는 1872년 슈나이더가 앰버 바이스비어를 만들면서 시작되었다.' },
-  sources:[ LQS.bjcp ] },
+  sources:[ LQS.bjcp, lqs('Schneider Weisse 공식 사이트(브랜드 예시)', 'https://www.schneider-weisse.de/') ] },
 
 { id:'lambic', kind:'type', emoji:'🍺', name:'람빅', local:'Lambiek · Lambic', en:'Lambic',
   origin:{ countries:['be'], note:'브뤼셀 주변(센 계곡·파요텐란트)' }, methods:['fermented'], materials:['wheat','barley'], styles:['lambic','sour'],
@@ -498,7 +565,7 @@ const LIQUORS = [
     making:'발효주(에일 맥주).', taste:'로스팅한 맛이 뚜렷하고 커피와 비슷하다. 쌉쌀하고 드라이한 것부터 약간 달콤한 것까지 있다.',
     history:'런던 포터에서 갈라져 나와 더 진하고 "스타우트(튼튼한)"한 몸체를 갖게 되었다. 기네스는 1799년 포터만 만들다가 1810년 무렵 "더 진한 포터"를 만들기 시작했다.',
     diff:'포터에서 발전한 스타일로, 로스팅 풍미가 더 강조된다.' },
-  sources:[ LQS.bjcp ] },
+  sources:[ LQS.bjcp, lqs('Guinness 공식 사이트(브랜드 예시)', 'https://www.guinness.com/') ] },
 
 { id:'english_porter', kind:'type', emoji:'🍺', name:'잉글리시 포터', local:'English Porter', en:'English Porter',
   origin:{ countries:['eng'], note:'런던' }, methods:['fermented'], materials:['barley'], styles:['porter','ale'],
@@ -523,7 +590,7 @@ const LIQUORS = [
 // ══════════════ 아메리카 ══════════════
 { id:'bourbon', kind:'type', emoji:'🥃', name:'버번 위스키', local:'Bourbon whisky', en:'Bourbon',
   origin:{ countries:['us'] }, methods:['distilled'], materials:['corn','grain'], styles:['whisky'],
-  tech:[], aging:{ methods:['oak'], vessel:'안쪽을 그을린 새 오크통', period:'스트레이트 버번은 2년 이상' }, abv:null,
+  tech:[], aging:{ methods:['oak'], vessel:'안쪽을 그을린 새 오크통', period:'스트레이트 버번은 2년 이상' }, abv:{ min:40, unit:'%', basis:'law', note:'위스키는 40%(80프루프) 이상으로 병입' },
   flavors:[], uses:[],
   summary:'옥수수를 51% 이상 쓴 곡물로 만들어, 그을린 새 오크통에 담는 미국 위스키예요.',
   detail:{
@@ -531,11 +598,12 @@ const LIQUORS = [
     subtypes:['스트레이트 버번 — 그을린 새 오크통에서 2년 이상 숙성'],
     legal:'미국 연방규정(27 CFR Part 5)이 정체성 기준으로 정한다.' },
   legal:{ protected:'미국 연방규정의 정체성 기준', rules:['옥수수 51% 이상','160프루프 이하 증류','그을린 새 오크통','통 입고 125프루프 이하'] },
-  sources:[ LQS.ttb ] },
+  brands:['메이커스 마크','짐 빔'],
+  sources:[ LQS.ttb, LQS.ttb_whisky, lqs('Maker’s Mark 공식 사이트(브랜드 예시)', 'https://www.makersmark.com/'), lqs('Jim Beam 공식 사이트(브랜드 예시)', 'https://www.jimbeam.com/') ] },
 
 { id:'tequila', kind:'type', emoji:'🌵', name:'데킬라', local:'Tequila', en:'Tequila',
   origin:{ countries:['mx'], note:'할리스코 등 5개 주 181개 시' }, methods:['distilled'], materials:['agave'], styles:['tequila'],
-  tech:[], aging:{ methods:['unaged','oak'] }, abv:null, flavors:[], uses:['cocktail_base'],
+  tech:[], aging:{ methods:['unaged','oak'] }, abv:{ min:35, max:55, unit:'%', basis:'law' }, flavors:[], uses:['cocktail_base'],
   summary:'블루 아가베(Agave tequilana Weber)로만 만드는 멕시코의 원산지 명칭 증류주예요.',
   detail:{
     making:'증류주. 블루 아가베(Agave tequilana Weber)만 쓸 수 있고, 멕시코 공식 표준 NOM-006-SCFI-2012의 방법을 따라야 한다.',
@@ -543,11 +611,12 @@ const LIQUORS = [
     region:'할리스코·미초아칸·과나후아토·나야리트·타마울리파스 5개 주의 181개 시가 원산지 명칭 지역이다.',
     diff:'메스칼은 여러 아가베 종을 쓸 수 있지만, 데킬라는 블루 아가베만 쓴다.' },
   legal:{ protected:'원산지 명칭 Tequila', rules:['블루 아가베만 사용','NOM-006-SCFI-2012'] },
-  sources:[ LQS.crt, LQS.nom006 ] },
+  brands:['호세 쿠엘보','패트론'],
+  sources:[ LQS.crt, LQS.nom006, LQS.nom006_dof, lqs('José Cuervo 공식 사이트(브랜드 예시)', 'https://www.cuervo.com/'), lqs('Patrón 공식 사이트(브랜드 예시)', 'https://www.patrontequila.com/') ] },
 
 { id:'mezcal', kind:'type', emoji:'🌵', name:'메스칼', local:'Mezcal', en:'Mezcal',
   origin:{ countries:['mx'], note:'와하카 등' }, methods:['distilled'], materials:['agave'], styles:['mezcal'],
-  tech:[], aging:{ methods:['varies'] }, abv:null, flavors:[], uses:[],
+  tech:[], aging:{ methods:['varies'] }, abv:{ min:35, max:55, unit:'%', basis:'law' }, flavors:[], uses:[],
   summary:'여러 종의 아가베(마게이)로 만드는 멕시코의 원산지 명칭 증류주예요.',
   detail:{
     making:'증류주. 아가베 속 식물의 즙을 발효시켜 증류한다. 에스파딘(Agave angustifolia) 등 여러 종을 쓸 수 있다.',
@@ -555,7 +624,7 @@ const LIQUORS = [
     region:'와하카 등 원산지 명칭을 받은 멕시코의 여러 주.',
     diff:'데킬라는 블루 아가베 한 종만 쓰지만 메스칼은 여러 아가베 종을 쓸 수 있다.' },
   legal:{ protected:'원산지 명칭 Mezcal', rules:['NOM-070-SCFI-2016'] },
-  sources:[ LQS.nom070 ] },
+  sources:[ LQS.nom070, LQS.nom070_dof ] },
 
 { id:'rum', kind:'type', emoji:'🥃', name:'럼', local:'Rum · Ron · Rhum', en:'Rum',
   origin:{ countries:[], note:'사탕수수를 기르는 여러 나라' }, methods:['distilled'], materials:['sugarcane','molasses'], styles:['rum'],
@@ -603,13 +672,13 @@ const LIQUORS = [
 
 { id:'airag', kind:'type', emoji:'🥛', name:'아이락', local:'Айраг (아이락)', en:'Airag',
   origin:{ countries:['mn'] }, methods:['fermented'], materials:['mare_milk'], styles:['airag'],
-  tech:['spontaneous'], aging:{ methods:[], vessel:'허후르(소가죽 통)' }, abv:null, flavors:[], uses:['ritual'],
+  tech:['spontaneous'], aging:{ methods:[], vessel:'허후르(소가죽 통)' }, abv:{ min:1.4, max:2.3, unit:'%', basis:'measured', note:'울란바토르 시료 측정값 1.44~2.33%' }, flavors:[], uses:['ritual'],
   summary:'말젖을 소가죽 통(허후르)에 넣고 수백 번 저어 발효시키는 몽골의 술이에요.',
   detail:{
     making:'발효주. 말젖을 짜 식힌 뒤 발효 종을 남겨 둔 허후르(소가죽 통) 안에서 500번 넘게 저어 발효시킨다.',
     history:'유목민 부모에게서 자식에게 이어져 온 기술로, 2019년 「허후르에서 아이락을 만드는 전통 기술과 관련 관습」이 유네스코 인류무형문화유산이 되었다.',
     pairing:'몽골 사람들의 일상 음식이며, 잔치와 제의·축복에서 신성한 음료로 쓰인다.' },
-  sources:[ LQS.airag ] },
+  sources:[ LQS.airag, LQS.airag_abv ] },
 
 { id:'palm_wine', kind:'type', emoji:'🌴', name:'야자주', local:'Palm wine · Toddy', en:'Palm wine',
   origin:{ countries:[], note:'아프리카·남아시아·동남아시아·중앙아메리카' }, methods:['fermented'], materials:['palm_sap'], styles:['palm_wine','local_ferm'],
@@ -622,7 +691,7 @@ const LIQUORS = [
 
 { id:'tej', kind:'type', emoji:'🍯', name:'테지', local:'ጠጅ (테지)', en:'Tej',
   origin:{ countries:['et'] }, methods:['fermented'], materials:['honey','herb'], styles:['tej','local_ferm'],
-  tech:['spontaneous'], aging:{ methods:[], period:'발효 약 15~30일' }, abv:null,
+  tech:['spontaneous'], aging:{ methods:[], period:'발효 약 15~30일' }, abv:{ min:10.1, max:12.0, unit:'%', basis:'measured', note:'한 연구의 시료 평균 11.04%(숙성 10~30일에 따라 10.1~12.0%)' },
   props:{ color:'노란빛', turbidity:'뿌옇게 흐림', carbonation:'약간 기포가 있음' },
   flavors:['honey','sweet','sour'], flavorBasis:'general', uses:[],
   summary:'꿀과 물에 게쇼(갈매나무 종류)의 잎·줄기를 넣어 자연발효시키는 에티오피아의 꿀술이에요.',
@@ -630,17 +699,204 @@ const LIQUORS = [
     making:'발효주. 꿀·물·게쇼(Rhamnus prinoides)의 잎과 줄기를 섞어 자연발효시킨다. 게쇼는 맛을 내려고 넣는다.',
     process:'날씨에 따라 15~30일쯤 발효한다. 원료나 도구에 있던 미생물이 발효를 맡는다.',
     taste:'노란빛에 달콤하고 시큼한 맛이 나며, 기포가 조금 있고 뿌옇다.' },
-  sources:[ LQS.tej ] },
+  sources:[ LQS.tej, LQS.tej_abv ] },
+
+// ══════════════ 확장: 한국 전통주 ══════════════
+{ id:'andong_soju', kind:'type', emoji:'🏺', name:'안동소주', local:'안동소주(安東燒酒)', en:'Andong soju',
+  origin:{ countries:['kr'], note:'경상북도 안동' }, methods:['distilled'], materials:['rice'], styles:['soju_trad','kr_trad_spirit'],
+  tech:['nuruk','pot'], aging:{ methods:[] }, abv:{ min:45, max:45, unit:'%', basis:'typical', note:'백과사전 설명: 45도' }, flavors:[], uses:[],
+  summary:'멥쌀이나 찹쌀 고두밥과 누룩으로 빚은 술을 소줏고리로 내린 안동의 증류식 소주예요.',
+  detail:{
+    making:'증류주. 고두밥에 누룩 등을 섞어 따뜻한 곳에서 2~3일 발효시킨 뒤 소줏고리로 증류한다. 위에 찬물을 갈아 부어 뚜껑 밑에 맺히는 이슬 같은 술을 받아낸다.',
+    history:'1915년 안동시 남문동에 세워진 안동주조회사가 「제비원표」 소주를 생산했다. 1962년 곡물로 술을 빚는 것이 금지되며 끊겼다가 1990년대에 되살아났다. 1987년 경상북도 무형문화재(현 무형유산)로 지정되었다.',
+    region:'경상북도 안동 지방에서 빚어 왔다.' },
+  sources:[ enc('E0034630','안동소주') ] },
+
+{ id:'munbaeju', kind:'type', emoji:'🍐', name:'문배주', local:'문배주', en:'Munbaeju',
+  origin:{ countries:['kr'], note:'평안도에서 전승, 지금은 경기도 김포' }, methods:['distilled'], materials:['grain'], styles:['kr_trad_spirit'],
+  tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:['pear'], flavorBasis:'general', uses:[],
+  summary:'술의 향기가 문배나무 열매 향과 같아 이름이 붙은, 평안도에서 전해 온 국가무형유산 술이에요.',
+  detail:{
+    making:'누룩으로 빚어 증류하는 과정을 거친다(백과사전 사진 설명: 누룩 섞기 → 술독 담그기 → 증류).',
+    history:'1986년 11월 중요무형문화재(현 국가무형유산)로 지정되었다.',
+    taste:'과일을 넣지 않는데도 술의 향기가 문배(돌배의 한 종류) 열매의 향과 같다고 한다.',
+    region:'평안도 지방에서 전승되어 왔다.' },
+  sources:[ enc('E0019484','문배주') ] },
+
+{ id:'gyodong_beopju', kind:'type', emoji:'🍶', name:'경주 교동법주', local:'경주교동법주(慶州校洞法酒)', en:'Gyeongju Gyodong Beopju',
+  origin:{ countries:['kr'], note:'경상북도 경주 교동' }, methods:['fermented'], materials:['rice'], styles:['kr_trad_ferm'],
+  tech:[], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  summary:'경주 교동 최부잣집에서 대대로 빚어 온, 국가무형유산으로 지정된 술이에요.',
+  detail:{
+    making:'발효주. 경주 교동의 최씨 집안에서 대대로 빚어 왔다.',
+    history:'처음 빚은 사람은 조선 숙종(재위 1674~1720) 때 궁중 음식을 맡은 사옹원의 참봉을 지낸 최국준으로 전해진다. 1986년 문배주·면천두견주와 함께 국가무형유산(당시 중요무형문화재)으로 지정되었다.',
+    region:'경상북도 경주시 교동.' },
+  sources:[ enc('E0002828','경주 교동법주'), LQS.gyodong_her ] },
+
+{ id:'dugyeonju', kind:'type', emoji:'🌸', name:'면천 두견주', local:'면천두견주(沔川杜鵑酒)', en:'Myeoncheon Dugyeonju',
+  origin:{ countries:['kr'], note:'충청남도 당진 면천' }, methods:['fermented','infused'], materials:['rice','flower'], styles:['kr_trad_ferm'],
+  tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:['floral'], flavorBasis:'general', uses:[],
+  summary:'진달래꽃(두견화)을 넣어 빚는 충남 당진 면천의 국가무형유산 술이에요.',
+  detail:{
+    making:'발효주. 누룩·고두밥에 진달래꽃을 넣어 술독에 담근다 — 백과사전은 "청주에 진달래꽃을 담가 빚는 술"이라 설명한다.',
+    history:'1986년 중요무형문화재(현 국가무형유산)로 지정되었다. 기능보유자 박승규는 증조모부터 4대째 이 술 빚는 기능을 잇고 있다.',
+    region:'충청남도 당진시 면천 지방의 향토술.' },
+  sources:[ enc('E0018180','면천 두견주') ] },
+
+{ id:'sogokju', kind:'type', emoji:'🍶', name:'한산 소곡주', local:'한산소곡주(韓山素麯酒)', en:'Hansan Sogokju',
+  origin:{ countries:['kr'], note:'충청남도 서천 한산' }, methods:['fermented'], materials:['rice'], styles:['kr_trad_ferm'],
+  tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  props:{ color:'샛노란 빛(100일 묻었다 꺼낸 술로 전해짐)' },
+  summary:'멥쌀 떡과 가루누룩으로 밑술을, 찹쌀 술밥으로 덧술을 빚는 충남 한산의 이름난 술이에요.',
+  detail:{
+    making:'발효주. 멥쌀로 무리떡을 쪄 누룩가루와 묽게 섞어 밑술을 만들고, 다시 찹쌀로 술밥을 쪄 곱게 친 가루누룩과 함께 빚는다.',
+    history:'백제가 망한 뒤 백제 유민들이 나라 잃은 슬픔을 달래려 빚어 마신 백제 궁중 술이라고 전해진다. 100일 동안 땅속에 묻었다 열면 끈끈하고 샛노란 술이 된다고 한다. 1979년 충청남도 무형문화재로 지정되었다.',
+    region:'충청남도 서천군 한산면을 중심으로 전승된다.' },
+  sources:[ enc('E0061685','한산 소곡주') ] },
+
+{ id:'jindo_hongju', kind:'type', emoji:'🍷', name:'진도홍주', local:'진도홍주(珍島紅酒)', en:'Jindo Hongju',
+  origin:{ countries:['kr'], note:'전라남도 진도' }, methods:['distilled'], materials:['herb'], styles:['kr_trad_spirit'],
+  tech:[], aging:{ methods:[] }, abv:null, props:{ color:'담홍색(지초 뿌리)' }, flavors:[], uses:[],
+  summary:'지초 뿌리를 넣어 내린, 맑은 붉은빛의 진도 전통 증류주예요.',
+  detail:{
+    making:'증류주. 불의 세기를 조절하며 8~10시간 내리면 맑고 끈적하며 떫은 담홍색 홍주가 나온다.',
+    process:'붉은빛은 지초 뿌리를 말린 「지초건근」에서 나온다.',
+    history:'고려 때 원나라에서 들어왔다는 소주에서 근원을 찾는다. 1994년 12월 전라남도 무형문화재(현 무형유산)로 지정되었으나, 지금은 거의 사라져 가고 있다고 기록되어 있다.' },
+  sources:[ enc('E0054652','진도홍주'), LQS.soju_hist ] },
+
+// ══════════════ 확장: 중국 ══════════════
+{ id:'shaoxing', kind:'type', emoji:'🏺', name:'사오싱주', local:'紹興黃酒 (사오싱 황주)', en:'Shaoxing Huangjiu',
+  origin:{ countries:['cn'], note:'저장성 사오싱' }, methods:['fermented'], materials:['rice','wheat'], styles:['huangjiu','rice_wine'],
+  tech:['qu','yeast'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  summary:'사오싱 지역에서 찹쌀과 밀 곡(麴)으로 빚는, 지리적 표시로 보호되는 황주예요.',
+  detail:{
+    making:'발효주. 쌀을 밀 곡과 효모로 발효시킨다. 찹쌀로 빚은 황주가 향미가 더 좋다는 연구가 있다.',
+    process:'사오싱이 황주의 주산지가 된 이유 가운데 하나로 감호(鑒湖) 같은 좋은 물이 꼽힌다. 감호 물로 빚은 황주는 에스터·단 향·알코올 향이 더 두드러졌다는 연구가 있다.',
+    legal:'사오싱 황주는 지리적 표시로 보호되는 제품이다.',
+    diff:'황주는 지역에 따라 사오싱·팡셴·다이셴·지모 황주 등으로 나뉜다.' },
+  legal:{ protected:'지리적 표시 紹興黃酒' },
+  sources:[ LQS.shaoxing_water, LQS.shaoxing_rice ] },
+
+{ id:'sauce_baijiu', kind:'type', emoji:'🏺', name:'장향형 백주', local:'醬香型白酒 (마오타이 향형)', en:'Sauce-aroma baijiu',
+  origin:{ countries:['cn'], note:'구이저우성 츠수이강 유역' }, methods:['distilled'], materials:['sorghum','wheat'], styles:['baijiu'],
+  tech:['qu','solid_ferm'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  summary:'수수를 1년에 아홉 번 찌고 여덟 번 발효해 일곱 번 증류하는, 마오타이로 대표되는 백주예요.',
+  detail:{
+    making:'증류주. 「12987」 공정 — 1년 한 주기, 원료 2번 투입, 9번 찌기, 8번 발효, 7번 술 받기.',
+    process:'원료는 주로 수수다. 밀로만 만든 고온 대곡(60~65℃에서 띄움)을 발효제로 쓴다.',
+    region:'핵심 산지는 츠수이강(赤水河) 유역으로, 물이 맑고 미량 원소가 많다고 설명된다.' },
+  brands:['구이저우 마오타이(貴州茅台)'],
+  sources:[ LQS.sauce_factors, LQS.maotai_style, LQS.moutai ] },
+
+{ id:'tsingtao', kind:'product', emoji:'🍺', name:'칭다오 맥주', local:'青島啤酒', en:'Tsingtao',
+  origin:{ countries:['cn'], note:'산둥성 칭다오' }, methods:['fermented'], materials:['barley'], styles:['lager'],
+  tech:['yeast'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
+  summary:'1903년 칭다오에서 문을 연 맥주 회사에서 이어져 온 중국 맥주예요.',
+  detail:{
+    making:'발효주(맥주).',
+    history:'전신은 1903년 8월 칭다오에서 독일·영국 이주민이 세운 「앵글로-저먼 브루어리」다. 회사는 이곳을 중국에서 가장 오래된 맥주 공장으로 소개한다.' },
+  sources:[ LQS.tsingtao ] },
+
+// ══════════════ 확장: 일본 ══════════════
+{ id:'mirin', kind:'type', emoji:'🍶', name:'미린', local:'本みりん (혼미린)', en:'Mirin',
+  origin:{ countries:['jp'] }, methods:['compound'], materials:['rice'], styles:['mirin'],
+  tech:['koji'], aging:{ methods:[] }, abv:{ max:15, maxText:'미만', unit:'%', basis:'law', note:'주세법상 15도 미만(실제 약 14%)' }, flavors:['sweet'], flavorBasis:'general', uses:['cooking'],
+  summary:'찹쌀·쌀 코지를 소주나 알코올에 넣어 숙성시킨 일본의 단 술로, 주로 요리에 써요.',
+  detail:{
+    making:'찹쌀, 쌀 코지, 소주 또는 알코올을 주원료로 한다. 코지가 찐 쌀의 녹말을 당으로 바꾸지만, 술덧에서 알코올 발효는 일어나지 않는다 — 알코올은 원료인 소주·알코올에서 온다.',
+    legal:'일본 주세법상 미린은 알코올분 15도 미만, 엑기스분 40도 이상이다.',
+    taste:'당분이 약 45%로 매우 달다.',
+    pairing:'조미료로 요리에 많이 쓴다.' },
+  sources:[ LQS.nta_mirin, LQS.nta_def ] },
+
+{ id:'doburoku', kind:'type', emoji:'🍶', name:'도부로쿠', local:'濁酒・どぶろく', en:'Doburoku',
+  origin:{ countries:['jp'] }, methods:['fermented'], materials:['rice'], styles:['doburoku','rice_wine'],
+  tech:['koji'], aging:{ methods:[] }, abv:null, props:{ turbidity:'거르지 않아 흐림' }, flavors:[], uses:[],
+  summary:'쌀·쌀 코지·물로 빚어 거르지 않은, 일본의 탁한 쌀 발효주예요.',
+  detail:{
+    making:'발효주. 쌀·쌀 코지·물로 빚어 거르지 않은 술로, 주세법상 「기타 양조주」에 속한다.',
+    legal:'구조개혁 특구에서는 농가가 최소 제조량(연 6킬로리터) 기준 없이 도부로쿠를 만들 수 있다.',
+    diff:'같은 원료로 빚어 거른 것이 사케(청주)다. 한국의 막걸리처럼 거르지 않은 술이다.' },
+  sources:[ LQS.nta_doburoku ] },
+
+{ id:'japanese_whisky', kind:'type', emoji:'🥃', name:'재패니즈 위스키', local:'ジャパニーズウイスキー', en:'Japanese whisky',
+  origin:{ countries:['jp'] }, methods:['distilled'], materials:['barley','grain'], styles:['whisky'],
+  tech:[], aging:{ methods:['oak','other_wood'], period:'3년 이상(일본 국내)', vessel:'700L 이하 나무통' },
+  abv:{ min:40, unit:'%', basis:'law', note:'업계 자율 기준: 병입 40도 이상' }, flavors:[], uses:[],
+  summary:'일본 안에서 당화·발효·증류하고 나무통에서 3년 이상 숙성해야 이름을 쓸 수 있는 위스키예요.',
+  detail:{
+    making:'증류주. 원료는 맥아(반드시 사용)·곡물·일본에서 뜬 물로 한정한다. 당화·발효·증류는 일본 안의 증류소에서, 증류 때 알코올분은 95도 미만.',
+    aging:'700리터 이하 나무통에 담아 다음 날부터 3년 이상 일본에서 저장한다.',
+    legal:'일본양주주조조합이 2021년 2월 12일 정해 4월 1일부터 시행한 자율 기준. 일본에서 병입하고 40도 이상이어야 하며, 색을 맞추기 위한 캐러멜은 쓸 수 있다.' },
+  legal:{ protected:'재패니즈 위스키 표시 기준(업계 자율, 2021)' },
+  sources:[ LQS.jp_whisky ] },
+
+// ══════════════ 확장: 이탈리아 ══════════════
+{ id:'campari', kind:'product', emoji:'🔴', name:'캄파리', local:'Campari', en:'Campari',
+  origin:{ countries:['it'], note:'노바라에서 시작, 밀라노' }, methods:['liqueur','infused'], materials:['herb'], styles:['herbal_liqueur'],
+  tech:['infusion'], aging:{ methods:[] }, abv:{ min:24, max:24, unit:'%', basis:'product' }, flavors:['bitter','herbal'], flavorBasis:'product', uses:['aperitif','cocktail_base'],
+  summary:'1860년 가스파레 캄파리가 만든 붉은 쓴맛 식전주로, 네그로니·아메리카노에 들어가요.',
+  detail:{
+    making:'쓴 허브·향기 나는 식물·과일을 알코올과 물에 우려 만든다. 레시피는 비밀이다.',
+    history:'1860년 리큐르 장인 가스파레 캄파리가 노바라에서 처음 만들었다. 1915년 밀라노 갤러리아 비토리오 에마누엘레 2세에 「카메리노」 바가 문을 열었고, 1932년 병에 든 「캄파리 소다」가 나왔다.',
+    pairing:'네그로니·아메리카노의 재료로 쓰인다.' },
+  sources:[ LQS.campari_story, LQS.campari_hist, LQS.campari_prod ] },
+
+{ id:'aperol', kind:'product', emoji:'🍊', name:'아페롤', local:'Aperol', en:'Aperol',
+  origin:{ countries:['it'], note:'파도바' }, methods:['liqueur','infused'], materials:['herb'], styles:['herbal_liqueur'],
+  tech:['infusion'], aging:{ methods:[] }, abv:{ min:11, max:11, unit:'%', basis:'product' }, flavors:['bitter','herbal','citrus'], flavorBasis:'product', uses:['aperitif','cocktail_base'],
+  summary:'1919년 파도바에서 만들어진 도수 11%의 가벼운 주황빛 식전주예요.',
+  detail:{
+    making:'여러 허브와 뿌리를 우려 만들며, 레시피는 지금까지 비밀이다.',
+    history:'바르비에리 형제가 1912년부터 개발해 1919년 파도바 국제 박람회에서 처음 선보였다. 이름은 식전주를 뜻하는 프랑스어 「아페로」에서 따왔다.',
+    pairing:'프로세코·탄산수와 섞는 아페롤 스프리츠로 많이 마신다.' },
+  sources:[ LQS.aperol_hist ] },
+
+{ id:'prosecco', kind:'type', emoji:'🥂', name:'프로세코', local:'Prosecco DOC', en:'Prosecco',
+  origin:{ countries:['it'], note:'베네토·프리울리베네치아줄리아' }, methods:['fermented'], materials:['grape'], styles:['sparkling','wine'],
+  tech:['second_tank'], aging:{ methods:[] }, abv:{ min:11, unit:'%', basis:'law', note:'스푸만테(발포성) 최소 11%' }, props:{ carbonation:'있음(탱크 속 2차 발효)' }, flavors:[], uses:['cocktail_base'],
+  summary:'글레라 포도로 만들고 큰 압력 탱크 속에서 거품을 내는 이탈리아 스파클링 와인이에요.',
+  detail:{
+    making:'발효주(스파클링 와인). 기본 와인을 설탕·효모와 함께 밀폐된 스테인리스 압력 탱크(오토클레이브)에 넣어 2차 발효시키는 샤르마-마르티노티 방식. 탱크에서 최소 30일(로제는 60일)~6개월 둔다.',
+    process:'글레라 품종을 85% 이상 써야 한다.',
+    region:'베네토주 5개 현과 프리울리베네치아줄리아주 4개 현.',
+    diff:'샴페인은 병 속에서 2차 발효하지만, 프로세코는 큰 탱크 속에서 한다.' },
+  legal:{ protected:'DOC Prosecco' },
+  sources:[ LQS.prosecco, LQS.prosecco_glera, LQS.prosecco_reg ] },
+
+{ id:'vermouth_torino', kind:'type', emoji:'🍷', name:'베르무트 디 토리노', local:'Vermouth di Torino', en:'Vermouth di Torino',
+  origin:{ countries:['it'], note:'토리노(피에몬테)' }, methods:['aromatized','fortified'], materials:['grape','herb'], styles:['vermouth','aromatized_wine'],
+  tech:['infusion'], aging:{ methods:[] }, abv:{ min:14.5, max:22, maxText:'미만', unit:'%', basis:'law', note:'가향 와인: 실제 14.5% 이상 22% 미만' }, flavors:['herbal','bitter'], flavorBasis:'general', uses:['aperitif','cocktail_base'],
+  summary:'쑥 종류(아르테미시아)로 맛을 낸 가향 와인에 알코올을 더한 술로, 토리노가 지리적 표시를 가졌어요.',
+  detail:{
+    making:'EU 규정상 베르무트는 알코올을 더한 가향 와인이며, 특유의 맛을 아르테미시아속 식물로 낸다.',
+    legal:'「Vermut di Torino / Vermouth di Torino」는 EU 가향 와인 규정에 등록된 이탈리아 지리적 표시다.',
+    pairing:'네그로니·아메리카노·마티니 같은 칵테일에 스위트·드라이 베르무트가 들어간다.' },
+  legal:{ protected:'지리적 표시 Vermouth di Torino' },
+  sources:[ LQS.eu251, LQS.eu251_sum, iba('negroni','Negroni') ] },
+
+{ id:'marsala', kind:'type', emoji:'🍷', name:'마르살라', local:'Marsala', en:'Marsala',
+  origin:{ countries:['it'], note:'시칠리아 서부' }, methods:['fermented','fortified'], materials:['grape'], styles:['marsala','fortified_wine'],
+  tech:[], aging:{ methods:[] }, abv:null, props:{ color:'짙은 호박색' }, flavors:['sweet'], flavorBasis:'general', uses:['cooking'],
+  summary:'1773년부터 시칠리아에서 만든, 졸인 포도즙을 더하는 강화 와인이에요.',
+  detail:{
+    making:'강화주. 포도즙을 끓여 3분의 1로 졸여 더하기 때문에 짙은 호박색과 탄 설탕 같은 맛이 난다.',
+    history:'1773년부터 만들어졌다. 영국 상인 존 우드하우스가 마르살라에 와인 공장을 열어 영국과의 마르살라 와인 무역을 키웠다.',
+    taste:'드라이한 것부터 단 것까지 있다.',
+    pairing:'요리에도 자주 쓴다.',
+    region:'시칠리아 서부 마르살라 일대(트라파니).' },
+  legal:{ protected:'DOC Marsala' },
+  sources:[ LQS.marsala ] },
 
 // ══════════════ 칵테일 (IBA 공식 레시피) ══════════════
 { id:'negroni', kind:'cocktail', emoji:'🍸', name:'네그로니', local:'Negroni', en:'Negroni',
-  origin:{ countries:[] }, methods:['mixed'], materials:['spirits'], styles:['negroni'], tech:['blending'], aging:{ methods:[] }, abv:null,
+  origin:{ countries:['it'], note:'피렌체' }, methods:['mixed'], materials:['spirits'], styles:['negroni'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['bitter'], flavorBasis:'general', uses:['aperitif'],
   summary:'진·캄파리·스위트 베르무트를 같은 양으로 섞는 칵테일이에요.',
   recipe:{ base:['gin'], items:[['진','30 ml'],['캄파리(비터)','30 ml'],['스위트 레드 베르무트','30 ml']],
     method:'얼음을 채운 차가운 올드패션드 잔에 모두 붓고 살살 젓는다.' },
-  detail:{ diff:'진 대신 탄산수를 넣으면 아메리카노와 비슷해진다(아메리카노는 캄파리·베르무트·탄산수).' },
-  sources:[ iba('negroni','Negroni') ] },
+  detail:{ history:'1919년 피렌체의 카페 카소니에서 카밀로 네그로니 백작이 늘 마시던 아메리카노에 탄산수 대신 진을 넣어 달라고 한 데서 생겼다. 바텐더는 레몬 대신 오렌지 조각으로 장식했다.', diff:'진 대신 탄산수를 넣으면 아메리카노와 비슷해진다(아메리카노는 캄파리·베르무트·탄산수).' },
+  sources:[ iba('negroni','Negroni'), LQS.negroni_hist ] },
 
 { id:'martini', kind:'cocktail', emoji:'🍸', name:'드라이 마티니', local:'Dry Martini', en:'Dry Martini',
   origin:{ countries:[] }, methods:['mixed'], materials:['spirits'], styles:['martini'], tech:['blending'], aging:{ methods:[] }, abv:null,
@@ -659,35 +915,38 @@ const LIQUORS = [
   sources:[ iba('mojito','Mojito') ] },
 
 { id:'daiquiri', kind:'cocktail', emoji:'🍸', name:'다이키리', local:'Daiquiri', en:'Daiquiri',
-  origin:{ countries:[] }, methods:['mixed'], materials:['spirits','citrus'], styles:['daiquiri'], tech:['blending'], aging:{ methods:[] }, abv:null,
+  origin:{ countries:['cu'], note:'아바나' }, methods:['mixed'], materials:['spirits','citrus'], styles:['daiquiri'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['citrus','sour'], flavorBasis:'general', uses:[],
   summary:'화이트 럼·라임즙·설탕을 흔들어 만드는 칵테일이에요.',
+  detail:{ history:'쿠바 아바나에서 발전한 칵테일로, 바 「라 플로리다(엘 플로리디타)」의 바텐더 콘스탄티노 리바라이과 베르트가 여러 변형을 완성해 이름을 알렸다.' },
   recipe:{ base:['rum'], items:[['쿠바산 화이트 럼','60 ml'],['생라임즙','20 ml'],['고운 설탕','바 스푼 2개']],
     method:'셰이커에 모두 넣고 저어 설탕을 녹인 뒤, 얼음을 넣고 흔들어 차가운 칵테일 잔에 걸러 따른다.' },
-  sources:[ iba('daiquiri','Daiquiri') ] },
+  sources:[ iba('daiquiri','Daiquiri'), LQS.daiquiri_hist ] },
 
 { id:'mai_tai', kind:'cocktail', emoji:'🍹', name:'마이타이', local:'Mai-Tai', en:'Mai Tai',
-  origin:{ countries:[] }, methods:['mixed'], materials:['spirits','citrus'], styles:['mai_tai'], tech:['blending'], aging:{ methods:[] }, abv:null,
+  origin:{ countries:['us'], note:'캘리포니아 오클랜드' }, methods:['mixed'], materials:['spirits','citrus'], styles:['mai_tai'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['citrus','nutty','sweet'], flavorBasis:'general', uses:[],
   summary:'두 가지 럼에 오렌지 큐라소·아몬드 시럽·라임즙을 더한 칵테일이에요.',
+  detail:{ history:'1944년 트레이더 빅이 오클랜드의 자기 식당에서 처음 만들었다. 맛을 본 손님이 타히티 말로 「마이 타이 — 로아 애(세상 밖의 맛, 최고)」라고 한 데서 이름이 붙었다.' },
   recipe:{ base:['rum'], items:[['앰버 자메이카 럼','30 ml'],['마르티니크 당밀 럼','30 ml'],['오렌지 큐라소','15 ml'],['오르자 시럽(아몬드)','15 ml'],['생라임즙','30 ml'],['설탕 시럽','7.5 ml']],
     method:'얼음과 함께 셰이커에 넣어 흔든 뒤 더블 록 잔이나 하이볼 잔에 따른다. 파인애플·민트·라임 껍질로 장식.' },
-  sources:[ iba('mai-tai','Mai-Tai') ] },
+  sources:[ iba('mai-tai','Mai-Tai'), LQS.maitai_hist ] },
 
 { id:'americano', kind:'cocktail', emoji:'🍸', name:'아메리카노(칵테일)', local:'Americano', en:'Americano',
-  origin:{ countries:[] }, methods:['mixed'], materials:['spirits'], styles:['americano'], tech:['blending'], aging:{ methods:[] }, abv:null,
+  origin:{ countries:['it'], note:'밀라노' }, methods:['mixed'], materials:['spirits'], styles:['americano'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['bitter'], flavorBasis:'general', uses:['aperitif'],
   summary:'캄파리와 스위트 베르무트에 탄산수를 더한 칵테일이에요(커피 아메리카노와 다름).',
   recipe:{ base:[], items:[['캄파리(비터)','30 ml'],['스위트 레드 베르무트','30 ml'],['탄산수','조금']],
     method:'얼음을 채운 올드패션드 잔에 바로 섞는다. 오렌지 반 조각과 레몬 껍질로 장식.' },
-  detail:{ diff:'네그로니에서 진을 빼고 탄산수를 넣은 구성과 같다.' },
-  sources:[ iba('americano','Americano') ] },
+  detail:{ history:'1860년 무렵 밀라노의 카페 캄파리에서 「밀라노-토리노」라는 이름으로 처음 냈고, 미국 관광객에게 인기를 얻으면서 아메리카노로 불리게 되었다.', diff:'네그로니에서 진을 빼고 탄산수를 넣은 구성과 같다.' },
+  sources:[ iba('americano','Americano'), LQS.campari_hist ] },
 
 { id:'spritz', kind:'cocktail', emoji:'🍹', name:'스프리츠', local:'Spritz', en:'Spritz',
-  origin:{ countries:[] }, methods:['mixed'], materials:['spirits','grape'], styles:['spritz'], tech:['blending'], aging:{ methods:[] }, abv:null,
+  origin:{ countries:['it'] }, methods:['mixed'], materials:['spirits','grape'], styles:['spritz'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['bitter','citrus'], flavorBasis:'general', uses:['aperitif'],
   summary:'프로세코(스파클링 와인)와 아페롤에 탄산수를 더한 칵테일이에요.',
+  detail:{ history:'아페롤은 1919년 파도바에서 만들어졌고, 프로세코 3·아페롤 2·탄산수 조금으로 만드는 아페롤 스프리츠는 1950년대에 이탈리아의 아페리티보 자리에서 인기를 얻었다. 이름은 독일어 「스프리처(물을 튀기다)」에서 따왔다.' },
   recipe:{ base:[], items:[['프로세코','90 ml'],['아페롤','60 ml'],['탄산수','조금']],
     method:'얼음을 채운 와인 잔에 모두 붓는다. 아페롤 대신 캄파리·치나르·셀렉트를 쓰는 버전도 있다.' },
-  sources:[ iba('spritz','Spritz') ] },
+  sources:[ iba('spritz','Spritz'), LQS.aperol_hist ] },
 ];

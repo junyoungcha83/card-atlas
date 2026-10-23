@@ -37,7 +37,7 @@ for (const d of T.LIQUORS) {
   if (d.abv) {
     const { min, max, unit, basis } = d.abv;
     if (unit !== '%') E(id, 'abv.unit 은 %');
-    if (!['law', 'style', 'product'].includes(basis)) E(id, 'abv.basis 는 law/style/product');
+    if (!['law', 'style', 'product', 'typical', 'measured'].includes(basis)) E(id, 'abv.basis 는 law/style/product/typical/measured');
     if (min == null && max == null) E(id, 'abv 에 min/max 중 하나는 필요(모르면 abv:null)');
     [min, max].forEach(v => { if (v != null && (typeof v !== 'number' || v < 0 || v > 100)) E(id, `abv 값 오류: ${v}`); });
     if (min != null && max != null && min > max) E(id, 'abv min > max');
@@ -54,7 +54,7 @@ for (const d of T.LIQUORS) {
     if (!s || !/^https?:\/\//.test(s.url || '')) E(id, `출처 ${i + 1}: 주소 없음`);
     if (!s || !DATE.test(s.checked || '')) E(id, `출처 ${i + 1}: 확인 날짜 없음`);
   });
-  if (!d.abv) W(id, '도수 미확인(화면에 정보 확인 필요)');
+  if (!d.abv && d.kind !== 'cocktail') W(id, '도수 미확인(화면에 정보 확인 필요)');   // 칵테일은 '재료·분량에 따라 다름'
 }
 
 const byKind = {}; T.LIQUORS.forEach(d => { byKind[d.kind] = (byKind[d.kind] || 0) + 1; });
