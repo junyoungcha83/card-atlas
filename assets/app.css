@@ -576,8 +576,6 @@ body.tl-wide #app{height:100%;height:100dvh;min-height:0;padding-bottom:0}
 .lq-recipe td{padding:6px 8px;border-bottom:1px solid var(--border)}
 .lq-recipe td:last-child{text-align:right;font-weight:700;white-space:nowrap}
 
-.lq-lock input{width:min(260px,80%);background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font:inherit;font-size:1.05rem;text-align:center;letter-spacing:.2em}
-.lq-lock-msg{color:#ff8a8a;min-height:1.2em;margin:4px 0}
 
 /* 세계의 술 — 기준 고르기·기준별 묶음 */
 .lq-h{font-size:.95rem;margin:6px 2px 0}

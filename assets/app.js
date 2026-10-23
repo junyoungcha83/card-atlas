@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v48';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v49';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -516,7 +516,7 @@ function renderHome(){
         <button class="home-card" data-k="worldhist"><img class="hc-emo hc-emo-img" src="assets/parthenon.svg" alt="파르테논 신전"><b>역사연표</b><small>우리 역사와 나란히 비교</small></button>
         <button class="home-card" data-k="religion"><span class="hc-emo">🙏</span><b>세계종교</b><small>우리나라 · 세계 종교의 흐름</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
-        <button class="home-card" data-k="liq"><span class="hc-emo">❓</span><b>술의 역사</b><small>🔒 비밀번호 필요</small></button>
+        <button class="home-card" data-k="liq"><span class="hc-emo">🍺</span><b>술의 역사</b><small>${LIQUORS.length}종 · 원료·제조법·숙성·향미</small></button>
       </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>nav(b.dataset.k));
@@ -1036,27 +1036,6 @@ function lqPic(d, cls){
     <span class="lq-ph" ${up?'style="display:none"':''}>${d.emoji||'🍶'}</span></div>`;
 }
 
-// 잠금 — 아이들도 보는 앱이라 술 항목은 비밀번호를 넣어야 연다. 기억하지 않는다(앱을 새로 열면 다시 묻는다).
-// 비밀번호 자체는 코드에 두지 않고 SHA-256 값만 둔다.
-const LQ_PW_HASH='0d73b222198558063016e1cf5d261bc6699f61d535248cc0d4b7fd4bd5015542';
-let LQ_OPEN=false;
-async function lqHash(t){ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
-function renderLiqLock(after, msg){
-  KIND='liq';
-  APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">❓ 술의 역사</div></div>
-    <div class="soon lq-lock"><div class="soon-emo">🔒</div><h2>비밀번호를 입력하세요</h2>
-      <input id="lqPw" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호">
-      <p class="lq-lock-msg">${esc(msg||'')}</p>
-      <button class="bar-btn on" id="lqGo">열기</button></div>`;
-  document.getElementById('home').onclick=()=>history.back();
-  const go=async()=>{ const v=document.getElementById('lqPw').value.trim(); if(!v) return;
-    if(await lqHash(v)===LQ_PW_HASH){ LQ_OPEN=true; after(); } else renderLiqLock(after,'비밀번호가 맞지 않아요.'); };
-  document.getElementById('lqGo').onclick=go;
-  document.getElementById('lqPw').onkeydown=e=>{ if(e.key==='Enter') go(); };
-  setTimeout(()=>{ const i=document.getElementById('lqPw'); if(i) i.focus(); },50);
-}
-
 // 목록 카드(앞면) — 전체 목록과 기준별 목록이 같이 쓴다
 function lqCard(d){
   return `<button class="lq-card" data-id="${d.id}">
@@ -1124,7 +1103,6 @@ function lqGroups(axis){
 }
 
 function renderLiqHome(){
-  if(!LQ_OPEN){ renderLiqLock(renderLiqHome); return; }
   KIND='liq';
   APP.innerHTML=`
     <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🍷 세계의 술</div><div class="bar-count">${LIQUORS.length}종</div></div>
@@ -1146,7 +1124,6 @@ function renderLiqHome(){
 }
 
 function renderLiqAxis(axis){
-  if(!LQ_OPEN){ renderLiqLock(()=>renderLiqAxis(axis)); return; }
   const ax=LQ_AXES.find(a=>a.id===axis); if(!ax){ renderLiqHome(); return; }
   KIND='liq';
   const groups=lqGroups(axis);
@@ -1171,7 +1148,6 @@ function renderLiqAxis(axis){
 }
 
 function renderLiqIndex(){
-  if(!LQ_OPEN){ renderLiqLock(renderLiqIndex); return; }
   KIND='liq';
   const total=LIQUORS.length, hits=LIQUORS.filter(d=>lqMatch(d,LQF));
   const nf = LQ_FKEYS.reduce((t,k)=>t+LQF[k].length,0) + (LQF.abvMin!==''||LQF.abvMax!==''?1:0);
@@ -1237,7 +1213,6 @@ function renderLiqIndex(){
 }
 
 function renderLiqDetail(id){
-  if(!LQ_OPEN){ renderLiqLock(()=>renderLiqDetail(id)); return; }
   const d=LIQUORS.find(x=>x.id===id); if(!d){ renderLiqIndex(); return; }
   KIND='liq';
   const x=d.detail||{}, miss=new Set(d.missing||[]);
