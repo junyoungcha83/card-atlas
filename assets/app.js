@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v47';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v48';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1057,6 +1057,119 @@ function renderLiqLock(after, msg){
   setTimeout(()=>{ const i=document.getElementById('lqPw'); if(i) i.focus(); },50);
 }
 
+// 목록 카드(앞면) — 전체 목록과 기준별 목록이 같이 쓴다
+function lqCard(d){
+  return `<button class="lq-card" data-id="${d.id}">
+      ${lqPic(d,'lq-pic')}
+      <div class="lq-cbody">
+        <div class="lq-ctop"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}</div>
+        <small class="lq-local">${esc(d.local)}</small>
+        <div class="lq-meta">${esc(lqCountries(d))}</div>
+        <div class="lq-tags">${(d.styles||[]).slice(0,3).map(s=>`<span>${esc(LQ_STYLE_NAMES[s])}</span>`).join('')}</div>
+        <div class="lq-meta">🌾 ${esc((d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name).join(', ')||'정보 확인 필요')} · 🌡️ ${esc(lqAbvText(d))}</div>
+        <p class="lq-sum">${esc(d.summary)}</p>
+      </div></button>`;
+}
+// 기준별 보기용 작은 카드 — 한 화면에 많이 보이도록 이름·나라·도수만(자세한 건 누르면 상세)
+function lqMini(d){
+  const c=(d.origin.countries||[]).map(x=>LQ_COUNTRY[x]).filter(Boolean);
+  const where = c.length ? c.map(x=>`${x.flag} ${x.name}`).join(' · ') : (d.origin.note||'');
+  return `<button class="lq-card lq-mini" data-id="${d.id}">
+      ${lqPic(d,'lq-pic')}
+      <div class="lq-cbody"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}
+        <small class="lq-meta">${esc(where)}</small>
+        <small class="lq-meta">🌡️ ${esc(d.abv?lqAbvText(d).replace(/ \(.*\)$/,''):(d.kind==='cocktail'?'레시피별':'미확인'))}</small></div></button>`;
+}
+function lqBindCards(){ APP.querySelectorAll('.lq-card').forEach(b=>b.onclick=e=>{ if(e.target.closest('.up-ov')) return; nav('liqd='+b.dataset.id); }); }
+
+// ── 기준별 보기 — 원본 데이터는 그대로, 고른 기준으로 카드를 다시 모아 보여 준다(여러 묶음에 같은 술이 나올 수 있음) ──
+const LQ_AXES = [
+  { id:'styles',    name:'주종',      emoji:'🍶', desc:'와인·맥주·증류주·전통주…' },
+  { id:'methods',   name:'제조 방식', emoji:'🧪', desc:'발효주·증류주·강화주·리큐르…' },
+  { id:'materials', name:'원료',      emoji:'🌾', desc:'곡물·과일·당질·식물·유제품' },
+  { id:'region',    name:'나라',      emoji:'🌍', desc:'대륙 → 나라' },
+  { id:'aging',     name:'숙성 방식', emoji:'🛢️', desc:'오크통·솔레라·가열 숙성…' },
+  { id:'flavors',   name:'향미',      emoji:'👃', desc:'과일·꽃·허브·오크·쓴맛…' },
+];
+// 기준 → [{key,title,subs:[{title,items}]}]. 해당 정보가 없는 술은 맨 끝 '정보 확인 필요' 묶음으로.
+function lqGroups(axis){
+  const L=LIQUORS, groups=[];
+  const byOrder=(items, order)=>items.slice().sort((a,b)=>order(a)-order(b));
+  if(axis==='styles'){
+    LQ_STYLES.forEach(g=>{ const its=L.filter(d=>(d.styles||[]).some(s=>g.items.includes(s)));
+      const ord=d=>Math.min(...d.styles.map(s=>{ const i=g.items.indexOf(s); return i<0?99:i; }));
+      if(its.length) groups.push({ key:g.id, title:`${g.emoji} ${g.name}`, subs:[{ items:byOrder(its,ord) }] }); });
+  } else if(axis==='methods'){
+    Object.entries(LQ_METHODS).forEach(([k,n])=>{ const its=L.filter(d=>(d.methods||[]).includes(k)); if(its.length) groups.push({ key:k, title:n, subs:[{ items:its }] }); });
+  } else if(axis==='materials'){
+    LQ_MATERIALS.forEach(g=>{ const keys=Object.keys(g.items); const its=L.filter(d=>(d.materials||[]).some(m=>keys.includes(m)));
+      const ord=d=>Math.min(...d.materials.map(m=>{ const i=keys.indexOf(m); return i<0?99:i; }));
+      if(its.length) groups.push({ key:g.id, title:g.name, subs:[{ items:byOrder(its,ord) }] }); });
+  } else if(axis==='region'){
+    LQ_REGIONS.forEach(r=>{ const subs=r.countries.map(([c,n,f])=>({ title:`${f} ${n}`, items:L.filter(d=>(d.origin.countries||[]).includes(c)) })).filter(x=>x.items.length);
+      if(subs.length) groups.push({ key:r.id, title:r.name, subs }); });
+    const none=L.filter(d=>!(d.origin.countries||[]).length);
+    if(none.length) groups.push({ key:'none', title:'여러 나라 · 지역 미정', subs:[{ items:none }] });
+    return groups;
+  } else {
+    const dict = axis==='aging' ? LQ_AGING : LQ_FLAVORS;
+    const get = d => axis==='aging' ? ((d.aging&&d.aging.methods)||[]) : (d.flavors||[]);
+    Object.entries(dict).forEach(([k,n])=>{ const its=L.filter(d=>get(d).includes(k)); if(its.length) groups.push({ key:k, title:n, subs:[{ items:its }] }); });
+  }
+  const has = { styles:d=>(d.styles||[]).length, methods:d=>(d.methods||[]).length, materials:d=>(d.materials||[]).length,
+    aging:d=>((d.aging&&d.aging.methods)||[]).length, flavors:d=>(d.flavors||[]).length }[axis];
+  const none=L.filter(d=>!has(d));
+  if(none.length) groups.push({ key:'none', title:'정보 확인 필요', subs:[{ items:none }], dim:true });
+  return groups;
+}
+
+function renderLiqHome(){
+  if(!LQ_OPEN){ renderLiqLock(renderLiqHome); return; }
+  KIND='liq';
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🍷 세계의 술</div><div class="bar-count">${LIQUORS.length}종</div></div>
+    <div class="lq-wrap">
+      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료로 찾기 (예: 쌀, 프랑스, 위스키)"></div>
+      <h3 class="lq-h">무엇으로 묶어 볼까요?</h3>
+      <div class="lq-axes">${LQ_AXES.map(a=>{ const g=lqGroups(a.id).filter(x=>!x.dim).length;
+        return `<button class="lq-axis" data-ax="${a.id}"><span class="lq-axis-emo">${a.emoji}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><span class="lq-axis-n">${g}개 묶음</span></button>`; }).join('')}</div>
+      <button class="lq-all" id="lqAll">📋 전체 목록 · 자세히 찾기 <small>여러 조건을 함께 골라 찾기</small></button>
+      <p class="lq-note lq-foot">같은 술이 여러 묶음에 나올 수 있어요(예: 포트는 '발효주'와 '강화주'). 카드는 모두 같은 원본을 가리켜요.</p>
+    </div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  APP.querySelectorAll('.lq-axis').forEach(b=>b.onclick=()=>nav('liqx='+b.dataset.ax));
+  document.getElementById('lqAll').onclick=()=>nav('liqall');
+  const qi=document.getElementById('lqQ');
+  // 검색은 전체 목록에서 보여 준다
+  qi.onkeydown=e=>{ if(e.key==='Enter' && qi.value.trim()){ LQF=lqEmptyFilter(); LQF.q=qi.value.trim(); lqSave(); nav('liqall'); } };
+  qi.onchange=()=>{ if(qi.value.trim()){ LQF=lqEmptyFilter(); LQF.q=qi.value.trim(); lqSave(); nav('liqall'); } };
+}
+
+function renderLiqAxis(axis){
+  if(!LQ_OPEN){ renderLiqLock(()=>renderLiqAxis(axis)); return; }
+  const ax=LQ_AXES.find(a=>a.id===axis); if(!ax){ renderLiqHome(); return; }
+  KIND='liq';
+  const groups=lqGroups(axis);
+  const sec=(g,i)=>{ const n=new Set(g.subs.flatMap(x=>x.items.map(d=>d.id))).size;
+    return `<section class="lq-sec${g.dim?' dim':''}" id="lqs-${i}">
+      <h3 class="lq-sech">${esc(g.title)} <span>${n}종</span></h3>
+      ${g.subs.map(sb=>`${sb.title?`<h4 class="lq-subh">${esc(sb.title)} <span>${sb.items.length}</span></h4>`:''}
+        <div class="lq-mgrid">${sb.items.map(lqMini).join('')}</div>`).join('')}
+    </section>`; };
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="back">‹ 세계의 술</button><div class="bar-title">${ax.emoji} ${esc(ax.name)}별</div>
+      <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
+    <div class="lq-wrap">
+      <div class="lq-jump">${groups.map((g,i)=>`<button class="lq-chip${g.dim?' ro':''}" data-jump="${i}">${esc(g.title)}</button>`).join('')}</div>
+      ${groups.map(sec).join('')}
+    </div>`;
+  document.getElementById('back').onclick=()=>history.back();
+  const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  APP.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{ const t=document.getElementById('lqs-'+b.dataset.jump); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); });
+  lqBindCards(); decorateUploads(APP);
+  window.scrollTo(0,0);
+}
+
 function renderLiqIndex(){
   if(!LQ_OPEN){ renderLiqLock(renderLiqIndex); return; }
   KIND='liq';
@@ -1094,18 +1207,9 @@ function renderLiqIndex(){
   </div>`;
   const active = [].concat(...LQ_FKEYS.map(k=>LQF[k].map(v=>`<button class="lq-chip on sm" data-fk="${k}" data-fv="${esc(v)}">${esc(lqLabel(k,v))} ×</button>`)))
     .concat(LQF.abvMin!==''||LQF.abvMax!==''?[`<button class="lq-chip on sm" data-abv="|">도수 ${esc(LQF.abvMin||'0')}~${esc(LQF.abvMax||'100')}% ×</button>`]:[]).join('');
-  const card = d => `<button class="lq-card" data-id="${d.id}">
-      ${lqPic(d,'lq-pic')}
-      <div class="lq-cbody">
-        <div class="lq-ctop"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}</div>
-        <small class="lq-local">${esc(d.local)}</small>
-        <div class="lq-meta">${esc(lqCountries(d))}</div>
-        <div class="lq-tags">${(d.styles||[]).slice(0,3).map(s=>`<span>${esc(LQ_STYLE_NAMES[s])}</span>`).join('')}</div>
-        <div class="lq-meta">🌾 ${esc((d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name).join(', ')||'정보 확인 필요')} · 🌡️ ${esc(lqAbvText(d))}</div>
-        <p class="lq-sum">${esc(d.summary)}</p>
-      </div></button>`;
+  const card = lqCard;
   APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🍷 세계의 술</div><div class="bar-count">${hits.length}/${total}</div>
+    <div class="bar"><button class="bar-btn" id="home">‹ 세계의 술</button><div class="bar-title">📋 전체 목록</div><div class="bar-count">${hits.length}/${total}</div>
       <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
     <div class="lq-wrap">
       <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료로 찾기 (예: 쌀, 프랑스, 위스키)" value="${esc(LQF.q)}">
@@ -1128,7 +1232,7 @@ function renderLiqIndex(){
     if(LQF.abvMin===a && LQF.abvMax===c){ LQF.abvMin=''; LQF.abvMax=''; } else { LQF.abvMin=a; LQF.abvMax=c; } lqSave(); renderLiqIndex(); });
   const setAbv=()=>{ LQF.abvMin=document.getElementById('lqMin').value; LQF.abvMax=document.getElementById('lqMax').value; lqSave(); renderLiqIndex(); };
   const mn=document.getElementById('lqMin'), mx=document.getElementById('lqMax'); if(mn){ mn.onchange=setAbv; mx.onchange=setAbv; }
-  APP.querySelectorAll('.lq-card').forEach(b=>b.onclick=e=>{ if(e.target.closest('.up-ov')) return; nav('liqd='+b.dataset.id); });
+  lqBindCards();
   decorateUploads(APP);
 }
 
@@ -1186,7 +1290,7 @@ function renderLiqDetail(id){
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
-  APP.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ LQF=lqEmptyFilter(); LQF[b.dataset.go]=[b.dataset.gv]; lqSave(); LQ_PANEL=false; nav('liq'); });
+  APP.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ LQF=lqEmptyFilter(); LQF[b.dataset.go]=[b.dataset.gv]; lqSave(); LQ_PANEL=false; nav('liqall'); });
   decorateUploads(APP);
   window.scrollTo(0,0);
 }
@@ -1227,7 +1331,10 @@ function route(){
   if(ws){ renderTLSection('worldhist', ws[1]); return; }
   const wt=h.match(/^whst=([a-z0-9-]+)$/i);
   if(wt){ renderTLState('worldhist', wt[1]); return; }
-  if(h==='liq'){ renderLiqIndex(); return; }
+  if(h==='liq'){ renderLiqHome(); return; }
+  if(h==='liqall'){ renderLiqIndex(); return; }
+  const lx=h.match(/^liqx=([a-z]+)$/i);
+  if(lx){ renderLiqAxis(lx[1]); return; }
   const lq=h.match(/^liqd=([a-z0-9_]+)$/i);
   if(lq){ renderLiqDetail(lq[1]); return; }
   if(h==='religion'){ renderTLIndex('religion'); return; }

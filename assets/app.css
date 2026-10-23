@@ -578,3 +578,31 @@ body.tl-wide #app{height:100%;height:100dvh;min-height:0;padding-bottom:0}
 
 .lq-lock input{width:min(260px,80%);background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font:inherit;font-size:1.05rem;text-align:center;letter-spacing:.2em}
 .lq-lock-msg{color:#ff8a8a;min-height:1.2em;margin:4px 0}
+
+/* 세계의 술 — 기준 고르기·기준별 묶음 */
+.lq-h{font-size:.95rem;margin:6px 2px 0}
+.lq-axes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.lq-axis{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 12px;color:var(--text);cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.lq-axis:active{transform:scale(.98)}
+.lq-axis-emo{font-size:1.9rem;line-height:1}
+.lq-axis b{font-size:1.05rem;margin-top:4px}
+.lq-axis small{color:var(--muted);font-size:.74rem;line-height:1.35}
+.lq-axis-n{margin-top:4px;font-size:.7rem;font-weight:800;color:var(--primary2)}
+.lq-all{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:#0f1630;border:1px dashed var(--border);border-radius:14px;padding:12px 14px;color:var(--text);font-weight:800;font-family:inherit;cursor:pointer;text-align:left}
+.lq-all small{color:var(--muted);font-weight:600;font-size:.74rem}
+.lq-jump{position:sticky;top:0;z-index:4;display:flex;gap:6px;overflow-x:auto;padding:6px 0 8px;background:linear-gradient(var(--bg) 80%,transparent);-webkit-overflow-scrolling:touch}
+.lq-jump .lq-chip{flex:none}
+.lq-sec{scroll-margin-top:52px}
+.lq-sech{font-size:1.02rem;margin:10px 2px 8px;color:var(--primary2);border-left:4px solid var(--primary);padding-left:8px}
+.lq-sech span,.lq-subh span{color:var(--muted);font-size:.78rem;font-weight:700}
+.lq-subh{font-size:.88rem;margin:10px 2px 6px}
+.lq-sec.dim .lq-sech{color:var(--muted);border-left-color:var(--border)}
+
+.lq-mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.lq-mini{flex-direction:column}
+.lq-mini .lq-pic{width:100%;height:64px;border-right:0;border-bottom:1px solid var(--border)}
+.lq-mini .lq-pic .lq-ph{font-size:1.9rem}
+.lq-mini .lq-cbody{padding:8px 10px 9px;gap:2px}
+.lq-mini b{font-size:.95rem;line-height:1.25}
+.lq-mini .lq-kind{align-self:flex-start;margin-top:2px}
+.lq-mini .lq-meta{font-size:.72rem;line-height:1.35}
