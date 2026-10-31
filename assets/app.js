@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v52';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v53';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -580,7 +580,7 @@ const MY_CITIES = {
 const MY_CITY_ORDER = ['masan','cheongju','icheon','yongsan','mapo'];
 
 // ── 세계 국가: 대륙 선택 → 나라 목록 → 국가 카드(그 대륙 나라끼리 넘김) ──
-// 대륙은 region 앞부분으로 정한다. 두 대륙에 걸친 나라(러시아·튀르키예)는 양쪽 모두에 넣는다.
+// 대륙은 region 앞부분으로 정한다. 두 대륙에 걸친 나라는 CONT_OVERRIDE로 한 대륙에만 넣는다.
 const CONTINENTS = [
   { id:'asia', name:'아시아',     emoji:'🌏', key:'아시아' },
   { id:'eu',   name:'유럽',       emoji:'🏰', key:'유럽' },
@@ -589,8 +589,9 @@ const CONTINENTS = [
   { id:'sa',   name:'남아메리카', emoji:'🌎', key:'남아메리카' },
   { id:'oc',   name:'오세아니아', emoji:'🦘', key:'오세아니아' },
 ];
+const CONT_OVERRIDE = { '러시아':'eu', '튀르키예':'asia' };
 const contCountries = id => { const ct=CONTINENTS.find(x=>x.id===id); if(!ct) return [];
-  return COUNTRIES.filter(c=>(isEurasian(c)?c.region:c.region.split(' · ')[0]).includes(ct.key)); };
+  return COUNTRIES.filter(c=>CONT_OVERRIDE[c.name] ? CONT_OVERRIDE[c.name]===id : c.region.split(' · ')[0].includes(ct.key)); };
 const isEurasian = c => /유럽\s*·\s*아시아/.test(c.region);
 let WORLD_CONT='';                       // 지금 덱의 대륙(빈 값=48개국 전체, 옛 딥링크용)
 
