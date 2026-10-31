@@ -10,7 +10,7 @@ import vm from 'node:vm';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ctx = {}; vm.createContext(ctx);
 for (const f of ['assets/liquor-tax.js', 'assets/liquor.js']) vm.runInContext(readFileSync(join(ROOT, f), 'utf8'), ctx);
-const T = vm.runInContext(`({ LQ_COUNTRY, LQ_REGIONS, LQ_METHODS, LQ_MATERIAL, LQ_STYLE_NAMES, LQ_STYLES, LQ_TECH_NAME, LQ_AGING, LQ_FLAVORS, LQ_USES, LQ_KINDS, LIQUORS })`, ctx);
+const T = vm.runInContext(`({ LQ_COUNTRY, LQ_REGIONS, LQ_METHODS, LQ_MATERIAL, LQ_STYLE_NAMES, LQ_STYLES, LQ_TECH_NAME, LQ_AGING, LQ_FLAVORS, LQ_USES, LQ_KINDS, LQ_ERAS, LIQUORS })`, ctx);
 
 const errors = [], warns = [];
 const E = (id, m) => errors.push(`${id}: ${m}`), W = (id, m) => warns.push(`${id}: ${m}`);
@@ -54,6 +54,13 @@ for (const d of T.LIQUORS) {
     if (!s || !/^https?:\/\//.test(s.url || '')) E(id, `출처 ${i + 1}: 주소 없음`);
     if (!s || !DATE.test(s.checked || '')) E(id, `출처 ${i + 1}: 확인 날짜 없음`);
   });
+  if (d.era) {
+    const { year, period } = d.era;
+    if ((year == null) === (period == null)) E(id, 'era 는 year 와 period 중 하나만');
+    if (year != null && (!Number.isInteger(year) || year > new Date().getFullYear())) E(id, `era.year 오류: ${year}`);
+    if (period != null && !T.LQ_ERAS.some(e => e.id === period)) E(id, `era.period 사전에 없음: ${period}`);
+    if (!d.era.note) W(id, 'era 에 근거(note)가 없음');
+  }
   if (!d.abv && d.kind !== 'cocktail') W(id, '도수 미확인(화면에 정보 확인 필요)');   // 칵테일은 '재료·분량에 따라 다름'
 }
 

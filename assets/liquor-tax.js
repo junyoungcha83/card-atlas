@@ -16,7 +16,7 @@ const LQ_REGIONS = [
     ['sct','스코틀랜드','🏴'],['eng','잉글랜드','🏴'],['ie','아일랜드','🇮🇪'],['es','스페인','🇪🇸'],
     ['pt','포르투갈','🇵🇹'],['gr','그리스','🇬🇷'],['pl','폴란드','🇵🇱'],['cz','체코','🇨🇿']] },
   { id:'namerica', name:'북아메리카', countries:[['us','미국','🇺🇸'],['mx','멕시코','🇲🇽'],['ca','캐나다','🇨🇦'],['cu','쿠바','🇨🇺']] },
-  { id:'samerica', name:'남아메리카', countries:[['ar','아르헨티나','🇦🇷'],['cl','칠레','🇨🇱'],['br','브라질','🇧🇷']] },
+  { id:'samerica', name:'남아메리카', countries:[['ar','아르헨티나','🇦🇷'],['cl','칠레','🇨🇱'],['pe','페루','🇵🇪'],['br','브라질','🇧🇷']] },
   { id:'africa', name:'아프리카', countries:[['et','에티오피아','🇪🇹']] },
   { id:'oceania', name:'오세아니아', countries:[['au','호주','🇦🇺'],['nz','뉴질랜드','🇳🇿']] },
 ];
@@ -30,7 +30,7 @@ const LQ_METHODS = {
 // ── 분류 3. 원료 (원료 유형 → 원료) ──
 const LQ_MATERIALS = [
   { id:'grain', name:'곡물', items:{ rice:'쌀', barley:'보리', wheat:'밀', sorghum:'수수', corn:'옥수수', rye:'호밀', millet:'기장', buckwheat:'메밀', grain:'곡물(기타·여러 곡물)' } },
-  { id:'fruit', name:'과일', items:{ grape:'포도', apple:'사과', pear:'배', ume:'매실', bokbunja:'복분자', cherry:'체리', citrus:'감귤류', cashew_apple:'캐슈애플' } },
+  { id:'fruit', name:'과일', items:{ grape:'포도', apple:'사과', pear:'배', ume:'매실', bokbunja:'복분자', cherry:'체리', plum:'자두', citrus:'감귤류', cashew_apple:'캐슈애플' } },
   { id:'sugar', name:'당질 원료', items:{ sugarcane:'사탕수수', molasses:'당밀', honey:'꿀' } },
   { id:'plant', name:'기타 식물성 원료', items:{ agave:'아가베', potato:'감자', sweet_potato:'고구마', palm_sap:'야자 수액', herb:'허브·약초', juniper:'주니퍼베리', anise:'아니스', coffee:'커피', coconut:'코코넛 수액', flower:'꽃(진달래 등)' } },
   { id:'dairy', name:'유제품', items:{ mare_milk:'말젖' } },
@@ -42,22 +42,22 @@ const LQ_STYLE_NAMES = {
   red:'레드 와인', white:'화이트 와인', rose:'로제 와인', sparkling:'스파클링 와인', fortified_wine:'강화 와인', aromatized_wine:'가향 와인', wine:'와인',
   lager:'라거', pilsner:'필스너', helles:'헬레스', ale:'에일', ipa:'IPA', stout:'스타우트', porter:'포터', wheat:'밀맥주', lambic:'람빅·자연발효 맥주', sour:'사워 맥주',
   whisky:'위스키', brandy:'브랜디', vodka:'보드카', gin:'진', rum:'럼', tequila:'데킬라', mezcal:'메스칼', baijiu:'백주', soju:'소주', shochu:'쇼추', awamori:'아와모리',
-  grappa:'그라파', cachaca:'카샤사', armagnac:'아르마냑', cognac:'코냑', calvados:'칼바도스', ouzo:'우조', tsipouro:'치푸로', feni:'페니',
+  grappa:'그라파', cachaca:'카샤사', armagnac:'아르마냑', cognac:'코냑', calvados:'칼바도스', ouzo:'우조', tsipouro:'치푸로', feni:'페니', pisco:'피스코', fruit_spirit:'과일 증류주(오드비)', akvavit:'아쿠아비트', beer:'맥주',
   makgeolli:'막걸리', yakju:'약주', cheongju:'청주', soju_trad:'증류식 소주', soju_diluted:'희석식 소주', fruit_wine_kr:'과실주(한국)',
   huangjiu:'황주', mijiu:'미주', sake:'사케(니혼슈)', mirin:'미린', kr_trad_spirit:'한국 전통 증류주', kr_trad_ferm:'한국 전통 발효주', umeshu:'우메슈', doburoku:'도부로쿠', airag:'아이락', rice_wine:'쌀 발효주', palm_wine:'야자주',
   port:'포트', sherry:'셰리', madeira:'마데이라', vdn:'뱅 두 나튀렐', marsala:'마르살라', vermouth:'베르무트',
   limoncello:'리몬첼로', amaro:'아마로', chartreuse:'샤르트뢰즈', benedictine:'베네딕틴', kahlua:'칼루아', herbal_liqueur:'허브·과일 리큐르',
-  cider:'사이다(사과 발효주)', tej:'테지', local_ferm:'지역 전통 발효주',
+  cider:'사이다(사과 발효주)', mead:'미드(벌꿀술)', tej:'테지', local_ferm:'지역 전통 발효주',
   negroni:'네그로니', martini:'마티니', mojito:'모히토', daiquiri:'다이키리', mai_tai:'마이타이', americano:'아메리카노', spritz:'스프리츠', cocktail:'기타 칵테일',
 };
 const LQ_STYLES = [
   { id:'g_wine', name:'와인', emoji:'🍷', items:['wine','red','white','rose','sparkling','fortified_wine','aromatized_wine','vermouth'] },
-  { id:'g_beer', name:'맥주', emoji:'🍺', items:['lager','pilsner','helles','ale','ipa','stout','porter','wheat','lambic','sour'] },
-  { id:'g_spirit', name:'증류주', emoji:'🥃', items:['whisky','brandy','vodka','gin','rum','tequila','mezcal','baijiu','soju','shochu','awamori','grappa','cachaca','armagnac','cognac','calvados','ouzo','tsipouro','feni','kr_trad_spirit'] },
+  { id:'g_beer', name:'맥주', emoji:'🍺', items:['beer','lager','pilsner','helles','ale','ipa','stout','porter','wheat','lambic','sour'] },
+  { id:'g_spirit', name:'증류주', emoji:'🥃', items:['whisky','brandy','vodka','gin','rum','tequila','mezcal','baijiu','soju','shochu','awamori','grappa','cachaca','armagnac','cognac','calvados','pisco','fruit_spirit','akvavit','ouzo','tsipouro','feni','kr_trad_spirit'] },
   { id:'g_asian', name:'아시아 전통주', emoji:'🍶', items:['makgeolli','yakju','cheongju','soju_trad','soju_diluted','fruit_wine_kr','baijiu','huangjiu','mijiu','sake','shochu','awamori','umeshu','doburoku','mirin','airag','rice_wine','palm_wine','kr_trad_spirit','kr_trad_ferm'] },
   { id:'g_fortified', name:'강화주', emoji:'🍇', items:['port','sherry','madeira','vdn','marsala'] },
   { id:'g_liqueur', name:'리큐르·가향주', emoji:'🌿', items:['limoncello','amaro','chartreuse','benedictine','kahlua','umeshu','vermouth','herbal_liqueur'] },
-  { id:'g_other', name:'기타 발효주', emoji:'🍯', items:['cider','tej','palm_wine','local_ferm'] },
+  { id:'g_other', name:'기타 발효주', emoji:'🍯', items:['cider','mead','tej','palm_wine','local_ferm'] },
   { id:'g_cocktail', name:'칵테일', emoji:'🍸', items:['negroni','martini','mojito','daiquiri','mai_tai','americano','spritz','cocktail'] },
 ];
 
@@ -82,6 +82,16 @@ const LQ_FLAVORS = {
   vanilla:'바닐라', smoky:'훈연', earthy:'흙·미네랄', yeasty:'효모·발효 향', roasted:'로스팅(커피·초콜릿)', hoppy:'홉',
   sweet:'단맛', sour:'산미', bitter:'쓴맛', umami:'감칠맛', body:'묵직한 바디',
 };
+
+// ── 분류 10. 시대 — 그 술이 처음 기록되거나 만들어졌다고 출처가 밝힌 때(세계사 연도 기준) ──
+//   술 데이터의 era: { year:1842 } 또는 연도를 모를 땐 { period:'medieval' }, note 에 근거 한 줄
+const LQ_ERAS = [
+  { id:'ancient',      name:'500년 이전',   emoji:'🏺', to:499 },
+  { id:'medieval',     name:'500~1500년',   emoji:'🏰', to:1499 },
+  { id:'early_modern', name:'1500~1800년',  emoji:'⛵', to:1799 },
+  { id:'modern',       name:'1800~1945년',  emoji:'🏭', to:1944 },
+  { id:'contemporary', name:'1945년 이후',  emoji:'🌐', to:9999 },
+];
 
 // ── 분류 9. 음용·활용 목적 ──
 const LQ_USES = {

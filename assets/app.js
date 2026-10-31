@@ -1074,7 +1074,11 @@ const LQ_AXES = [
   { id:'region',    name:'나라',      emoji:'🌍', desc:'대륙 → 나라' },
   { id:'aging',     name:'숙성 방식', emoji:'🛢️', desc:'오크통·솔레라·가열 숙성…' },
   { id:'flavors',   name:'향미',      emoji:'👃', desc:'과일·꽃·허브·오크·쓴맛…' },
+  { id:'era',       name:'시대',      emoji:'⏳', desc:'처음 기록된 때 — 연도순' },
 ];
+// 시대 — era.period 가 있으면 그대로, 없으면 연도로 구간을 정한다
+const lqEra = d => !d.era ? null : (d.era.period || (LQ_ERAS.find(e=>d.era.year<=e.to)||{}).id);
+const lqEraText = d => !d.era ? '' : `${d.era.year!=null?d.era.year+'년':(LQ_ERAS.find(e=>e.id===d.era.period)||{}).name}${d.era.note?' — '+d.era.note:''}`;
 // 기준 → [{key,title,subs:[{title,items}]}]. 해당 정보가 없는 술은 맨 끝 '정보 확인 필요' 묶음으로.
 function lqGroups(axis){
   const L=LIQUORS, groups=[];
@@ -1095,13 +1099,17 @@ function lqGroups(axis){
     const none=L.filter(d=>!(d.origin.countries||[]).length);
     if(none.length) groups.push({ key:'none', title:'여러 나라 · 지역 미정', subs:[{ items:none }] });
     return groups;
+  } else if(axis==='era'){
+    // 같은 구간 안에서는 연도순(연도를 모르면 구간 맨 앞)
+    LQ_ERAS.forEach(e=>{ const its=L.filter(d=>lqEra(d)===e.id).sort((a,b)=>(a.era.year??-1)-(b.era.year??-1));
+      if(its.length) groups.push({ key:e.id, title:`${e.emoji} ${e.name}`, subs:[{ items:its }] }); });
   } else {
     const dict = axis==='aging' ? LQ_AGING : LQ_FLAVORS;
     const get = d => axis==='aging' ? ((d.aging&&d.aging.methods)||[]) : (d.flavors||[]);
     Object.entries(dict).forEach(([k,n])=>{ const its=L.filter(d=>get(d).includes(k)); if(its.length) groups.push({ key:k, title:n, subs:[{ items:its }] }); });
   }
   const has = { styles:d=>(d.styles||[]).length, methods:d=>(d.methods||[]).length, materials:d=>(d.materials||[]).length,
-    aging:d=>((d.aging&&d.aging.methods)||[]).length, flavors:d=>(d.flavors||[]).length }[axis];
+    aging:d=>((d.aging&&d.aging.methods)||[]).length, flavors:d=>(d.flavors||[]).length, era:d=>!!lqEra(d) }[axis];
   const none=L.filter(d=>!has(d));
   if(none.length) groups.push({ key:'none', title:'정보 확인 필요', subs:[{ items:none }], dim:true });
   return groups;
@@ -1254,6 +1262,7 @@ function renderLiqDetail(id){
         ${infoRow('주요 원료', matText||'정보 확인 필요')}
         ${infoRow('제조 방식', (d.methods||[]).map(m=>LQ_METHODS[m]).join(', '))}
         ${infoRow('알코올 도수', lqAbvText(d))}
+        ${d.era?infoRow('처음 기록', lqEraText(d)):''}
         ${infoRow('종류', LQ_KINDS[d.kind])}
         ${Object.keys(props).map(k=>infoRow(PROP[k]||k, props[k])).join('')}
       </dl></div>
