@@ -9,6 +9,9 @@
 //  4. 술의 '유형'(kind:type)과 '개별 제품'(product), '칵테일'(cocktail)을 섞지 않는다.
 //  5. 원산지(origin)는 대표 생산 국가, 역사적 기원은 detail.history 에 따로 쓴다.
 //  6. node tools/check-liquor.mjs 로 id 중복·분류 오류·출처 누락을 점검한다.
+//  7. 세부 종류 — 만드는 방식이 같고 등급·숙성 기간·원료 일부만 다르면 detail.subtypes 에 글로 적는다(A).
+//     만드는 방식이나 원산지가 달라 카드 내용이 달라지면 별도 카드로 만들고 parent 에 상위 카드 id 를 적는다(B).
+//     B 카드는 상위 카드의 '세부 유형'에 자동으로 링크되므로 subtypes 에 같은 이름을 또 쓰지 않는다.
 
 const LQ_D = '2026-10-23';   // 출처 확인 날짜
 const lqs = (title, url) => ({ title, url, checked: LQ_D });
@@ -16,6 +19,7 @@ const enc = (id, t) => lqs(`한국민족문화대백과사전 — ${t}`, `https:
 const iba = (slug, t) => lqs(`IBA 공식 칵테일 — ${t}`, `https://iba-world.com/iba-cocktail/${slug}/`);
 const LQS = {
   jusebeop: lqs('국가법령정보센터 — 주세법', 'https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A3%BC%EC%84%B8%EB%B2%95'),
+  nta_tokutei: lqs('일본 국세청 — 「청주의 제법 품질 표시 기준」 개요(특정 명칭 8종·표시 용어)', 'https://www.nta.go.jp/taxes/sake/hyoji/seishu/gaiyo/02.htm'),
   nta_def: lqs('일본 국세청 — 주세법상 주류의 분류와 정의', 'https://www.nta.go.jp/taxes/sake/qa/01/01.pdf'),
   nta_seishu: lqs('일본 국세청 — 주세법의 「청주」 정의', 'https://www.nta.go.jp/about/council/sake-bunkakai/021127/shiryo/07a.htm'),
   nta_ryukyu: lqs('일본 국세청 — 지리적 표시 「琉球」 생산 기준', 'https://www.nta.go.jp/taxes/sake/hyoji/chiri/180223_besshi03.htm'),
@@ -181,7 +185,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 곡물을 고체 발효시키고 증류·숙성·블렌딩해 만든다.',
     process:'주로 수수·쌀·밀을 원료로 한다. 효모·곰팡이·세균이 함께 자란 발효제 "곡(麴)"을 쓰며, 곡은 대곡·소곡·부곡으로 나뉜다.',
-    subtypes:['장향(醬香)','농향(濃香)','청향(淸香)','미향(米香) 등 — 향의 특징으로 12가지 향형으로 나누며, 농향·청향·장향이 기본 3대 향형이다'],
+    subtypes:['농향(濃香)','청향(淸香)','미향(米香) 등 — 향의 특징으로 12가지 향형으로 나누며, 농향·청향·장향이 기본 3대 향형이다'],
     taste:'향은 주로 발효 중 미생물이 만드는 에스터·알코올·산·알데하이드 등에서 나온다.' },
   brands:['우량예(五粮液)'],
   sources:[ LQS.pmc_baijiu, LQS.pmc_baijiu_flavor, LQS.pmc_baijiu_abv, enc('E0022395','백주'), lqs('우량예 공식 사이트(브랜드 예시)', 'https://www.wuliangye.com.cn/') ] },
@@ -207,10 +211,27 @@ const LIQUORS = [
     making:'발효주. 일본 주세법은 쌀·쌀 코지·물을 원료로 발효시켜 거른 술(알코올분 22도 미만)을 청주로 정의한다.',
     process:'쌀, 쌀에 코지균을 띄운 쌀 코지, 물로 빚어 발효시킨 뒤 거른다.',
     legal:'지리적 표시 「日本酒」는 일본산 쌀을 쓰고 일본에서 만든 청주에만 쓸 수 있다.',
-    diff:'한국의 약주·청주와 같이 맑게 거른 곡물 발효주지만, 발효제로 쌀 코지를 쓴다.' },
-  legal:{ protected:'지리적 표시 「日本酒」' },
+    diff:'한국의 약주·청주와 같이 맑게 거른 곡물 발효주지만, 발효제로 쌀 코지를 쓴다.',
+    subtypes:['준마이다이긴조(純米大吟醸) — 쌀·쌀 코지만, 정미율 50% 이하, 긴조 방식',
+      '다이긴조(大吟醸) — 양조 알코올을 더함, 정미율 50% 이하, 긴조 방식',
+      '준마이긴조(純米吟醸) — 쌀·쌀 코지만, 정미율 60% 이하, 긴조 방식',
+      '긴조(吟醸) — 양조 알코올을 더함, 정미율 60% 이하, 긴조 방식',
+      '도쿠베쓰 준마이(特別純米) — 쌀·쌀 코지만, 정미율 60% 이하 또는 특별한 제조 방법(설명 표시 필요)',
+      '준마이(純米) — 쌀·쌀 코지만, 정미율 기준 없음',
+      '도쿠베쓰 혼조조(特別本醸造) — 양조 알코올을 더함, 정미율 60% 이하 또는 특별한 제조 방법(설명 표시 필요)',
+      '혼조조(本醸造) — 양조 알코올을 더함, 정미율 70% 이하',
+      '나마자케(生酒) — 만든 뒤 한 번도 가열 처리하지 않은 술(표시 용어)',
+      '나마조조슈(生貯蔵酒) — 가열하지 않고 저장했다가 출하할 때 가열 처리한 술(표시 용어)',
+      '겐슈(原酒) — 만든 뒤 물을 타서 도수를 맞추지 않은 술(표시 용어)',
+      '다루자케(樽酒) — 나무통에 저장해 나무 향이 밴 술(표시 용어)'],
+    aging:'보통은 저장 전과 출하 전 두 번 가열 처리한다. 1년 이상 저장한 술에는 저장 연수를 표시할 수 있다.' },
+  legal:{ protected:'지리적 표시 「日本酒」',
+    rules:['위 8가지(특정 명칭)는 모두 코지를 만든 쌀이 전체 쌀의 15% 이상이어야 한다',
+      '정미율은 현미 대비 깎고 남은 백미의 무게 비율 — 60%면 겉을 40% 깎았다는 뜻',
+      '긴조·혼조조 계열에 넣는 양조 알코올은 백미 무게의 10% 이하',
+      '긴조 방식(吟醸造り) — 잘 깎은 쌀을 낮은 온도에서 천천히 발효시켜 특유의 향(긴카)을 내는 방법'] },
   brands:['닷사이(獺祭, 아사히주조)'],
-  sources:[ LQS.nta_seishu, LQS.nta_def, lqs('아사히주조(닷사이) 공식 사이트(브랜드 예시)', 'https://www.asahishuzo.ne.jp/') ] },
+  sources:[ LQS.nta_seishu, LQS.nta_def, LQS.nta_tokutei, lqs('아사히주조(닷사이) 공식 사이트(브랜드 예시)', 'https://www.asahishuzo.ne.jp/') ] },
 
 { id:'shochu', kind:'type', emoji:'🥃', name:'본격 소주', local:'本格焼酎 (혼카쿠쇼추)', en:'Honkaku shochu',
   origin:{ countries:['jp'] }, methods:['distilled'], materials:['barley','sweet_potato','rice','sugarcane'], styles:['shochu'],
@@ -224,7 +245,7 @@ const LIQUORS = [
   brands:['이이치코(いいちこ)'],
   sources:[ LQS.jss_honkaku, LQS.nta_shochu, lqs('이이치코 공식 사이트(브랜드 예시)', 'https://www.iichiko.co.jp/') ] },
 
-{ id:'awamori', kind:'type', emoji:'🏺', name:'아와모리', local:'泡盛 (류큐 아와모리)', en:'Awamori',
+{ id:'awamori', kind:'type', parent:'shochu', emoji:'🏺', name:'아와모리', local:'泡盛 (류큐 아와모리)', en:'Awamori',
   origin:{ countries:['jp'], note:'오키나와' }, methods:['distilled'], materials:['rice'], styles:['awamori','shochu'],
   tech:['koji','pot'], aging:{ methods:['varies'], period:'3년 이상 숙성하면 「고주(쿠스)」' }, abv:{ max:45, maxText:'이하', unit:'%', basis:'law', note:'단식 증류 소주(아와모리 포함)는 45도 이하' },
   flavors:['vanilla'], flavorBasis:'general', uses:[],
@@ -255,10 +276,10 @@ const LIQUORS = [
   summary:'신선한 포도나 포도즙만을 알코올 발효시켜 만든 술이에요.',
   detail:{
     making:'발효주. OIV는 와인을 "신선한 포도(으깬 것 포함) 또는 포도즙을 부분 또는 완전히 알코올 발효시킨 음료"로 정의한다.',
-    subtypes:['레드','화이트','로제','스파클링(샴페인 등)','강화 와인(포트·셰리·마데이라 등)'] },
+    subtypes:['레드','화이트','로제'] },
   sources:[ LQS.oiv_wine ] },
 
-{ id:'champagne', kind:'type', emoji:'🥂', name:'샴페인', local:'Champagne', en:'Champagne',
+{ id:'champagne', kind:'type', parent:'wine', emoji:'🥂', name:'샴페인', local:'Champagne', en:'Champagne',
   origin:{ countries:['fr'], note:'샹파뉴 지방' }, methods:['fermented'], materials:['grape'], styles:['sparkling','wine'],
   tech:['yeast','second_bottle','blending'], aging:{ methods:['bottle'], period:'최소 15개월(빈티지는 3년 이상)', vessel:'병(효모 앙금과 함께)' },
   abv:{ min:12, max:12, unit:'%', basis:'typical', note:'약 12%(종류에 따라 ±0.7%)' }, props:{ carbonation:'있음(병 속 2차 발효로 생긴 거품)' },
@@ -338,7 +359,7 @@ const LIQUORS = [
     region:'프랑스 노르망디 페캉의 「팔레 베네딕틴」에서 만든다.' },
   sources:[ LQS.benedictine, LQS.benedictine_dom ] },
 
-{ id:'vdn', kind:'type', emoji:'🍇', name:'뱅 두 나튀렐', local:'Vin doux naturel', en:'Vin doux naturel',
+{ id:'vdn', kind:'type', parent:'wine', emoji:'🍇', name:'뱅 두 나튀렐', local:'Vin doux naturel', en:'Vin doux naturel',
   origin:{ countries:['fr'], note:'루시용 등' }, methods:['fermented','fortified'], materials:['grape'], styles:['vdn','fortified_wine'],
   tech:['mutage'], aging:{ methods:['varies'] }, abv:{ min:15, unit:'%', basis:'law', note:'리브잘트·바뉠스: 실제 알코올 15% 이상(총 21.5% 이상)' }, flavors:['sweet'], flavorBasis:'general', uses:[],
   summary:'발효 도중 포도 알코올을 넣어 발효를 멈춰, 포도의 단맛을 남긴 프랑스의 강화 와인이에요.',
@@ -431,7 +452,7 @@ const LIQUORS = [
   sources:[ LQS.eu787, lqs('Smirnoff 공식 사이트(브랜드 예시)', 'https://www.smirnoff.com/') ] },
 
 // ══════════════ 포르투갈·스페인 ══════════════
-{ id:'port', kind:'type', emoji:'🍷', name:'포트', local:'Vinho do Porto', en:'Port',
+{ id:'port', kind:'type', parent:'wine', emoji:'🍷', name:'포트', local:'Vinho do Porto', en:'Port',
   origin:{ countries:['pt'], note:'도루 지정 지역' }, methods:['fermented','fortified'], materials:['grape'], styles:['port','fortified_wine'],
   tech:['mutage'], aging:{ methods:['varies'] }, abv:{ min:19, max:22, unit:'%', basis:'law', note:'라이트 드라이 화이트 포트는 16.5% 이상' }, flavors:['sweet','berry','dried_fruit','nutty'], flavorBasis:'general', uses:[],
   summary:'발효 중인 와인에 포도 브랜디를 넣어 발효를 멈춘, 포르투갈 도루 지방의 강화 와인이에요.',
@@ -445,7 +466,7 @@ const LIQUORS = [
   brands:['테일러스'],
   sources:[ LQS.port, LQS.port_gl, LQS.port_pdo, LQS.port_sens, lqs('Taylor’s 공식 사이트(브랜드 예시)', 'https://www.taylor.pt/') ] },
 
-{ id:'sherry', kind:'type', emoji:'🍷', name:'셰리', local:'Jerez · Xérès · Sherry', en:'Sherry',
+{ id:'sherry', kind:'type', parent:'wine', emoji:'🍷', name:'셰리', local:'Jerez · Xérès · Sherry', en:'Sherry',
   origin:{ countries:['es'], note:'헤레스 지역(마르코 데 헤레스)' }, methods:['fermented','fortified'], materials:['grape'], styles:['sherry','fortified_wine'],
   tech:['yeast'], aging:{ methods:['solera','biological','oxidative','oak'], vessel:'길들인 아메리칸 오크통' },
   abv:{ min:15, unit:'%', basis:'law', note:'피노는 약 15%로 강화' }, flavors:['nutty','yeasty','herbal'], flavorBasis:'general', uses:[],
@@ -460,7 +481,7 @@ const LIQUORS = [
   brands:['곤살레스 비아스'],
   sources:[ LQS.sherry, LQS.sherry_fino, lqs('González Byass 공식 사이트(브랜드 예시)', 'https://www.gonzalezbyass.com/') ] },
 
-{ id:'madeira', kind:'type', emoji:'🍷', name:'마데이라', local:'Vinho da Madeira', en:'Madeira',
+{ id:'madeira', kind:'type', parent:'wine', emoji:'🍷', name:'마데이라', local:'Vinho da Madeira', en:'Madeira',
   origin:{ countries:['pt'], note:'마데이라섬' }, methods:['fermented','fortified'], materials:['grape'], styles:['madeira','fortified_wine'],
   tech:['mutage'], aging:{ methods:['heated','oxidative','oak'] }, abv:{ min:17, max:18, unit:'%', basis:'typical', note:'강화 후 약 17~18%' }, flavors:[], uses:[],
   summary:'와인을 데우거나(에스투파젱) 따뜻한 곳에 두어 숙성하는 포르투갈 마데이라섬의 강화 와인이에요.',
@@ -702,7 +723,7 @@ const LIQUORS = [
   sources:[ LQS.tej, LQS.tej_abv ] },
 
 // ══════════════ 확장: 한국 전통주 ══════════════
-{ id:'andong_soju', kind:'type', emoji:'🏺', name:'안동소주', local:'안동소주(安東燒酒)', en:'Andong soju',
+{ id:'andong_soju', kind:'type', parent:'soju_trad', emoji:'🏺', name:'안동소주', local:'안동소주(安東燒酒)', en:'Andong soju',
   origin:{ countries:['kr'], note:'경상북도 안동' }, methods:['distilled'], materials:['rice'], styles:['soju_trad','kr_trad_spirit'],
   tech:['nuruk','pot'], aging:{ methods:[] }, abv:{ min:45, max:45, unit:'%', basis:'typical', note:'백과사전 설명: 45도' }, flavors:[], uses:[],
   summary:'멥쌀이나 찹쌀 고두밥과 누룩으로 빚은 술을 소줏고리로 내린 안동의 증류식 소주예요.',
@@ -765,7 +786,7 @@ const LIQUORS = [
   sources:[ enc('E0054652','진도홍주'), LQS.soju_hist ] },
 
 // ══════════════ 확장: 중국 ══════════════
-{ id:'shaoxing', kind:'type', emoji:'🏺', name:'사오싱주', local:'紹興黃酒 (사오싱 황주)', en:'Shaoxing Huangjiu',
+{ id:'shaoxing', kind:'type', parent:'huangjiu', emoji:'🏺', name:'사오싱주', local:'紹興黃酒 (사오싱 황주)', en:'Shaoxing Huangjiu',
   origin:{ countries:['cn'], note:'저장성 사오싱' }, methods:['fermented'], materials:['rice','wheat'], styles:['huangjiu','rice_wine'],
   tech:['qu','yeast'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'사오싱 지역에서 찹쌀과 밀 곡(麴)으로 빚는, 지리적 표시로 보호되는 황주예요.',
@@ -777,7 +798,7 @@ const LIQUORS = [
   legal:{ protected:'지리적 표시 紹興黃酒' },
   sources:[ LQS.shaoxing_water, LQS.shaoxing_rice ] },
 
-{ id:'sauce_baijiu', kind:'type', emoji:'🏺', name:'장향형 백주', local:'醬香型白酒 (마오타이 향형)', en:'Sauce-aroma baijiu',
+{ id:'sauce_baijiu', kind:'type', parent:'baijiu', emoji:'🏺', name:'장향형 백주', local:'醬香型白酒 (마오타이 향형)', en:'Sauce-aroma baijiu',
   origin:{ countries:['cn'], note:'구이저우성 츠수이강 유역' }, methods:['distilled'], materials:['sorghum','wheat'], styles:['baijiu'],
   tech:['qu','solid_ferm'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'수수를 1년에 아홉 번 찌고 여덟 번 발효해 일곱 번 증류하는, 마오타이로 대표되는 백주예요.',
@@ -852,7 +873,7 @@ const LIQUORS = [
     pairing:'프로세코·탄산수와 섞는 아페롤 스프리츠로 많이 마신다.' },
   sources:[ LQS.aperol_hist ] },
 
-{ id:'prosecco', kind:'type', emoji:'🥂', name:'프로세코', local:'Prosecco DOC', en:'Prosecco',
+{ id:'prosecco', kind:'type', parent:'wine', emoji:'🥂', name:'프로세코', local:'Prosecco DOC', en:'Prosecco',
   origin:{ countries:['it'], note:'베네토·프리울리베네치아줄리아' }, methods:['fermented'], materials:['grape'], styles:['sparkling','wine'],
   tech:['second_tank'], aging:{ methods:[] }, abv:{ min:11, unit:'%', basis:'law', note:'스푸만테(발포성) 최소 11%' }, props:{ carbonation:'있음(탱크 속 2차 발효)' }, flavors:[], uses:['cocktail_base'],
   summary:'글레라 포도로 만들고 큰 압력 탱크 속에서 거품을 내는 이탈리아 스파클링 와인이에요.',
@@ -864,7 +885,7 @@ const LIQUORS = [
   legal:{ protected:'DOC Prosecco' },
   sources:[ LQS.prosecco, LQS.prosecco_glera, LQS.prosecco_reg ] },
 
-{ id:'vermouth_torino', kind:'type', emoji:'🍷', name:'베르무트 디 토리노', local:'Vermouth di Torino', en:'Vermouth di Torino',
+{ id:'vermouth_torino', kind:'type', parent:'wine', emoji:'🍷', name:'베르무트 디 토리노', local:'Vermouth di Torino', en:'Vermouth di Torino',
   origin:{ countries:['it'], note:'토리노(피에몬테)' }, methods:['aromatized','fortified'], materials:['grape','herb'], styles:['vermouth','aromatized_wine'],
   tech:['infusion'], aging:{ methods:[] }, abv:{ min:14.5, max:22, maxText:'미만', unit:'%', basis:'law', note:'가향 와인: 실제 14.5% 이상 22% 미만' }, flavors:['herbal','bitter'], flavorBasis:'general', uses:['aperitif','cocktail_base'],
   summary:'쑥 종류(아르테미시아)로 맛을 낸 가향 와인에 알코올을 더한 술로, 토리노가 지리적 표시를 가졌어요.',
@@ -875,7 +896,7 @@ const LIQUORS = [
   legal:{ protected:'지리적 표시 Vermouth di Torino' },
   sources:[ LQS.eu251, LQS.eu251_sum, iba('negroni','Negroni') ] },
 
-{ id:'marsala', kind:'type', emoji:'🍷', name:'마르살라', local:'Marsala', en:'Marsala',
+{ id:'marsala', kind:'type', parent:'wine', emoji:'🍷', name:'마르살라', local:'Marsala', en:'Marsala',
   origin:{ countries:['it'], note:'시칠리아 서부' }, methods:['fermented','fortified'], materials:['grape'], styles:['marsala','fortified_wine'],
   tech:[], aging:{ methods:[] }, abv:null, props:{ color:'짙은 호박색' }, flavors:['sweet'], flavorBasis:'general', uses:['cooking'],
   summary:'1773년부터 시칠리아에서 만든, 졸인 포도즙을 더하는 강화 와인이에요.',

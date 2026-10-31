@@ -57,6 +57,18 @@ for (const d of T.LIQUORS) {
   if (!d.abv && d.kind !== 'cocktail') W(id, '도수 미확인(화면에 정보 확인 필요)');   // 칵테일은 '재료·분량에 따라 다름'
 }
 
+// 세부 종류(B) — parent 는 있는 유형 카드여야 하고, 상위 카드 subtypes 에 같은 이름을 또 쓰지 않는다
+const byId = Object.fromEntries(T.LIQUORS.map(d => [d.id, d]));
+for (const d of T.LIQUORS) {
+  if (!d.parent) continue;
+  const p = byId[d.parent];
+  if (!p) { E(d.id, `parent 에 없는 카드: ${d.parent}`); continue; }
+  if (p.id === d.id || p.parent) E(d.id, 'parent 는 한 단계만(자기 자신·손자 관계 불가)');
+  if (p.kind !== 'type') E(d.id, 'parent 는 술의 유형(type) 카드여야 함');
+  const heads = ((p.detail || {}).subtypes || []).map(t => t.split(' — ')[0]);
+  if (heads.some(h => h.includes(d.name))) W(d.id, `상위 카드 ${p.id} 의 subtypes 에 같은 이름이 글로도 있음 — 하나만 남길 것`);
+}
+
 const byKind = {}; T.LIQUORS.forEach(d => { byKind[d.kind] = (byKind[d.kind] || 0) + 1; });
 console.log(`점검: ${T.LIQUORS.length}종 (${Object.entries(byKind).map(([k, n]) => `${T.LQ_KINDS[k]} ${n}`).join(' · ')}) · 오류 ${errors.length} · 경고 ${warns.length}`);
 errors.forEach(m => console.log('  ERROR ' + m));

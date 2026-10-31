@@ -993,6 +993,10 @@ function lqLabel(key, v){
   }
   return v;
 }
+// 세부 종류 — parent 로 이어진 별도 카드(B)와 detail.subtypes 의 글 목록(A)을 한 목록으로 보여 준다
+const lqParent = d => d.parent ? LIQUORS.find(x=>x.id===d.parent) : null;
+const lqChildren = id => LIQUORS.filter(x=>x.parent===id);
+const lqSubHeads = d => ((d.detail||{}).subtypes||[]).map(t=>t.split(' — ')[0]);
 function lqMatch(d, f){
   const has = (arr, v) => (arr||[]).includes(v);
   const ok = {
@@ -1015,8 +1019,8 @@ function lqMatch(d, f){
   }
   const q=f.q.trim().toLowerCase();
   if(q){
-    // 설명 문장은 검색하지 않는다 — '쌀' 로 찾을 때 '쌉쌀하다' 가 걸리는 식의 오검색을 막는다
-    const hay=[d.name,d.local,d.en,...(d.styles||[]).map(s=>LQ_STYLE_NAMES[s]),...(d.origin.countries||[]).map(c=>(LQ_COUNTRY[c]||{}).name),...(d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name)].join(' ').toLowerCase();
+    // 설명 문장은 검색하지 않는다 — '쌀' 로 찾을 때 '쌉쌀하다' 가 걸리는 식의 오검색을 막는다. 세부 유형은 이름 부분만 본다
+    const hay=[d.name,d.local,d.en,...(d.styles||[]).map(s=>LQ_STYLE_NAMES[s]),...(d.origin.countries||[]).map(c=>(LQ_COUNTRY[c]||{}).name),...(d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name),...lqSubHeads(d)].join(' ').toLowerCase();
     if(!hay.includes(q)) return false;
   }
   return true;
@@ -1043,6 +1047,7 @@ function lqCard(d){
       <div class="lq-cbody">
         <div class="lq-ctop"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}</div>
         <small class="lq-local">${esc(d.local)}</small>
+        ${lqParent(d)?`<div class="lq-meta lq-par">↳ ${esc(lqParent(d).name)}의 한 종류</div>`:''}
         <div class="lq-meta">${esc(lqCountries(d))}</div>
         <div class="lq-tags">${(d.styles||[]).slice(0,3).map(s=>`<span>${esc(LQ_STYLE_NAMES[s])}</span>`).join('')}</div>
         <div class="lq-meta">🌾 ${esc((d.materials||[]).map(m=>(LQ_MATERIAL[m]||{}).name).join(', ')||'정보 확인 필요')} · 🌡️ ${esc(lqAbvText(d))}</div>
@@ -1107,7 +1112,7 @@ function renderLiqHome(){
   APP.innerHTML=`
     <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🍷 세계의 술</div><div class="bar-count">${LIQUORS.length}종</div></div>
     <div class="lq-wrap">
-      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료로 찾기 (예: 쌀, 프랑스, 위스키)"></div>
+      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료·세부 유형으로 찾기 (예: 쌀, 프랑스, 준마이)"></div>
       <h3 class="lq-h">무엇으로 묶어 볼까요?</h3>
       <div class="lq-axes">${LQ_AXES.map(a=>{ const g=lqGroups(a.id).filter(x=>!x.dim).length;
         return `<button class="lq-axis" data-ax="${a.id}"><span class="lq-axis-emo">${a.emoji}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><span class="lq-axis-n">${g}개 묶음</span></button>`; }).join('')}</div>
@@ -1188,7 +1193,7 @@ function renderLiqIndex(){
     <div class="bar"><button class="bar-btn" id="home">‹ 세계의 술</button><div class="bar-title">📋 전체 목록</div><div class="bar-count">${hits.length}/${total}</div>
       <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
     <div class="lq-wrap">
-      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료로 찾기 (예: 쌀, 프랑스, 위스키)" value="${esc(LQF.q)}">
+      <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료·세부 유형으로 찾기 (예: 쌀, 프랑스, 준마이)" value="${esc(LQF.q)}">
         <button class="bar-btn ${LQ_PANEL?'on':''}" id="lqToggle">필터${nf?` ${nf}`:''}</button>${nf||LQF.q?'<button class="bar-btn" id="lqReset">초기화</button>':''}</div>
       ${LQ_PANEL?panel:''}
       ${active?`<div class="lq-chips lq-active">${active}</div>`:''}
@@ -1225,6 +1230,9 @@ function renderLiqDetail(id){
   const a=d.aging||{};
   const props=d.props||{}, PROP={carbonation:'탄산',color:'색',turbidity:'탁도',filtration:'여과',sweetness:'당도',acidity:'산도'};
   const lg=d.legal||{};
+  const par=lqParent(d), kids=lqChildren(d.id);
+  const subs = (x.subtypes||[]).map(s=>`<li>${esc(s)}</li>`).join('')
+    + kids.map(k=>`<li><button class="lq-sublink" data-id="${k.id}">${k.emoji||''} ${esc(k.name)} <span>카드 보기 ›</span></button> <small>${esc(k.summary)}</small></li>`).join('');
   const basis={general:'일반적으로 알려진 특성',style:'스타일 가이드 기준',product:'제품 설명 기준'}[d.flavorBasis]||'';
   const matText=(d.materials||[]).map(m=>{ const o=LQ_MATERIAL[m]; if(!o) return m; return `${o.name}(${(lqMatGroup(o.group)||{}).name})`; }).join(', ');
   const recipe = d.recipe ? `<div class="c-sec"><h3>🍸 레시피 <small>IBA 공식</small></h3>
@@ -1236,7 +1244,7 @@ function renderLiqDetail(id){
       <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
     <div class="geo-detail lq-detail">
       <div class="lq-dhead">${lqPic(d,'lq-dpic')}
-        <div><h2>${esc(d.name)}</h2><div class="c-en">${esc(d.local)}${d.en&&d.en!==d.local?` · ${esc(d.en)}`:''}</div>
+        <div>${par?`<button class="lq-crumb" data-id="${par.id}">${esc(par.name)} ›</button>`:''}<h2>${esc(d.name)}</h2><div class="c-en">${esc(d.local)}${d.en&&d.en!==d.local?` · ${esc(d.en)}`:''}</div>
           <span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span></div></div>
       <p class="wh-sum">${esc(d.summary)}</p>
       ${recipe}
@@ -1254,7 +1262,7 @@ function renderLiqDetail(id){
       ${sec(4,'역사와 문화', p(x.history))}
       ${sec(5,'지역적 특징', p(x.region))}
       ${sec(6,'향과 맛', ((d.flavors||[]).length?tags('flavors',d.flavors)+`<p class="lq-sm">근거: ${basis}</p>`:'')+p(x.taste), true)}
-      ${sec(7,'대표적인 세부 유형', (x.subtypes||[]).length?`<ul class="lq-ul">${x.subtypes.map(s=>`<li>${esc(s)}</li>`).join('')}</ul>`:'')}
+      ${sec(7,'대표적인 세부 유형', subs?`<ul class="lq-ul">${subs}</ul>`+(kids.length?'<p class="lq-sm">‘카드 보기’가 붙은 종류는 만드는 방식이 달라 따로 카드가 있어요.</p>':''):'')}
       ${sec(8,'대표 브랜드 및 제품 사례', (d.brands||[]).length?`<p>${d.brands.map(esc).join(' · ')}</p>`:'')}
       ${sec(9,'숙성 및 저장', ((a.methods||[]).length?tags('aging',a.methods):'')+(a.period?infoLine('기간',a.period):'')+(a.vessel?infoLine('용기',a.vessel):'')+p(x.aging))}
       ${sec(10,'일반적인 도수', `<p>${esc(lqAbvText(d))}${d.abv&&d.abv.note?` — ${esc(d.abv.note)}`:''}</p>`, true)}
@@ -1265,6 +1273,7 @@ function renderLiqDetail(id){
     </div>`;
   document.getElementById('back').onclick=()=>history.back();
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
+  APP.querySelectorAll('.lq-crumb,.lq-sublink').forEach(b=>b.onclick=()=>nav('liqd='+b.dataset.id));
   APP.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ LQF=lqEmptyFilter(); LQF[b.dataset.go]=[b.dataset.gv]; lqSave(); LQ_PANEL=false; nav('liqall'); });
   decorateUploads(APP);
   window.scrollTo(0,0);

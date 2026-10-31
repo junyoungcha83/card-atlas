@@ -604,3 +604,9 @@ body.tl-wide #app{height:100%;height:100dvh;min-height:0;padding-bottom:0}
 .lq-mini b{font-size:.95rem;line-height:1.25}
 .lq-mini .lq-kind{align-self:flex-start;margin-top:2px}
 .lq-mini .lq-meta{font-size:.72rem;line-height:1.35}
+/* 세계의 술 — 상위 카드 경로·세부 유형 링크 */
+.lq-crumb{display:block;background:none;border:0;padding:0 0 2px;color:var(--primary2);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.lq-par{color:var(--primary2)}
+.lq-sublink{background:var(--bg2);border:1px solid var(--primary);color:var(--text);border-radius:8px;padding:3px 8px;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer}
+.lq-sublink span{color:var(--primary2);font-size:.74rem;margin-left:4px}
+.lq-ul li small{display:block;color:var(--muted);font-size:.78rem;margin:2px 0 4px}
