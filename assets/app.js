@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v49';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v52';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -466,15 +466,15 @@ function updateMeta(){
   if(n) n.disabled = PAGE>=pageCount()-1;
   const dots=document.getElementById('dots');
   if(dots) [...dots.children].forEach((d,i)=>d.classList.toggle('on', i===item()));
-  history.replaceState(null,'',`#${KIND}=${item()}.${side()}`);
+  history.replaceState(null,'',`#${KIND}=${KIND==='world'&&WORLD_CONT?WORLD_CONT+'.':''}${item()}.${side()}`);
 }
 function hideHint(){ const h=document.getElementById('hint'); if(h) h.classList.add('gone'); }
 
 function renderDeck(){
   APP.innerHTML=`
     <div class="bar">
-      <button class="bar-btn" id="home">‹ 홈</button>
-      <div class="bar-title">${KIND==='world'?'🌍 세계 국가':KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':KIND==='past'?'🏚️ 과거도시':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
+      <button class="bar-btn" id="home">${KIND==='world'?'‹ 목록':'‹ 홈'}</button>
+      <div class="bar-title">${KIND==='world'?(c=>c?`${c.emoji} ${esc(c.name)}`:'🌍 세계 국가')(CONTINENTS.find(x=>x.id===WORLD_CONT)):KIND==='kbo'?'⚾ KBO 구단':KIND==='heroes'?'👑 한국위인전':KIND==='past'?'🏚️ 과거도시':'<img class="bar-emb" src="assets/wc-trophy.svg" alt=""> 월드컵'}</div>
       ${(KIND==='kbo'||KIND==='heroes'||KIND==='foot')?`<button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진·이력 편집">${EDIT?'✎ 편집중':'✎ 편집'}</button>`:''}
       <div class="bar-count" id="count"></div>
     </div>
@@ -578,6 +578,53 @@ const MY_CITIES = {
   },
 };
 const MY_CITY_ORDER = ['masan','cheongju','icheon','yongsan','mapo'];
+
+// ── 세계 국가: 대륙 선택 → 나라 목록 → 국가 카드(그 대륙 나라끼리 넘김) ──
+// 대륙은 region 앞부분으로 정한다. 두 대륙에 걸친 나라(러시아·튀르키예)는 양쪽 모두에 넣는다.
+const CONTINENTS = [
+  { id:'asia', name:'아시아',     emoji:'🌏', key:'아시아' },
+  { id:'eu',   name:'유럽',       emoji:'🏰', key:'유럽' },
+  { id:'af',   name:'아프리카',   emoji:'🦁', key:'아프리카' },
+  { id:'na',   name:'북아메리카', emoji:'🗽', key:'북아메리카' },
+  { id:'sa',   name:'남아메리카', emoji:'🌎', key:'남아메리카' },
+  { id:'oc',   name:'오세아니아', emoji:'🦘', key:'오세아니아' },
+];
+const contCountries = id => { const ct=CONTINENTS.find(x=>x.id===id); if(!ct) return [];
+  return COUNTRIES.filter(c=>(isEurasian(c)?c.region:c.region.split(' · ')[0]).includes(ct.key)); };
+const isEurasian = c => /유럽\s*·\s*아시아/.test(c.region);
+let WORLD_CONT='';                       // 지금 덱의 대륙(빈 값=48개국 전체, 옛 딥링크용)
+
+function renderWorldIndex(){
+  KIND=null;
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🌍 세계 국가</div><div class="bar-count">${COUNTRIES.length}개국</div></div>
+    <div class="geo-index">
+      <div class="geo-grp"><h3>대륙을 고르세요</h3><div class="geo-grid cont-grid">${
+        CONTINENTS.map(ct=>{ const list=contCountries(ct.id);
+          return `<button class="geo-tile cont-tile" data-cont="${ct.id}">
+            <span class="tile-emo">${ct.emoji}</span><b>${esc(ct.name)}</b><small>${list.length}개국</small>
+            <span class="cont-flags">${list.slice(0,5).map(c=>`<img src="https://flagcdn.com/w40/${c.flag}.png" alt="" loading="lazy">`).join('')}</span></button>`; }).join('')
+      }</div></div>
+    </div>
+    <div class="hint">👉 대륙을 누르면 <b>그 대륙의 나라</b>가 나와요</div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  APP.querySelectorAll('.cont-tile').forEach(b=>b.onclick=()=>nav('worldc='+b.dataset.cont));
+}
+function renderWorldCont(id){
+  const ct=CONTINENTS.find(x=>x.id===id); if(!ct){ renderWorldIndex(); return; }
+  KIND=null;
+  const list=contCountries(id);
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 대륙</button><div class="bar-title">${ct.emoji} ${esc(ct.name)}</div><div class="bar-count">${list.length}개국</div></div>
+    <div class="geo-index"><div class="geo-grid">${
+      list.map((c,i)=>`<button class="geo-tile ctry-tile" data-i="${i}">
+        <img class="ctry-flag" src="https://flagcdn.com/w160/${c.flag}.png" alt="${esc(c.name)} 국기" loading="lazy">
+        <b>${esc(c.name)}</b><small>${isEurasian(c)?'유럽·아시아':esc(c.region.split(' · ')[1]||c.en)}</small></button>`).join('')
+    }</div></div>
+    <div class="hint">👉 나라를 누르면 <b>국가 카드</b>가 열려요</div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  APP.querySelectorAll('.ctry-tile').forEach(b=>b.onclick=()=>nav(`world=${id}.${b.dataset.i}.0`));
+}
 
 // ── 한국지리 (계층 드릴다운) ──
 function renderGeoIndex(){
@@ -1291,11 +1338,12 @@ function infoLine(k,v){ return `<p class="lq-sm"><b>${esc(k)}</b> ${esc(v)}</p>`
 
 function nav(hash){ history.pushState(null,'','#'+hash); route(); }
 
-function openDeck(kind, it=0, sd=0){
+function openDeck(kind, it=0, sd=0, cont=''){
   if(kind==='geo'){ renderGeoIndex(); return; }
   if(!DECKS[kind]){ comingSoon(kind); return; }
   KIND=kind; FLAT = (kind==='heroes' || kind==='past');
-  LIST = kind==='world'?COUNTRIES : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?[{toc:true}].concat(HEROES) : kind==='past'?PAST_CITIES : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
+  WORLD_CONT = kind==='world' ? cont : '';
+  LIST = kind==='world'?(cont?contCountries(cont):COUNTRIES) : kind==='kbo'?[{stand:true,n:'KBO 순위'}].concat(KBO) : kind==='heroes'?[{toc:true}].concat(HEROES) : kind==='past'?PAST_CITIES : [{hist:true,n:'월드컵 역사'}].concat(FOOT);
   it = Math.min(Math.max(it,0), LIST.length-1);
   PAGE = FLAT ? it : it*2 + (sd?1:0);
   renderDeck();
@@ -1335,6 +1383,11 @@ function route(){
   if(rs){ renderTLSection('religion', rs[1]); return; }
   const rt=h.match(/^relst=([a-z0-9-]+)$/i);
   if(rt){ renderTLState('religion', rt[1]); return; }
+  if(h==='world'){ renderWorldIndex(); return; }
+  const wc=h.match(/^worldc=([a-z]+)$/);
+  if(wc){ renderWorldCont(wc[1]); return; }
+  const wd=h.match(/^world=([a-z]+)\.(\d+)\.(\d+)$/);
+  if(wd && CONTINENTS.some(x=>x.id===wd[1])){ openDeck('world', +wd[2], +wd[3], wd[1]); return; }
   const m=h.match(/^(world|kbo|foot|heroes|past)(?:=(\d+)\.(\d+))?$/);
   if(m) openDeck(m[1], m[2]?+m[2]:0, m[3]?+m[3]:0);
   else renderHome();

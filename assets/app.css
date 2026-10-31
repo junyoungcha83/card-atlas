@@ -610,3 +610,10 @@ body.tl-wide #app{height:100%;height:100dvh;min-height:0;padding-bottom:0}
 .lq-sublink{background:var(--bg2);border:1px solid var(--primary);color:var(--text);border-radius:8px;padding:3px 8px;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer}
 .lq-sublink span{color:var(--primary2);font-size:.74rem;margin-left:4px}
 .lq-ul li small{display:block;color:var(--muted);font-size:.78rem;margin:2px 0 4px}
+
+/* 세계 국가 — 대륙 선택 / 나라 목록 */
+.cont-grid{grid-template-columns:repeat(2,1fr)}
+.cont-tile{padding:14px 6px 10px}
+.cont-flags{display:flex;gap:3px;margin-top:6px;flex-wrap:wrap;justify-content:center}
+.cont-flags img{height:12px!important;width:auto;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+.ctry-tile .ctry-flag{height:auto;width:72px;max-width:90%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
