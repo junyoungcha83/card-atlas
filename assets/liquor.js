@@ -193,6 +193,7 @@ const LIQUORS = [
     making:'증류주. 곡물을 고체 발효시키고 증류·숙성·블렌딩해 만든다.',
     process:'주로 수수·쌀·밀을 원료로 한다. 효모·곰팡이·세균이 함께 자란 발효제 "곡(麴)"을 쓰며, 곡은 대곡·소곡·부곡으로 나뉜다.',
     subtypes:['농향(濃香)','청향(淸香)','미향(米香) 등 — 향의 특징으로 12가지 향형으로 나누며, 농향·청향·장향이 기본 3대 향형이다'],
+    subNative:['浓香型','清香型','米香型'],
     taste:'향은 주로 발효 중 미생물이 만드는 에스터·알코올·산·알데하이드 등에서 나온다.' },
   brands:['우량예(五粮液)'],
   sources:[ LQS.pmc_baijiu, LQS.pmc_baijiu_flavor, LQS.pmc_baijiu_abv, enc('E0022395','백주'), lqs('우량예 공식 사이트(브랜드 예시)', 'https://www.wuliangye.com.cn/') ] },
@@ -231,6 +232,7 @@ const LIQUORS = [
       '나마조조슈(生貯蔵酒) — 가열하지 않고 저장했다가 출하할 때 가열 처리한 술(표시 용어)',
       '겐슈(原酒) — 만든 뒤 물을 타서 도수를 맞추지 않은 술(표시 용어)',
       '다루자케(樽酒) — 나무통에 저장해 나무 향이 밴 술(표시 용어)'],
+    subNative:['純米大吟醸','大吟醸','純米吟醸','吟醸','特別純米','純米','特別本醸造','本醸造','生酒','生貯蔵酒','原酒','樽酒'],
     aging:'보통은 저장 전과 출하 전 두 번 가열 처리한다. 1년 이상 저장한 술에는 저장 연수를 표시할 수 있다.' },
   legal:{ protected:'지리적 표시 「日本酒」',
     rules:['위 8가지(특정 명칭)는 모두 코지를 만든 쌀이 전체 쌀의 15% 이상이어야 한다',
@@ -248,6 +250,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 녹말 원료(곡류·고구마)나 당 원료(흑설탕 등)를 발효시켜 증류한다.',
     subtypes:['쌀 소주','고구마 소주','보리 소주','흑설탕 소주'],
+    subNative:['米焼酎','芋焼酎','麦焼酎','黒糖焼酎'],
     diff:'일본 주세법은 소주를 연속식 증류 소주(36도 미만, 갑류)와 단식 증류 소주(45도 이하)로 나눈다. 본격 소주는 단식 증류 소주다.' },
   brands:['이이치코(いいちこ)'],
   sources:[ LQS.jss_honkaku, LQS.nta_shochu, lqs('이이치코 공식 사이트(브랜드 예시)', 'https://www.iichiko.co.jp/') ] },
@@ -260,6 +263,7 @@ const LIQUORS = [
   detail:{
     subtypes:['아와모리',
       '쿠스(古酒) — 3년 이상 숙성한 아와모리'],
+    subNative:['泡盛','古酒（クース）'],
     making:'증류주. 흑국균 쌀 코지와 물로만 빚은 술덧(전량 코지 담금)을 단식 증류기로 증류한다.',
     process:'흑국균(Aspergillus luchuensis)으로 띄운 쌀 코지만 쓰고, 물도 오키나와현 안의 것만 쓴다. 발효와 증류는 오키나와현 안에서 해야 한다.',
     aging:'3년 이상 숙성한 것을 고주(古酒, 쿠스)라 부른다.',
@@ -278,14 +282,15 @@ const LIQUORS = [
   sources:[ LQS.nta_homebrew, LQS.nta_def ] },
 
 // ══════════════ 프랑스 ══════════════
-{ id:'wine', kind:'type', emoji:'🍷', name:'와인', local:'Vin · Wine', en:'Wine',
+{ id:'wine', kind:'type', emoji:'🍷', name:'와인', local:'Vin(프) · Vino(이·스) · Vinho(포) · Wein(독) · 葡萄酒(중) · ワイン(일)', en:'Wine',
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['fermented'], materials:['grape'], styles:['wine','red','white','rose'],
   tech:['yeast'], aging:{ methods:[] }, abv:{ min:8.5, unit:'%', basis:'law', note:'OIV 기준 실제 알코올 8.5% 이상(지역 규정에 따라 7%까지)' },
   flavors:[], uses:[],
   summary:'신선한 포도나 포도즙만을 알코올 발효시켜 만든 술이에요.',
   detail:{
     making:'발효주. OIV는 와인을 "신선한 포도(으깬 것 포함) 또는 포도즙을 부분 또는 완전히 알코올 발효시킨 음료"로 정의한다.',
-    subtypes:['레드','화이트','로제'] },
+    subtypes:['레드','화이트','로제'],
+    subNative:['Rouge(프) · Rosso(이) · Tinto(스·포) · Rotwein(독)','Blanc(프) · Bianco(이) · Blanco(스) · Branco(포) · Weißwein(독)','Rosé(프) · Rosato(이) · Rosado(스·포)'] },
   sources:[ LQS.oiv_wine ] },
 
 { id:'champagne', kind:'type', parent:'wine', emoji:'🥂', name:'샴페인', local:'Champagne', en:'Champagne',
@@ -306,6 +311,7 @@ const LIQUORS = [
       '블랑 드 누아 — 적포도(피노 누아·뫼니에)로만',
       '로제 — 적포도를 우려내거나 레드 샴페인 와인을 섞어 색과 바디를 더함',
       '빈티지 — 그해 수확한 포도로만 만들고 그 해를 병에 표시'],
+    subNative:['Brut Nature · Pas Dosé · Dosage Zéro','Extra Brut','Brut','Extra Dry · Extra Sec','Sec','Demi-Sec','Doux','Blanc de Blancs','Blanc de Noirs','Rosé','Millésimé'],
     making:'발효주(스파클링 와인). 기본 와인에 와인·설탕·효모를 섞은 "리큐르 드 티라주"를 넣고 병입하면, 병 안에서 효모가 설탕을 먹으며 알코올과 거품을 만든다.',
     process:'2차 발효 뒤 병을 빛이 없는 저장고에 두고 효모 앙금과 함께 오래 숙성한다. 죽은 효모가 분해되는 과정(자가분해)이 맛을 더한다.',
     aging:'모든 샴페인은 출시 전 최소 15개월, 빈티지 샴페인은 최소 3년 숙성한다.',
@@ -324,6 +330,7 @@ const LIQUORS = [
     making:'증류주(브랜디). 와인을 구리 증류기로 두 번 증류해 와인 증류주를 얻고, 오크통에서 최소 2년 숙성한다.',
     process:'첫 번째 증류(프르미에르 쇼프)로 "브루이"를 얻고, 이를 다시 증류(두 번째 쇼프)하면서 처음과 끝 부분을 잘라 내 코냑 원액을 얻는다. 원료 포도는 위니 블랑이 98% 이상으로, 산도가 높고 도수가 낮은(8~9%) 와인을 만든다.',
     subtypes:['VS — 가장 어린 원액이 2년 이상','VSOP — 4년 이상','XO — 10년 이상'],
+    subNative:['VS · ***','VSOP','XO'],
     taste:'꽃·과일·오크·향신료 향이 폭넓게 나타난다. BNIC는 전문가 50명이 코냑 100종을 시음한 기록 5,000건으로 「아로마 휠」을 만들었다.',
     region:'프랑스 코냑 지리적 표시 지역.',
     diff:'같은 프랑스 포도 브랜디인 아르마냑은 대부분 연속식 증류기로 한 번 증류한다.' },
@@ -342,6 +349,7 @@ const LIQUORS = [
       'XO · 오르 다주(Hors d\'Âge)',
       '빈티지 — 그해 수확한 포도로만 만든 아르마냑',
       '블랑슈 아르마냑(AOC)'],
+    subNative:['VS · ***','VSOP','XO · Hors d’Âge','Millésime','Blanche Armagnac'],
     making:'증류주(브랜디). 와인을 순동 연속 증류기(알랑비크 아르마냐케)로 증류한다. 이 증류기는 1818년에 인정받아 지역 증류사들이 개량해 왔다.',
     process:'와인이 냉각기 아래쪽에서 계속 들어가 증류탑의 판을 따라 내려가고, 아래에서 데워진 증기가 올라오며 알코올과 향을 머금은 뒤 응축된다. 주요 품종은 위니 블랑, 그리고 필록세라 이후 개발된 잡종 품종 바코.',
     aging:'증류한 원액을 400리터 오크통(주로 가스코뉴·리무쟁산)에 숙성하며, 숙성 중 증발로 도수가 조금씩 낮아진다(천사의 몫).',
@@ -358,6 +366,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 사과(사이다용)와 배(페리용)로 만든 사이다를 증류해 오크통에서 최소 2년 숙성한다.',
     subtypes:['Calvados','Calvados Pays d’Auge — 단식 증류기로 반드시 두 번 증류, 페리용 배 30% 이상','Calvados Domfrontais'],
+    subNative:['Calvados','Calvados Pays d’Auge','Calvados Domfrontais'],
     process:'구리 증류기로 72% 이하에서 증류해 향 성분을 많이 남긴다.',
     region:'프랑스 노르망디 원산지 명칭 지역.' },
   legal:{ protected:'AOC Calvados · Calvados Pays d’Auge · Calvados Domfrontais' },
@@ -371,7 +380,8 @@ const LIQUORS = [
   detail:{
     making:'리큐르. 130가지 식물·꽃·나무껍질·뿌리·향신료로 만들며, 어떤 식물을 쓰는지와 섞는 법은 수도사 두 명만 안다.',
     history:'1605년 데스트레 공작이 카르투시오회에 "장수의 묘약" 처방이 담긴 문서를 맡겼고, 1737년 그랑드 샤르트뢰즈 수도원으로 옮겨졌다. 1764년 「그랑드 샤르트뢰즈 식물 엘릭시르」로 완성되었다.',
-    subtypes:['그린 — 자연스러운 초록빛과 강한 향','옐로 — 단맛과 향신료 향'] },
+    subtypes:['그린 — 자연스러운 초록빛과 강한 향','옐로 — 단맛과 향신료 향'],
+    subNative:['Chartreuse Verte','Chartreuse Jaune'] },
   era:{ year:1764, note:'「그랑드 샤르트뢰즈 식물 엘릭시르」 완성(처방은 1605년)' },
   sources:[ LQS.chartreuse, LQS.chartreuse_g, LQS.chartreuse_y ] },
 
@@ -395,6 +405,7 @@ const LIQUORS = [
     making:'강화주. 발효 중 96도 포도 알코올을 머스트 부피의 5~10%(순알코올 최대 10%)만큼 넣는 "뮤타주"로 효모의 활동을 멈춘다.',
     process:'효모가 당을 모두 알코올로 바꾸기 전에 멈추기 때문에 포도의 천연 당 일부가 남는다.',
     subtypes:['리브잘트','뮈스카 드 리브잘트','모리','바뉠스'],
+    subNative:['Rivesaltes','Muscat de Rivesaltes','Maury','Banyuls'],
     diff:'포르투갈의 포트도 발효 중 포도 브랜디를 넣어 단맛을 남기는 강화 와인이다.' },
   sources:[ LQS.vdn_rivesaltes, LQS.vdn_maury, LQS.vdn_cdc ] },
 
@@ -444,6 +455,7 @@ const LIQUORS = [
     making:'증류주. 스코틀랜드에서 생산하고 스코틀랜드에서만 숙성해야 한다.',
     aging:'용량 700리터 이하의 오크통에서 3년 이상 숙성한다.',
     subtypes:['싱글 몰트 — 한 증류소에서 물과 맥아 보리만으로 구리 단식 증류기에 증류','싱글 그레인 — 한 증류소, 다른 곡물도 사용','블렌디드 몰트 — 여러 증류소의 싱글 몰트를 섞음','블렌디드 그레인','블렌디드 스카치 — 싱글 몰트와 싱글 그레인을 섞음(세계 판매의 약 90%)'],
+    subNative:['Single Malt Scotch Whisky','Single Grain Scotch Whisky','Blended Malt Scotch Whisky','Blended Grain Scotch Whisky','Blended Scotch Whisky'],
     legal:'The Scotch Whisky Regulations 2009가 정의한다. 최소 도수 40%. 범주를 병 앞면에 표시해야 한다.' },
   legal:{ protected:'Scotch Whisky (법률로 정의)', rules:['스코틀랜드에서 생산·숙성','700L 이하 오크통 3년 이상','도수 40% 이상'] },
   brands:['조니워커'],
@@ -458,6 +470,7 @@ const LIQUORS = [
       '몰트 — 맥아 보리 100%로 단식 증류기에 증류(두 번 또는 세 번)',
       '그레인 — 맥아 보리 30% 이하에 옥수수·밀·보리 같은 곡물을 더해 연속식 증류기(컬럼 스틸)로 증류',
       '블렌디드 — 위 종류 가운데 둘 이상을 섞은 것'],
+    subNative:['Irish Pot Still Whiskey','Irish Malt Whiskey','Irish Grain Whiskey','Blended Irish Whiskey'],
     making:'증류주. 몰트(싹 틔운 곡물)의 효소로 당화하고 효모로 발효시켜, 94.8% 미만으로 증류해 원료의 향을 살린다.',
     aging:'아일랜드섬 안에서 700리터 이하의 나무통(오크 등)에 3년 이상 숙성한다. 새 통뿐 아니라 마데이라·셰리·포트·버번을 담았던 통도 쓴다.',
     legal:'Irish Whiskey Act 1980과 EU 규정에 따른 지리적 표시.' },
@@ -474,12 +487,13 @@ const LIQUORS = [
       '디스틸드 진 — 96% 이상의 농산물 알코올을 주니퍼베리·천연 식물과 함께 다시 증류한 것',
       '런던 진 — 디스틸드 진 가운데 향을 모두 증류로만 내고, 색을 넣지 않으며 단맛이 1리터에 0.1g 이하인 것',
       '드라이 — 단맛이 1리터에 0.1g 이하일 때 진·디스틸드 진 이름에 붙일 수 있는 말'],
+    subNative:['Gin','Distilled Gin','London Gin','Dry'],
     making:'EU 규정상 진은 농산물에서 얻은 에틸 알코올에 주니퍼베리(Juniperus communis)로 향을 낸 술이며, 최소 도수는 37.5%다.',
     pairing:'네그로니·마티니 같은 칵테일의 베이스로 쓰인다.' },
   brands:['탱커레이'],
   sources:[ LQS.eu787_ann, LQS.eu787, lqs('Tanqueray 공식 사이트(브랜드 예시)', 'https://www.tanqueray.com/') ] },
 
-{ id:'vodka', kind:'type', emoji:'🥃', name:'보드카', local:'Vodka', en:'Vodka',
+{ id:'vodka', kind:'type', emoji:'🥃', name:'보드카', local:'Vodka · Водка(러) · Wódka(폴)', en:'Vodka',
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['distilled'], materials:['grain','potato'], styles:['vodka'],
   tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 규정 최소 37.5%' }, flavors:[], uses:['cocktail_base'],
   summary:'농산물에서 얻은 알코올로 만드는 증류주로, EU 규정상 37.5% 이상이에요.',
@@ -495,6 +509,7 @@ const LIQUORS = [
   detail:{
     making:'강화주. 머스트의 당이 절반쯤 발효되었을 때 포도 브랜디(아구아르덴테)를 넣어 발효를 일찍 멈춘다. 이를 "베네피시우"라 한다.',
     subtypes:['루비 — 짙은 붉은색, 신선한 검은 과일 맛(리저브·LBV·빈티지 포함)','토니 — 숙성으로 황갈색, 견과·아몬드·캐러멜·말린 무화과 맛','화이트','로제 — 체리·라즈베리·딸기 향'],
+    subNative:['Ruby','Tawny','White · Branco','Rosé'],
     region:'포르투갈 도루 지정 지역에서만 만든다.',
     legal:'1933년 설립된 IVDP가 포트와 도루 와인의 품질·생산을 관리하고 원산지 명칭을 보호한다.',
     diff:'셰리는 발효를 마친 와인에 알코올을 더하지만, 포트는 발효 도중에 넣어 단맛을 남긴다.' },
@@ -512,7 +527,8 @@ const LIQUORS = [
     aging:'발효 뒤 와인 표면에 "플로르"라는 효모막이 생겨 산화를 막으며 숙성시킨다(생물학적 숙성). 대부분 아메리칸 오크통에서 "크리아데라스 이 솔레라" 방식으로 오래 숙성한다.',
     region:'스페인 남부 헤레스·산루카르 데 바라메다 등을 잇는 "마법의 삼각지대".',
     taste:'피노는 연한 볏짚색에 아몬드·갓 구운 빵 반죽·들풀 향이 나고, 아주 드라이하며 짭짤한 여운이 있다.',
-    subtypes:['피노','만사니야','아몬티야도','올로로소','팔로 코르타도'] },
+    subtypes:['피노','만사니야','아몬티야도','올로로소','팔로 코르타도'],
+    subNative:['Fino','Manzanilla','Amontillado','Oloroso','Palo Cortado'] },
   legal:{ protected:'원산지 명칭 Jerez-Xérès-Sherry' },
   brands:['곤살레스 비아스'],
   sources:[ LQS.sherry, LQS.sherry_fino, lqs('González Byass 공식 사이트(브랜드 예시)', 'https://www.gonzalezbyass.com/') ] },
@@ -524,7 +540,8 @@ const LIQUORS = [
   detail:{
     making:'강화주. 96% 중성 포도 알코올을 넣어 발효를 멈추며, 넣는 때에 따라 드라이·미디엄 드라이·미디엄 리치·리치 네 가지가 된다.',
     aging:'에스투파젱: 스테인리스 통을 45~50℃의 뜨거운 물로 3개월 이상 데운 뒤 90일 이상 쉬게 한다. 칸테이루: 저장고 위층의 따뜻한 곳에서 나무통에 2년 이상 두며 산화 숙성한다.',
-    subtypes:['세르시알 — 드라이','베르델류 — 오프드라이','보알 — 세미스위트','말바지아 — 스위트','틴타 네그라'] },
+    subtypes:['세르시알 — 드라이','베르델류 — 오프드라이','보알 — 세미스위트','말바지아 — 스위트','틴타 네그라'],
+    subNative:['Sercial','Verdelho','Boal · Bual','Malvasia · Malmsey','Tinta Negra'] },
   legal:{ protected:'원산지 명칭 Madeira' },
   brands:['블랜디스'],
   sources:[ LQS.madeira, LQS.madeira_v, LQS.madeira_abv, lqs('Blandy’s 공식 사이트(브랜드 예시)', 'https://www.blandys.com/') ] },
@@ -536,7 +553,8 @@ const LIQUORS = [
   summary:'아니스 씨앗과 함께 증류한 알코올로 만든, 그리스·키프로스의 지리적 표시 술이에요.',
   detail:{
     making:'EU 분류상 "증류 아니스(distilled anis)"에 속한다. 아니스 등 향 씨앗과 함께 증류한 알코올이 전체 알코올의 20% 이상이어야 하며, 최소 도수는 35%다.',
-    subtypes:['Ouzo of Mitilene','Ouzo of Plomari','Ouzo of Kalamata','Ouzo of Thrace','Ouzo of Macedonia'] },
+    subtypes:['Ouzo of Mitilene','Ouzo of Plomari','Ouzo of Kalamata','Ouzo of Thrace','Ouzo of Macedonia'],
+    subNative:['Ούζο Μυτιλήνης','Ούζο Πλωμαρίου','Ούζο Καλαμάτας','Ούζο Θράκης','Ούζο Μακεδονίας'] },
   legal:{ protected:'지리적 표시 Ouzo' },
   sources:[ LQS.eu_ouzo ] },
 
@@ -660,6 +678,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 옥수수 51% 이상인 발효 곡물로 160프루프(80%) 이하로 증류하고, 125프루프(62.5%) 이하로 그을린 새 오크통에 담는다.',
     subtypes:['스트레이트 버번 — 그을린 새 오크통에서 2년 이상 숙성'],
+    subNative:['Straight Bourbon Whiskey'],
     legal:'미국 연방규정(27 CFR Part 5)이 정체성 기준으로 정한다.' },
   legal:{ protected:'미국 연방규정의 정체성 기준', rules:['옥수수 51% 이상','160프루프 이하 증류','그을린 새 오크통','통 입고 125프루프 이하'] },
   brands:['메이커스 마크','짐 빔'],
@@ -672,6 +691,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 블루 아가베(Agave tequilana Weber)만 쓸 수 있고, 멕시코 공식 표준 NOM-006-SCFI-2012의 방법을 따라야 한다.',
     subtypes:['블랑코(실버) — 숙성하지 않음','레포사도 — 오크통에서 2개월 이상','아녜호 — 600L 이하 오크통에서 1년 이상','엑스트라 아녜호 — 3년 이상'],
+    subNative:['Blanco · Plata','Reposado','Añejo','Extra Añejo'],
     region:'할리스코·미초아칸·과나후아토·나야리트·타마울리파스 5개 주의 181개 시가 원산지 명칭 지역이다.',
     diff:'메스칼은 여러 아가베 종을 쓸 수 있지만, 데킬라는 블루 아가베만 쓴다.' },
   legal:{ protected:'원산지 명칭 Tequila', rules:['블루 아가베만 사용','NOM-006-SCFI-2012'] },
@@ -685,6 +705,7 @@ const LIQUORS = [
   detail:{
     making:'증류주. 아가베 속 식물의 즙을 발효시켜 증류한다. 에스파딘(Agave angustifolia) 등 여러 종을 쓸 수 있다.',
     subtypes:['메스칼','메스칼 아르테사날(전통 공예)','메스칼 안세스트랄(가장 전통적 — 땅구덩이 화덕에 굽기 등)'],
+    subNative:['Mezcal','Mezcal Artesanal','Mezcal Ancestral'],
     region:'와하카 등 원산지 명칭을 받은 멕시코의 여러 주.',
     diff:'데킬라는 블루 아가베 한 종만 쓰지만 메스칼은 여러 아가베 종을 쓸 수 있다.' },
   legal:{ protected:'원산지 명칭 Mezcal', rules:['NOM-070-SCFI-2016'] },
@@ -697,6 +718,7 @@ const LIQUORS = [
   detail:{
     subtypes:['트래디셔널(traditionnel·tradicional) — 지리적 표시 럼 가운데 그 지역 원료만 써서 90% 미만으로 증류하고 단맛을 더하지 않은 것',
       '아그리콜(agricole) — 트래디셔널 조건에 더해 사탕수수즙만 발효·증류한 것(프랑스 해외 데파르트망과 마데이라의 지리적 표시만 쓸 수 있음)'],
+    subNative:['Traditionnel · Tradicional','Agricole'],
     making:'증류주. EU 규정상 럼은 사탕수수 설탕을 만들 때 나오는 당밀·시럽, 또는 사탕수수즙 자체를 발효시킨 것을 96% 미만으로 증류해 럼 특유의 향이 남게 만든 술이다.',
     pairing:'모히토·다이키리·마이타이 같은 칵테일의 베이스로 쓰인다.',
     diff:'브라질의 카샤사는 사탕수수즙을 발효시켜 증류한 브라질 고유의 사탕수수 증류주다.' },
@@ -710,7 +732,8 @@ const LIQUORS = [
   detail:{
     making:'증류주. 사탕수수즙을 발효시킨 술덧을 증류해 만든다.',
     legal:'브라질 대통령령 6.871/2009: 브라질에서 만든 사탕수수 증류주의 고유 명칭이며 도수는 38~48%다. 당을 1리터에 6g까지 넣을 수 있고, 6~30g이면 "아도사다(단맛 카샤사)"다.',
-    subtypes:['카샤사','카샤사 아도사다(단맛)','카샤사 엔벨례시다(숙성 — 1년 이상 숙성 원액 50% 이상)'] },
+    subtypes:['카샤사','카샤사 아도사다(단맛)','카샤사 엔벨례시다(숙성 — 1년 이상 숙성 원액 50% 이상)'],
+    subNative:['Cachaça','Cachaça Adoçada','Cachaça Envelhecida'] },
   legal:{ protected:'브라질 고유 명칭(대통령령 6.871/2009)' },
   sources:[ LQS.cachaca ] },
 
@@ -734,6 +757,7 @@ const LIQUORS = [
   detail:{
     subtypes:['캐슈 페니 — 캐슈애플 즙으로 만든 것',
       '코코넛 페니 — 코코넛 수액으로 만든 것'],
+    subNative:['Cashew Feni','Coconut Feni'],
     making:'증류주. 캐슈애플 즙으로 만든 것은 캐슈 페니, 코코넛 수액으로 만든 것은 코코넛 페니라 한다.',
     legal:'2007년 인도에서 처음으로 지리적 표시를 받은 술이며, 2016년 고아주가 "헤리티지 스피릿"으로 지정했다.' },
   legal:{ protected:'인도 지리적 표시 Feni (2007)' },
@@ -905,7 +929,7 @@ const LIQUORS = [
   sources:[ LQS.jp_whisky ] },
 
 // ══════════════ 3차 보강(2026-10-31): 큰 분류 카드 + 새 술 ══════════════
-{ id:'whisky', kind:'type', emoji:'🥃', name:'위스키', local:'Whisky · Whiskey', en:'Whisky',
+{ id:'whisky', kind:'type', emoji:'🥃', name:'위스키', local:'Whisky(스코틀랜드) · Whiskey(아일랜드) · ウイスキー(일본)', en:'Whisky',
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['distilled'], materials:['barley','grain'], styles:['whisky'],
   tech:[], aging:{ methods:['oak'], period:'EU 3년 이상', vessel:'700L 이하 나무통(EU) · 오크통(미국)' },
   abv:{ min:40, unit:'%', basis:'law', note:'EU 최소 40%, 미국도 병입 40% 이상' }, flavors:[], uses:[],
@@ -917,6 +941,7 @@ const LIQUORS = [
       '미국 규정의 원료별 이름 — 옥수수·호밀·밀·맥아 보리·맥아 호밀이 술덧의 51% 이상이면 각각 버번·라이·휘트·몰트·라이 몰트 위스키',
       '콘 위스키 — 미국: 옥수수 80% 이상',
       '스트레이트 — 미국: 위 원료별 위스키를 새로 그을린 오크통에 2년 이상 숙성하고 아무것도 더하지 않은 것'],
+    subNative:['Single Malt','Bourbon · Rye · Wheat · Malt · Rye Malt Whisky','Corn Whiskey','Straight'],
     diff:'미국 규정은 맥아를 꼭 쓰라고 하지 않고, EU 규정은 맥아를 반드시 쓰게 한다.' },
   sources:[ LQS.eu787_ann, LQS.ttb_whisky ] },
 
@@ -927,11 +952,12 @@ const LIQUORS = [
   detail:{
     making:'증류주. 호밀 51% 이상인 술덧을 80%(160프루프) 이하로 증류해, 62.5%(125프루프) 이하로 새로 그을린 오크통에 넣어 저장한다. 중성 알코올은 섞을 수 없다.',
     subtypes:['스트레이트 라이 위스키 — 새로 그을린 오크통에서 2년 이상 숙성하고 색·향을 더하지 않은 것'],
+    subNative:['Straight Rye Whiskey'],
     diff:'같은 미국 규정의 버번은 옥수수가 51% 이상이고, 색·향료를 더할 수 없다. 라이 위스키는 해가 없는 색·향 재료를 더할 수 있다.' },
   legal:{ rules:['호밀 51% 이상','80% 이하로 증류','새로 그을린 오크통에 62.5% 이하로 저장'] },
   sources:[ LQS.ttb_whisky ] },
 
-{ id:'beer', kind:'type', emoji:'🍺', name:'맥주', local:'Beer · Bier', en:'Beer',
+{ id:'beer', kind:'type', emoji:'🍺', name:'맥주', local:'Beer · Bier(독) · Bière(프) · Birra(이) · Cerveza(스) · Pivo(체) · 啤酒(중) · ビール(일)', en:'Beer',
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['fermented'], materials:['barley','grain'], styles:['beer'],
   tech:['yeast'], aging:{ methods:[] },
   abv:{ min:0.5, unit:'%', basis:'law', note:'미국 연방 규정은 0.5% 이상을 맥주로 본다(BJCP 스타일은 대부분 4~9%)' }, flavors:[], uses:[],
@@ -942,6 +968,7 @@ const LIQUORS = [
       '라거 — 아래쪽에서 발효하는 효모(하면 발효)로 만든 맥주',
       '와일드·혼합 발효 — 세균이나 사카로미세스가 아닌 효모로 발효(자연 발효 포함)',
       '도수에 따른 구분(BJCP) — 세션 4% 미만 · 스탠더드 4~6% · 하이 6~9% · 베리 하이 9% 초과'],
+    subNative:['Ale','Lager','Wild · Mixed-Fermentation','Session · Standard · High · Very High'],
     diff:'독일 같은 전통 양조 지역에서는 상면·하면 발효라는 말을 주로 쓰고, 라거를 저온 숙성 방식으로 본다. 그래서 쾰시는 "상면 발효 라거"라고 부르기도 한다.' },
   sources:[ LQS.ttb_beer, LQS.bjcp ] },
 
@@ -958,6 +985,7 @@ const LIQUORS = [
       '싱가니 — 볼리비아 규정에 따라 볼리비아에서 포도로 만든 브랜디',
       '말린 과일 브랜디 — 말린 과일로 만든 것(건포도로 만들면 레이즌 브랜디)',
       '리스 브랜디 — 와인을 만들고 남은 앙금을 증류한 것'],
+    subNative:['Fruit Brandy','Brandy de Jerez','Singani','Dried Fruit Brandy · Raisin Brandy','Lees Brandy'],
     diff:'미국 규정은 포도 찌꺼기 증류주(그라파)·사과 브랜디(칼바도스)·과일 증류주를 모두 브랜디의 한 종류로 보지만, EU 규정은 이들을 브랜디와 다른 범주로 나눈다.' },
   sources:[ LQS.ttb_brandy, LQS.eu787_ann ] },
 
@@ -967,7 +995,8 @@ const LIQUORS = [
   summary:'페루나 칠레에서 그 나라 법에 따라 포도로 만드는 브랜디예요.',
   detail:{
     making:'증류주(포도 브랜디). 미국 규정은 페루나 칠레에서 그 나라의 피스코 제조 법규에 따라 증류한 포도 브랜디만 피스코로 인정한다.',
-    subtypes:['피스코 페루 — 페루 법규에 따라 페루에서 만든 것','피스코 칠레노 — 칠레 법규에 따라 칠레에서 만든 것'] },
+    subtypes:['피스코 페루 — 페루 법규에 따라 페루에서 만든 것','피스코 칠레노 — 칠레 법규에 따라 칠레에서 만든 것'],
+    subNative:['Pisco Perú','Pisco Chileno'] },
   legal:{ protected:'페루·칠레의 원산지 명칭' },
   sources:[ LQS.ttb_brandy ] },
 
@@ -979,6 +1008,7 @@ const LIQUORS = [
     making:'증류주. EU 규정상 신선한 과일(바나나 포함)·베리·채소나 그 즙을 발효·증류하며, 매번 86% 미만으로 증류해 원료의 향과 맛이 남게 한다.',
     subtypes:['키르슈 — 체리','슬리보비츠 · 플럼 · 크베치 — 자두','미라벨 — 미라벨 자두','윌리엄스 — 윌리엄스 품종 배로만',
       '오프스틀러 — 술덧의 85% 이상이 여러 품종의 사과·배인 것'],
+    subNative:['Kirsch · Kirschwasser','Slivovitz · Quetsch · Zwetschge','Mirabelle','Williams','Obstler'],
     diff:'EU 규정은 와인으로 만드는 브랜디, 사과주를 증류하는 사과주 증류주(칼바도스 등), 포도 찌꺼기 증류주(그라파 등)와 과일 증류주를 서로 다른 범주로 나눈다.' },
   legal:{ rules:['이름은 「과일 이름 + 증류주」가 원칙','색을 넣지 않음(나무통에 1년 이상 숙성한 것은 캐러멜 가능)','알코올·향료를 더하지 않음','단맛은 1리터에 18g 이하'] },
   sources:[ LQS.eu787_ann ] },
@@ -1003,6 +1033,7 @@ const LIQUORS = [
     subtypes:['트래디셔널 미드 — 꿀 맛을 그대로 살린 것(드라이·세미스위트·스위트)','멜로멜 — 과일을 넣은 미드',
       '사이저 — 사과(주로 사이다)로 만든 멜로멜','파이먼트 — 포도로 만든 멜로멜',
       '메테글린 — 요리용 향신료·허브만 넣은 미드','브래곳 — 맥아를 넣은 미드'],
+    subNative:['Traditional Mead','Melomel','Cyser','Pyment','Metheglin','Braggot'],
     diff:'EU 규정의 「꿀 증류주(honey spirit)」는 꿀 술덧을 발효시킨 뒤 증류한 증류주로, 증류하지 않는 미드와 다르다.' },
   sources:[ LQS.bjcp_mead, LQS.eu787_ann ] },
 
@@ -1038,6 +1069,7 @@ const LIQUORS = [
       '프로세코 스푸만테 — 스파클링',
       '프로세코 스푸만테 로제 — 글레라 85~90%와 피노 네로 10~15%(레드 양조), 수확 연도(밀레지마토) 표시 의무',
       '프로세코 프리찬테 — 약하게 거품이 이는 세미 스파클링'],
+    subNative:['Prosecco','Prosecco Spumante','Prosecco Spumante Rosé','Prosecco Frizzante'],
     making:'발효주(스파클링 와인). 기본 와인을 설탕·효모와 함께 밀폐된 스테인리스 압력 탱크(오토클레이브)에 넣어 2차 발효시키는 샤르마-마르티노티 방식. 탱크에서 최소 30일(로제는 60일)~6개월 둔다.',
     process:'글레라 품종을 85% 이상 써야 한다.',
     region:'베네토주 5개 현과 프리울리베네치아줄리아주 4개 현.',

@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v54';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v55';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1044,7 +1044,7 @@ function lqLabel(key, v){
 // 세부 종류 — parent 로 이어진 별도 카드(B)와 detail.subtypes 의 글 목록(A)을 한 목록으로 보여 준다
 const lqParent = d => d.parent ? LIQUORS.find(x=>x.id===d.parent) : null;
 const lqChildren = id => LIQUORS.filter(x=>x.parent===id);
-const lqSubHeads = d => ((d.detail||{}).subtypes||[]).map(t=>t.split(' — ')[0]);
+const lqSubHeads = d => [...((d.detail||{}).subtypes||[]).map(t=>t.split(' — ')[0]), ...((d.detail||{}).subNative||[])];   // 원어로도 찾을 수 있게
 function lqMatch(d, f){
   const has = (arr, v) => (arr||[]).includes(v);
   const ok = {
@@ -1086,6 +1086,80 @@ function lqPic(d, cls){
   return `<div class="${cls}" data-upslot="${slot}">
     <img src="${imgURL(slot,'')}" alt="" loading="lazy" ${up?'':'style="display:none"'} onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <span class="lq-ph" ${up?'style="display:none"':''}>${d.emoji||'🍶'}</span></div>`;
+}
+
+// ── 세부 유형 병 그림 — 원어 이름을 라벨에 적은 일러스트(사진이 올라오면 사진이 우선) ──
+const LQ_VESSEL = {
+  bin:['sake','shochu','awamori','baijiu'],
+  wine:['wine','port','sherry','madeira','vdn','mead'],
+  spark:['champagne','prosecco'],
+  beer:['beer'],
+};
+const lqVessel = id => Object.keys(LQ_VESSEL).find(k=>LQ_VESSEL[k].includes(id)) || 'spirit';
+// 이름에 색이 드러나는 종류만 색을 바꾸고(레드·로제·토니·그린…), 나머지는 술 갈래의 대표색
+const LQ_TINT_BY_NAME = [[/레드|루비/,'#7a1426'],[/로제/,'#e48aa0'],[/화이트/,'#ead98f'],[/토니/,'#a8642a'],[/그린/,'#5fa83a'],[/옐로/,'#e0bf3a'],
+  [/블랑코|블랑슈/,'#dfe9f2'],[/레포사도/,'#d9a441'],[/아녜호|XO|VSOP|오르 다주|엔벨례시다|스트레이트/,'#a85f1c']];
+const LQ_TINT_BY_CARD = { sake:'#e9eef4', shochu:'#e9eef4', awamori:'#e9eef4', baijiu:'#e9eef4', gin:'#e9eef4', ouzo:'#e9eef4', pisco:'#e9eef4',
+  fruit_spirit:'#e9eef4', mezcal:'#e9eef4', cachaca:'#e9eef4', feni:'#e9eef4', tequila:'#e9eef4', chartreuse:'#5fa83a',
+  champagne:'#ecd98c', prosecco:'#ecd98c', mead:'#e2b44a', sherry:'#c99a4a', madeira:'#9a5a26', port:'#6e1a2a', vdn:'#b0602a', wine:'#7a1426', beer:'#d29a3a' };
+function lqTint(cardId, head){
+  for(const [re,c] of LQ_TINT_BY_NAME) if(re.test(head)) return c;
+  return LQ_TINT_BY_CARD[cardId] || '#b4732a';
+}
+function lqBottle(cardId, native, ko){
+  const v=lqVessel(cardId), tint=lqTint(cardId, ko);
+  const body = {
+    bin:   'M42 8h16v10c0 6 12 14 12 30v100a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V48c0-16 12-24 12-30z',
+    wine:  'M44 6h12v40c0 8 14 14 14 30v74a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V76c0-16 14-22 14-30z',
+    spark: 'M44 6h12v40c0 8 15 14 15 30v74a6 6 0 0 1-6 6H35a6 6 0 0 1-6-6V76c0-16 15-22 15-30z',
+    spirit:'M42 14h16v22h12a4 4 0 0 1 4 4v110a6 6 0 0 1-6 6H32a6 6 0 0 1-6-6V40a4 4 0 0 1 4-4h12z',
+    beer:  'M44 10h12v34c0 8 10 12 10 26v80a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6V70c0-14 10-18 10-26z',
+  }[v];
+  const top = v==='spark' ? '<rect x="42" y="2" width="16" height="30" rx="3" fill="#d4af37"/>'
+    : v==='beer' ? '<rect x="42" y="6" width="16" height="7" rx="2" fill="#c0c7d4"/>'
+    : v==='spirit' ? '<rect x="44" y="4" width="12" height="12" rx="2" fill="#8a5a33"/>'
+    : '<rect x="42" y="3" width="16" height="8" rx="2" fill="#c0c7d4"/>';
+  // 한자·가나는 일본·중국 병처럼 세로 라벨, 그 밖에는 가로 라벨(' · ' 기준 두 줄)
+  const label=String(native||ko);
+  const cjk=/[\u3040-\u30ff\u3400-\u9fff]/.test(label) && !label.includes(' · ');
+  let lab;
+  if(cjk){
+    const ch=[...label.replace(/[（(].*$/,'')], fs=Math.min(13, Math.floor(62/ch.length));
+    const h=ch.length*(fs+1)+10, y0=Math.max(64, 112-h/2);
+    lab=`<rect x="${50-fs/2-6}" y="${y0}" width="${fs+12}" height="${h}" rx="3" fill="#fbf7ec" stroke="#b9a77a" stroke-width=".8"/>`
+      + ch.map((c,i)=>`<text x="50" y="${y0+6+fs*0.88+i*(fs+1)}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2235">${esc(c)}</text>`).join('');
+  } else {
+    const parts=label.split(' · ');
+    const lines = parts.length>1 ? [parts[0], parts.slice(1).join(' · ')] : [parts[0]];
+    const longest=Math.max(...lines.map(t=>[...t].length));
+    const w = v==='beer'?34:44, fs=Math.max(6, Math.min(14, Math.floor(w*1.75/Math.max(1,longest))));
+    const h = lines.length*(fs+2)+8, y0=112-h/2;
+    lab=`<rect x="${50-w/2-2}" y="${y0}" width="${w+4}" height="${h}" rx="3" fill="#fbf7ec" stroke="#b9a77a" stroke-width=".8"/>`
+      + lines.map((t,i)=>`<text x="50" y="${y0+4+fs*0.9+i*(fs+2)}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2235" textLength="${[...t].length*fs*0.6>w?w:''}" lengthAdjust="spacingAndGlyphs">${esc(t)}</text>`).join('').replace(/ textLength=""/g,'');
+  }
+  return `<svg class="lq-bottle" viewBox="0 0 100 160" role="img" aria-label="${esc(ko)} ${esc(native)}">
+    <path d="${body}" fill="${tint}" fill-opacity=".85" stroke="#cdd6ea" stroke-opacity=".7" stroke-width="1.5"/>
+    <path d="${body}" fill="url(#lqShine)" opacity=".35"/>
+    ${top}
+    ${lab}
+    <defs><linearGradient id="lqShine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".0"/><stop offset=".25" stop-color="#fff" stop-opacity=".9"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+  </svg>`;
+}
+// 세부 유형 한 칸 — 사진 슬롯은 이름(한글 머리말)으로 고정 id 를 만든다(순서가 바뀌어도 유지)
+function lqHash(s){ let h=5381; for(const ch of String(s)) h=((h*33)^ch.codePointAt(0))>>>0; return h.toString(36); }
+function lqSubTile(d, text, native){
+  const [head, ...rest] = String(text).split(' — ');
+  const desc = rest.join(' — ');
+  const slot = (lqSlot(d)+'-s'+lqHash(head)).slice(0,64), up=IMG_SET.has(slot);
+  return `<div class="lq-stile">
+    <div class="lq-subpic" data-upslot="${slot}">
+      ${up?`<img src="${imgURL(slot,'')}" alt="" loading="lazy">`:lqBottle(d.id, native, head)}
+    </div>
+    <div class="lq-subtxt">
+      ${native?`<div class="lq-native">${esc(native)}</div>`:''}
+      <div class="lq-subko">${esc(head)}</div>
+      ${desc?`<small>${esc(desc)}</small>`:''}
+    </div></div>`;
 }
 
 // 목록 카드(앞면) — 전체 목록과 기준별 목록이 같이 쓴다
@@ -1287,8 +1361,10 @@ function renderLiqDetail(id){
   const props=d.props||{}, PROP={carbonation:'탄산',color:'색',turbidity:'탁도',filtration:'여과',sweetness:'당도',acidity:'산도'};
   const lg=d.legal||{};
   const par=lqParent(d), kids=lqChildren(d.id);
-  const subs = (x.subtypes||[]).map(s=>`<li>${esc(s)}</li>`).join('')
-    + kids.map(k=>`<li><button class="lq-sublink" data-id="${k.id}">${k.emoji||''} ${esc(k.name)} <span>카드 보기 ›</span></button> <small>${esc(k.summary)}</small></li>`).join('');
+  const subTiles = (x.subtypes||[]).map((s,i)=>lqSubTile(d,s,(x.subNative||[])[i]||'')).join('');
+  const kidList = kids.map(k=>`<li><button class="lq-sublink" data-id="${k.id}">${k.emoji||''} ${esc(k.name)} <span>카드 보기 ›</span></button> <small>${esc(k.local)} · ${esc(k.summary)}</small></li>`).join('');
+  const subs = (subTiles?`<div class="lq-subgrid">${subTiles}</div><p class="lq-sm">병 그림은 이름(원어) 표기를 보여 주는 일러스트예요. 편집 모드(✎)에서 실제 사진으로 바꿀 수 있어요.</p>`:'')
+    + (kidList?`<ul class="lq-ul">${kidList}</ul>`:'');
   const basis={general:'일반적으로 알려진 특성',style:'스타일 가이드 기준',product:'제품 설명 기준'}[d.flavorBasis]||'';
   const matText=(d.materials||[]).map(m=>{ const o=LQ_MATERIAL[m]; if(!o) return m; return `${o.name}(${(lqMatGroup(o.group)||{}).name})`; }).join(', ');
   const recipe = d.recipe ? `<div class="c-sec"><h3>🍸 레시피 <small>IBA 공식</small></h3>
@@ -1319,7 +1395,7 @@ function renderLiqDetail(id){
       ${sec(4,'역사와 문화', p(x.history))}
       ${sec(5,'지역적 특징', p(x.region))}
       ${sec(6,'향과 맛', ((d.flavors||[]).length?tags('flavors',d.flavors)+`<p class="lq-sm">근거: ${basis}</p>`:'')+p(x.taste), true)}
-      ${sec(7,'대표적인 세부 유형', subs?`<ul class="lq-ul">${subs}</ul>`+(kids.length?'<p class="lq-sm">‘카드 보기’가 붙은 종류는 만드는 방식이 달라 따로 카드가 있어요.</p>':''):'')}
+      ${sec(7,'대표적인 세부 유형', subs?subs+(kids.length?'<p class="lq-sm">‘카드 보기’가 붙은 종류는 만드는 방식이 달라 따로 카드가 있어요.</p>':''):'')}
       ${sec(8,'대표 브랜드 및 제품 사례', (d.brands||[]).length?`<p>${d.brands.map(esc).join(' · ')}</p>`:'')}
       ${sec(9,'숙성 및 저장', ((a.methods||[]).length?tags('aging',a.methods):'')+(a.period?infoLine('기간',a.period):'')+(a.vessel?infoLine('용기',a.vessel):'')+p(x.aging))}
       ${sec(10,'일반적인 도수', `<p>${esc(lqAbvText(d))}${d.abv&&d.abv.note?` — ${esc(d.abv.note)}`:''}</p>`, true)}
