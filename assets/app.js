@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v60';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v61';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1375,7 +1375,7 @@ function renderLiqDetail(id){
   const par=lqParent(d), kids=lqChildren(d.id);
   const subTiles = (x.subtypes||[]).map((s,i)=>lqSubTile(d,s,(x.subNative||[])[i]||'')).join('');
   const kidList = kids.map(k=>`<li><button class="lq-sublink" data-id="${k.id}">${k.emoji||''} ${esc(k.name)} <span>카드 보기 ›</span></button> <small>${esc(k.local)} · ${esc(k.summary)}</small></li>`).join('');
-  const subs = (subTiles?`<div class="lq-subgrid">${subTiles}</div><p class="lq-sm">병 그림은 이름(원어) 표기를 보여 주는 일러스트예요. 편집 모드(✎)에서 실제 사진으로 바꿀 수 있어요.</p>`:'')
+  const subs = (subTiles?`<div class="lq-subgrid">${subTiles}</div><p class="lq-sm">병 그림은 이름(원어) 표기를 보여 주는 일러스트예요. ＋ 버튼으로 실제 사진을 넣을 수 있어요.</p>`:'')
     + (kidList?`<ul class="lq-ul">${kidList}</ul>`:'');
   const basis={general:'일반적으로 알려진 특성',style:'스타일 가이드 기준',product:'제품 설명 기준'}[d.flavorBasis]||'';
   const matText=(d.materials||[]).map(m=>{ const o=LQ_MATERIAL[m]; if(!o) return m; return `${o.name}(${(lqMatGroup(o.group)||{}).name})`; }).join(', ');
@@ -1407,7 +1407,7 @@ function renderLiqDetail(id){
       ${sec(4,'역사와 문화', p(x.history))}
       ${sec(5,'지역적 특징', p(x.region))}
       ${sec(6,'향과 맛', ((d.flavors||[]).length?tags('flavors',d.flavors)+`<p class="lq-sm">근거: ${basis}</p>`:'')+p(x.taste), true)}
-      ${sec(7,'대표적인 세부 유형', subs?subs+(kids.length?'<p class="lq-sm">‘카드 보기’가 붙은 종류는 만드는 방식이 달라 따로 카드가 있어요.</p>':''):'')}
+      ${sec(7,'대표적인 세부 유형', subs?subs+(kids.length?'<p class="lq-sm">‘카드 보기’가 붙은 종류는 만드는 방식이 달라 따로 카드가 있어요.</p>':''):(x.subNote?`<p class="lq-sm">ℹ️ ${esc(x.subNote)}</p>`:''))}
       ${sec(8,'대표 브랜드 및 제품 사례', (d.brands||[]).length?`<p>${d.brands.map(esc).join(' · ')}</p>`:'')}
       ${sec(9,'숙성 및 저장', ((a.methods||[]).length?tags('aging',a.methods):'')+(a.period?infoLine('기간',a.period):'')+(a.vessel?infoLine('용기',a.vessel):'')+p(x.aging))}
       ${sec(10,'일반적인 도수', `<p>${esc(lqAbvText(d))}${d.abv&&d.abv.note?` — ${esc(d.abv.note)}`:''}</p>`, true)}

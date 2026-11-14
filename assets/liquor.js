@@ -132,6 +132,8 @@ const LIQUORS = [
   props:{ turbidity:'뿌옇게 흐림', filtration:'거르기만 하고 앙금을 남김' }, flavors:['sour'], flavorBasis:'general', uses:[],
   summary:'곡물과 누룩으로 빚은 술을 앙금째 걸러 뿌옇고 도수가 낮은 우리 술이에요.',
   detail:{
+    subtypes:['이화주·사절주 — 체에 거르지 않은 탁주(조선 시대 방식, 지금은 거의 볼 수 없음)','합주·막걸리 — 체에 걸러 낸 탁주','모주 — 거르고 남은 술지게미를 다시 발효해 만든 탁주'],
+    subNative:['梨花酒 · 四節酒','合酒 · 막걸리','母酒'],
     making:'발효주. 주세법은 녹말이 든 재료와 국(麴)·물을 원료로 발효시킨 술덧을 여과하지 않고 혼탁하게 만든 술을 탁주로 나눈다.',
     process:'녹말이 든 곡물, 누룩, 물로 빚는다. 주식이 쌀이었기 때문에 쌀을 많이 썼다. 전통적으로는 날곡물을 빻아 단단히 디뎌 띄운 누룩을 썼고, 1960년대 이후 양조장에서는 흰 누룩곰팡이를 접종한 입국(粒麴)을 주로 쓴다.',
     history:'문헌상 ≪양주방≫에 「혼돈주(混沌酒)」라는 이름으로 처음 나온다.',
@@ -146,6 +148,8 @@ const LIQUORS = [
   props:{ turbidity:'맑음', filtration:'술덧을 걸러 맑게 함' }, flavors:[], uses:[],
   summary:'술덧을 걸러 맑게 만든 우리 술. 옛날 금주령을 피하려 맑은 술을 "약주"라 부르던 데서 이름이 굳었어요.',
   detail:{
+    subtypes:['백하주 — ‘흰 아지랑이 같다’는 뜻, 고려 이래 가장 많이 빚던 술','녹파주 — ‘푸른 파도 같다’는 뜻, 고려 이후 알려짐','벽향주 — ‘푸르고 향기로운 술’, 조선 초부터 말까지 이름남','소국주 — 조선 초부터 이름난 술, 우리 술을 대표할 만큼 맛이 좋다고 함','법주 — 절 주변에서 빚던 술, 여러 번 덧술해 진하고 맛있게 빚음'],
+    subNative:['白霞酒','綠波酒','碧香酒','少麴酒','法酒'],
     making:'발효주. 곡물로 빚은 술덧을 걸러 맑게 만든다.',
     history:'조선 시대에 금주령이 내려지면 양반들이 자기들이 마시는 맑은 술(청주)을 약으로 먹는 술(약주)이라 하며 금주령을 피했고, 그래서 백성들이 상류층이 마시는 맑은 술을 모두 약주라 부르게 되었다고 한다.',
     diff:'막걸리(탁주)와 원료는 비슷하지만 앙금을 걸러 맑게 한다는 점이 다르다. 주세법은 원료와 국(누룩) 사용 기준으로 약주와 청주를 따로 구분한다.' },
@@ -156,7 +160,7 @@ const LIQUORS = [
   tech:['filtration'], aging:{ methods:[] }, abv:null,
   props:{ turbidity:'맑음' }, flavors:[], uses:[],
   summary:'다 익은 술독에 용수를 박아 맑게 고인 술을 떠낸, 맑은 우리 술이에요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 다 익은 술에 용수(대나무·싸리로 엮은 둥근 통)를 박아 그 안에 고이는 맑은 술을 떠낸다.',
     process:'예로부터 탁주에 비해 비교적 맑게 거른 술을 청주라 불렀다.',
     diff:'일본의 청주(사케)와 이름은 같지만, 이 카드는 우리 전통에서 말하는 맑은 술을 뜻한다. 주세법상 청주는 쌀을 원료로 하며 약주와 따로 분류된다.' },
@@ -177,7 +181,7 @@ const LIQUORS = [
   origin:{ countries:['kr'] }, methods:['distilled','compound'], materials:['neutral'], styles:['soju','soju_diluted'],
   tech:[], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'주정(높은 도수의 중성 알코올)을 물로 희석해 만드는 소주예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'주정을 물로 희석해 만든다(주세법상 희석식 소주).',
     diff:'술덧을 직접 증류하는 증류식 소주와 달리, 이미 정제한 주정을 물로 묽혀 만든다.' },
   brands:['참이슬(하이트진로)'],
@@ -276,7 +280,7 @@ const LIQUORS = [
   origin:{ countries:['jp'] }, methods:['liqueur','infused'], materials:['ume'], styles:['umeshu'],
   tech:['infusion'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'매실을 소주 같은 술에 담가 만드는 일본의 리큐르예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'리큐르(침출주). 매실을 소주 등 술에 설탕과 함께 담가 맛을 우려낸다.',
     legal:'일본 주세법상 리큐르로 분류된다. 집에서 매실을 소주에 담그는 것은 새 술을 만드는 셈이지만, 세금을 낸 20도 이상의 술을 써서 마실 사람이 직접 담그는 경우 등은 예외로 허용된다.' },
   sources:[ LQS.nta_homebrew, LQS.nta_def ] },
@@ -389,7 +393,7 @@ const LIQUORS = [
   origin:{ countries:['fr'], note:'노르망디 페캉' }, methods:['liqueur'], materials:['herb'], styles:['benedictine','herbal_liqueur'],
   tech:[], aging:{ methods:[] }, abv:{ min:40, max:40, unit:'%', basis:'product' }, flavors:['herbal','spice','citrus','honey','nutty'], flavorBasis:'product', uses:[],
   summary:'27가지 식물과 향신료로 만드는, 프랑스 페캉의 허브 리큐르예요.',
-  detail:{
+  detail:{ subNote:'한 회사가 만드는 단일 제품이라 세부 유형으로 나뉘지 않아요.',
     making:'리큐르. 27가지 식물·향신료로 만든다.',
     history:'1510년 페캉 수도원의 베네딕토회 수도사 돔 베르나르도 빈첼리의 비법에서 비롯되었다고 전해진다. 프랑스 혁명 때 잊혔던 처방을 1863년 와인 상인 알렉상드르 르그랑이 되살렸다.',
     taste:'구릿빛에 금빛이 돌고, 허브·향신료 향에 귤 껍질·소나무 향이 살짝 나며, 꿀·감귤·아몬드 맛이 부드럽게 난다(제품 설명).',
@@ -415,18 +419,22 @@ const LIQUORS = [
   tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'법정 최소 37.5%' }, flavors:[], uses:[],
   summary:'와인을 짜고 남은 포도 찌꺼기(비나차)를 증류한 이탈리아의 지리적 표시 증류주예요.',
   detail:{
+    subtypes:['그라파 조바네 — 숙성하지 않은 그라파','그라파 아피나타 — 나무통에서 12개월 미만 다듬은 것','그라파 베키아·인베키아타 — 세관 관리 창고의 나무통에서 12개월 이상 숙성','그라파 리제르바·스트라베키아 — 18개월 이상 숙성'],
+    subNative:['Grappa giovane','Grappa affinata in legno','Grappa vecchia · invecchiata','Grappa riserva · stravecchia'],
     making:'증류주(포도 찌꺼기 증류주). 발효했거나 반쯤 발효한 포도 찌꺼기를 증기로 직접, 또는 증류기에 물을 더해 증류한다.',
     legal:'이탈리아에서 재배·양조한 포도의 찌꺼기를 이탈리아 안에서 증류·병입한 것만 그라파라 부를 수 있다. 시판 도수는 37.5% 이상.' },
   legal:{ protected:'지리적 표시 Grappa' },
   brands:['노니노'],
-  sources:[ LQS.grappa, LQS.grappa_abv, lqs('Nonino 공식 사이트(브랜드 예시)', 'https://www.grappanonino.it/') ] },
+  sources:[ LQS.grappa, LQS.grappa_abv, lqs('Nonino 공식 사이트(브랜드 예시)', 'https://www.grappanonino.it/') ,
+    { title:'Disciplinare.it — Grappa IG (D.M. 747/2016 표시 용어)', url:'https://www.disciplinare.it/grappa-ig.html', checked:'2026-11-14' }
+  ] },
 
 { id:'limoncello', kind:'type', emoji:'🍋', name:'리몬첼로', local:'Limoncello', en:'Limoncello',
   origin:{ countries:['it'], note:'아말피 해안·시칠리아·나폴리만 일대' }, methods:['liqueur','infused'], materials:['citrus','neutral'], styles:['limoncello','herbal_liqueur'],
   tech:['infusion'], aging:{ methods:[], period:'최대 약 45일' }, abv:null,
   flavors:['citrus','sweet'], flavorBasis:'general', uses:['digestif'],
   summary:'레몬 껍질을 높은 도수의 곡물 알코올에 우려 시럽과 섞은, 이탈리아 남부의 리큐르예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'리큐르(침출주). 레몬 껍질 바깥층(쓴 흰 부분 제외)을 높은 도수의 곡물 알코올에 3~30일 담가 레몬 기름을 우려낸 뒤 설탕 시럽과 섞어 거른다.',
     aging:'병에 담아 최대 약 45일 숙성한다.',
     pairing:'전통적으로 차갑게 해서 식후주로 마신다.',
@@ -438,7 +446,7 @@ const LIQUORS = [
   origin:{ countries:['it'] }, methods:['liqueur','infused'], materials:['herb'], styles:['amaro','herbal_liqueur'],
   tech:['infusion'], aging:{ methods:[] }, abv:null, flavors:['bitter','herbal'], flavorBasis:'general', uses:['aperitif','digestif'],
   summary:'쓴맛이 나는 약초·뿌리·껍질로 맛을 낸 이탈리아의 쓴 허브 리큐르("아마로"는 "쓰다"는 뜻)예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'리큐르. 비터스는 쓴 약초·잎·열매·씨앗·뿌리로 만든 술로, 레시피는 대개 비밀이다.',
     taste:'오렌지 껍질·용담 뿌리·대황 뿌리·키나 껍질 같은 재료가 쓴맛을 낸다.',
     pairing:'식전주나 식후 소화를 돕는 술로 마신다.' },
@@ -497,7 +505,9 @@ const LIQUORS = [
   origin:{ countries:[], note:'세계 여러 나라에서 만든다' }, methods:['distilled'], materials:['grain','potato'], styles:['vodka'],
   tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 규정 최소 37.5%' }, flavors:[], uses:['cocktail_base'],
   summary:'농산물에서 얻은 알코올로 만드는 증류주로, EU 규정상 37.5% 이상이에요.',
-  detail:{ making:'증류주. EU 규정상 보드카의 최소 도수는 37.5%다.' },
+  detail:{
+    subtypes:['보드카 — 곡물·감자 같은 농산물 알코올로 만든 기본형','다른 원료로 만든 보드카 — 곡물·감자가 아니면 “○○로 만듦”이라고 원료를 표시해야 함','가향 보드카 — 보드카에 향을 더한 것(EU 별도 범주)','지리적 표시 보드카 — 폴란드·스웨덴·핀란드 보드카 등'],
+    subNative:['Vodka','Vodka produced from …','Flavoured vodka','Polska Wódka · Svensk Vodka · Suomalainen Vodka'], making:'증류주. EU 규정상 보드카의 최소 도수는 37.5%다.' },
   brands:['스미노프'],
   sources:[ LQS.eu787, lqs('Smirnoff 공식 사이트(브랜드 예시)', 'https://www.smirnoff.com/') ] },
 
@@ -563,6 +573,8 @@ const LIQUORS = [
   tech:[], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 포도 찌꺼기 증류주 최소 37.5%' }, flavors:[], uses:[],
   summary:'포도 찌꺼기로 만드는 그리스의 지리적 표시 증류주예요.',
   detail:{
+    subtypes:['마케도니아 치푸로 — EU 지리적 표시','테살리아 치푸로 — EU 지리적 표시','티르나보스 치푸로 — EU 지리적 표시','치쿠디아(크레타) — 크레타섬에서 같은 방식으로 만드는 포도 찌꺼기 증류주'],
+    subNative:['Τσίπουρο Μακεδονίας','Τσίπουρο Θεσσαλίας','Τσίπουρο Τυρνάβου','Τσικουδιά Κρήτης'],
     making:'EU 분류상 "포도 찌꺼기 증류주(grape marc spirit)"에 속한다. 치쿠디아도 같은 분류다.',
     diff:'이탈리아의 그라파와 같은 포도 찌꺼기 증류주 분류에 속한다.' },
   legal:{ protected:'지리적 표시 Tsipouro' },
@@ -573,7 +585,7 @@ const LIQUORS = [
   origin:{ countries:[], note:'사과가 자라는 여러 나라' }, methods:['fermented'], materials:['apple'], styles:['cider'],
   tech:['yeast'], aging:{ methods:[] }, abv:null, flavors:['apple'], flavorBasis:'general', uses:[],
   summary:'사과즙을 발효시켜 만든 술이에요(우리가 마시는 탄산음료 사이다와 다른 술).',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 사과를 갈아 짠 즙을 통에서 발효시킨다.',
     diff:'칼바도스는 이런 사이다를 증류한 술이다.' },
   sources:[ LQS.cider ] },
@@ -584,6 +596,8 @@ const LIQUORS = [
   flavors:['grain','hoppy','bitter'], flavorBasis:'style', uses:[], brands:['필스너 우르켈'],
   summary:'몰트와 홉의 풍미가 풍부하고 여운이 긴, 체코의 상쾌한 페일 라거예요.',
   detail:{
+    subtypes:['체코 페일 라거(3A) — 같은 맛을 더 가볍고 낮은 도수로(3.0~4.1%)','체코 프리미엄 페일 라거(3B) — 필스너 타입, 이 카드의 맥주(4.2~5.8%)','체코 앰버 라거(3C) — 호박색, 몰트 맛(4.4~5.8%)','체코 다크 라거(3D) — 짙은 색, 볶은 맛(4.4~5.8%)'],
+    subNative:['Czech Pale Lager','Czech Premium Pale Lager','Czech Amber Lager','Czech Dark Lager'],
     making:'발효주(라거 맥주).',
     taste:'몰트 풍미가 복합적이고 쓴맛이 강하면서도 깔끔하다.',
     history:'1842년 플젠에서 처음 양조된 필스너 우르켈과 흔히 연결되며, 바이에른 출신 양조사 요제프 그롤이 처음 만든 것으로 알려져 있다.' },
@@ -595,7 +609,7 @@ const LIQUORS = [
   tech:['yeast'], aging:{ methods:[] }, abv:{ min:4.4, max:5.2, unit:'%', basis:'style' },
   flavors:['hoppy','bitter'], flavorBasis:'style', uses:[],
   summary:'홉 향이 두드러지고 쌉쌀하며 드라이한 독일의 페일 라거예요.',
-  detail:{
+  detail:{ subNote:'BJCP에서 하나의 스타일(5D 저먼 필스)로 정해져 따로 나뉘지 않아요.',
     making:'발효주(라거 맥주).', taste:'밝은 황금색에 거품이 오래가고, 깔끔하고 상쾌하다.',
     history:'체코 필스너를 독일의 물(미네랄이 많은 물)과 독일 홉에 맞게 바꾼 것으로, 1870년대 초 독일에서 처음 양조되었다.',
     diff:'체코 필스너보다 더 드라이하고 홉의 쓴맛이 선명하다.' },
@@ -607,7 +621,7 @@ const LIQUORS = [
   tech:['yeast'], aging:{ methods:[] }, abv:{ min:4.7, max:5.4, unit:'%', basis:'style' },
   flavors:['grain'], flavorBasis:'style', uses:[], brands:['슈파텐'],
   summary:'부드러운 몰트 맛과 깔끔한 마무리의, 뮌헨에서 태어난 황금빛 라거예요.',
-  detail:{
+  detail:{ subNote:'BJCP에서 하나의 스타일(4A 뮌헨 헬레스)로 정해져 따로 나뉘지 않아요.',
     making:'발효주(라거 맥주).', taste:'몰트 위주지만 달지 않고, 쓴맛을 절제해 매일 마시기 좋은 맥주로 설명된다.',
     history:'1894년 뮌헨에서 필스너 계열 맥주와 경쟁하려고 만들어졌으며, 흔히 슈파텐이 처음 만든 것으로 꼽힌다.' },
   era:{ year:1894, note:'뮌헨에서 필스너와 경쟁하려고 만듦' },
@@ -619,6 +633,8 @@ const LIQUORS = [
   flavors:['tropical','spice','yeasty'], flavorBasis:'style', uses:[], brands:['슈나이더'],
   summary:'바나나·정향 같은 효모 향이 특징인, 탄산이 많은 독일 밀맥주예요.',
   detail:{
+    subtypes:['바이스비어(10A) — 밝은 색, 바나나·정향 향, 탄산이 많음(4.3~5.6%)','둥클레스 바이스비어(10B) — 어두운 색, 구운 빵·캐러멜 맛(4.3~5.6%)','바이첸보크(10C) — 보크만큼 진하고 센 밀맥주(6.5~9.0%)'],
+    subNative:['Weissbier','Dunkles Weissbier','Weizenbock'],
     making:'발효주(밀맥주).', taste:'홉은 가볍고 탄산이 많으며, 바이첸 효모가 내는 바나나·정향 향이 특징이다.',
     history:'바이에른의 밀맥주 전통은 1500년대 이전으로 거슬러 올라가며, 한때 왕실만 양조할 수 있었다. 오늘날의 바이스비어는 1872년 슈나이더가 앰버 바이스비어를 만들면서 시작되었다.' },
   era:{ year:1872, note:'슈나이더의 앰버 바이스비어(밀맥주 전통은 1500년대 이전)' },
@@ -630,6 +646,8 @@ const LIQUORS = [
   flavors:['sour','earthy'], flavorBasis:'style', uses:[], props:{ carbonation:'전통적으로 탄산 없이 냄' },
   summary:'공기 중 야생 효모로 자연발효시키는, 시큼한 벨기에 밀맥주예요.',
   detail:{
+    subtypes:['람빅(23D) — 탄산 없이 마시는 신맛의 야생 발효 밀맥주(5.0~6.5%)','괴즈(23E) — 숙성 기간이 다른 람빅을 섞어 병에서 다시 발효, 탄산이 강함(5.0~8.0%)','과일 람빅(23F) — 람빅·괴즈에 과일을 넣어 발효(5.0~7.0%)'],
+    subNative:['Lambic','Gueuze','Fruit Lambic'],
     making:'발효주(자연발효 맥주). 브뤼셀 주변에서 자연발효시키는 "야생" 에일이다.',
     taste:'꽤 시큼하고 쿰쿰한 풍미가 있으며, 홉의 쓴맛 자리를 신맛이 채운다. 전통적으로 탄산 없이 카페에서 낸다.',
     history:'수백 년 된 농가 양조 전통에서 비롯되었다.' },
@@ -641,6 +659,8 @@ const LIQUORS = [
   flavors:['roasted','bitter'], flavorBasis:'style', uses:[], brands:['기네스'],
   summary:'커피 같은 로스팅 향이 두드러지는 검은 아일랜드 맥주예요.',
   detail:{
+    subtypes:['아이리시 스타우트(15B) — 커피 같은 볶은 맛의 검은 맥주(3.8~5.0%)','아이리시 엑스트라 스타우트(15C) — 더 진하고 센 스타우트(5.0~6.5%)'],
+    subNative:['Irish Stout','Irish Extra Stout'],
     making:'발효주(에일 맥주).', taste:'로스팅한 맛이 뚜렷하고 커피와 비슷하다. 쌉쌀하고 드라이한 것부터 약간 달콤한 것까지 있다.',
     history:'런던 포터에서 갈라져 나와 더 진하고 "스타우트(튼튼한)"한 몸체를 갖게 되었다. 기네스는 1799년 포터만 만들다가 1810년 무렵 "더 진한 포터"를 만들기 시작했다.',
     diff:'포터에서 발전한 스타일로, 로스팅 풍미가 더 강조된다.' },
@@ -653,6 +673,8 @@ const LIQUORS = [
   flavors:['roasted','body'], flavorBasis:'style', uses:[],
   summary:'초콜릿·캐러멜 풍미와 은은한 로스팅 향의 짙은 갈색 영국 에일이에요.',
   detail:{
+    subtypes:['잉글리시 포터(13C) — 은은한 볶은 맛의 진갈색 에일(4.0~5.4%)','아메리칸 포터(20A) — 더 쓰고 홉 향이 있는 미국식(4.8~6.5%)','발틱 포터(9C) — 발트해 지역의 더 세고 진한 포터(6.5~9.5%)'],
+    subNative:['English Porter','American Porter','Baltic Porter'],
     making:'발효주(에일 맥주).', taste:'탄 맛 없이 로스팅 풍미가 절제되어 있고, 초콜릿·캐러멜 같은 몰트 풍미가 있다.',
     history:'1700년대 초 런던에서 당시 유행한 브라운 비어를 홉을 더 넣고 오래 보관하도록 만든 데서 시작되었다.' },
   era:{ year:1700, note:'1700년대 초 런던' },
@@ -664,6 +686,8 @@ const LIQUORS = [
   flavors:['hoppy','bitter'], flavorBasis:'style', uses:[], brands:['앵커 리버티 에일'],
   summary:'홉의 향과 쓴맛이 앞장서는, 도수가 조금 높은 미국식 페일 에일이에요.',
   detail:{
+    subtypes:['아메리칸 IPA(21A) — 홉 향과 쓴맛이 강한 미국식 페일 에일(5.5~7.5%)','스페셜티 IPA(21B) — 벨지안·블랙·브라운·레드·라이·화이트·브뤼 IPA','헤이지 IPA(21C) — 뿌옇고 과일 향이 강하며 쓴맛이 덜함(6.0~9.0%)','더블 IPA(22A) — 홉과 도수를 더 높인 IPA(7.5~10.0%)'],
+    subNative:['American IPA','Specialty IPA','Hazy IPA','Double IPA'],
     making:'발효주(에일 맥주).', taste:'홉 향과 쓴맛이 강하고, 깔끔한 발효와 드라이한 마무리가 홉의 개성을 살린다.',
     history:'전통 영국 스타일을 미국 크래프트 맥주로 옮긴 첫 사례는 1975년 캐스케이드 홉으로 만든 앵커 리버티 에일로 여겨진다.' },
   era:{ year:1975, note:'캐스케이드 홉으로 만든 앵커 리버티 에일' },
@@ -742,7 +766,7 @@ const LIQUORS = [
   tech:[], aging:{ methods:[] }, abv:{ min:20, max:20, unit:'%', basis:'product' },
   flavors:['roasted','nutty','sweet'], flavorBasis:'product', uses:['cocktail_base'],
   summary:'1936년 멕시코에서 만들어진, 아라비카 커피와 럼으로 만드는 커피 리큐르예요.',
-  detail:{
+  detail:{ subNote:'한 회사가 만드는 단일 제품이라 세부 유형으로 나뉘지 않아요.',
     making:'리큐르. 100% 아라비카 커피콩과 럼으로 만든다.',
     history:'1936년 멕시코에서 만들어졌다.',
     taste:'진한 블랙커피, 구운 밤, 버터 같은 풍미로 소개된다(제품 설명).' },
@@ -767,7 +791,7 @@ const LIQUORS = [
   origin:{ countries:['mn'] }, methods:['fermented'], materials:['mare_milk'], styles:['airag'],
   tech:['spontaneous'], aging:{ methods:[], vessel:'허후르(소가죽 통)' }, abv:{ min:1.4, max:2.3, unit:'%', basis:'measured', note:'울란바토르 시료 측정값 1.44~2.33%' }, flavors:[], uses:['ritual'],
   summary:'말젖을 소가죽 통(허후르)에 넣고 수백 번 저어 발효시키는 몽골의 술이에요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 말젖을 짜 식힌 뒤 발효 종을 남겨 둔 허후르(소가죽 통) 안에서 500번 넘게 저어 발효시킨다.',
     history:'유목민 부모에게서 자식에게 이어져 온 기술로, 2019년 「허후르에서 아이락을 만드는 전통 기술과 관련 관습」이 유네스코 인류무형문화유산이 되었다.',
     pairing:'몽골 사람들의 일상 음식이며, 잔치와 제의·축복에서 신성한 음료로 쓰인다.' },
@@ -777,7 +801,7 @@ const LIQUORS = [
   origin:{ countries:[], note:'아프리카·남아시아·동남아시아·중앙아메리카' }, methods:['fermented'], materials:['palm_sap'], styles:['palm_wine','local_ferm'],
   tech:['spontaneous'], aging:{ methods:['unaged'] }, abv:null, flavors:['sweet','sour'], flavorBasis:'general', uses:[],
   summary:'야자나무의 단 수액을 발효시켜 만드는 술로, 서아프리카에서 가장 많이 마시는 전통주예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 여러 야자나무의 단 수액을 발효시킨다. 발효 정도에 따라 달콤한 것부터 시큼한 것까지 맛이 다르다.',
     region:'아프리카, 남아시아, 동남아시아, 중앙아메리카의 전통주. 서아프리카에서는 1천만 명이 넘는 사람이 마시는 것으로 추정된다.' },
   sources:[ LQS.palm ] },
@@ -788,7 +812,7 @@ const LIQUORS = [
   props:{ color:'노란빛', turbidity:'뿌옇게 흐림', carbonation:'약간 기포가 있음' },
   flavors:['honey','sweet','sour'], flavorBasis:'general', uses:[],
   summary:'꿀과 물에 게쇼(갈매나무 종류)의 잎·줄기를 넣어 자연발효시키는 에티오피아의 꿀술이에요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 꿀·물·게쇼(Rhamnus prinoides)의 잎과 줄기를 섞어 자연발효시킨다. 게쇼는 맛을 내려고 넣는다.',
     process:'날씨에 따라 15~30일쯤 발효한다. 원료나 도구에 있던 미생물이 발효를 맡는다.',
     taste:'노란빛에 달콤하고 시큼한 맛이 나며, 기포가 조금 있고 뿌옇다.' },
@@ -799,7 +823,7 @@ const LIQUORS = [
   origin:{ countries:['kr'], note:'경상북도 안동' }, methods:['distilled'], materials:['rice'], styles:['soju_trad','kr_trad_spirit'],
   tech:['nuruk','pot'], aging:{ methods:[] }, abv:{ min:45, max:45, unit:'%', basis:'typical', note:'백과사전 설명: 45도' }, flavors:[], uses:[],
   summary:'멥쌀이나 찹쌀 고두밥과 누룩으로 빚은 술을 소줏고리로 내린 안동의 증류식 소주예요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'증류주. 고두밥에 누룩 등을 섞어 따뜻한 곳에서 2~3일 발효시킨 뒤 소줏고리로 증류한다. 위에 찬물을 갈아 부어 뚜껑 밑에 맺히는 이슬 같은 술을 받아낸다.',
     history:'1915년 안동시 남문동에 세워진 안동주조회사가 「제비원표」 소주를 생산했다. 1962년 곡물로 술을 빚는 것이 금지되며 끊겼다가 1990년대에 되살아났다. 1987년 경상북도 무형문화재(현 무형유산)로 지정되었다.',
     region:'경상북도 안동 지방에서 빚어 왔다.' },
@@ -809,7 +833,7 @@ const LIQUORS = [
   origin:{ countries:['kr'], note:'평안도에서 전승, 지금은 경기도 김포' }, methods:['distilled'], materials:['grain'], styles:['kr_trad_spirit'],
   tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:['pear'], flavorBasis:'general', uses:[],
   summary:'술의 향기가 문배나무 열매 향과 같아 이름이 붙은, 평안도에서 전해 온 국가무형유산 술이에요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'누룩으로 빚어 증류하는 과정을 거친다(백과사전 사진 설명: 누룩 섞기 → 술독 담그기 → 증류).',
     history:'1986년 11월 중요무형문화재(현 국가무형유산)로 지정되었다.',
     taste:'과일을 넣지 않는데도 술의 향기가 문배(돌배의 한 종류) 열매의 향과 같다고 한다.',
@@ -820,7 +844,7 @@ const LIQUORS = [
   origin:{ countries:['kr'], note:'경상북도 경주 교동' }, methods:['fermented'], materials:['rice'], styles:['kr_trad_ferm'],
   tech:[], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'경주 교동 최부잣집에서 대대로 빚어 온, 국가무형유산으로 지정된 술이에요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'발효주. 경주 교동의 최씨 집안에서 대대로 빚어 왔다.',
     history:'처음 빚은 사람은 조선 숙종(재위 1674~1720) 때 궁중 음식을 맡은 사옹원의 참봉을 지낸 최국준으로 전해진다. 1986년 문배주·면천두견주와 함께 국가무형유산(당시 중요무형문화재)으로 지정되었다.',
     region:'경상북도 경주시 교동.' },
@@ -831,7 +855,7 @@ const LIQUORS = [
   origin:{ countries:['kr'], note:'충청남도 당진 면천' }, methods:['fermented','infused'], materials:['rice','flower'], styles:['kr_trad_ferm'],
   tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:['floral'], flavorBasis:'general', uses:[],
   summary:'진달래꽃(두견화)을 넣어 빚는 충남 당진 면천의 국가무형유산 술이에요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'발효주. 누룩·고두밥에 진달래꽃을 넣어 술독에 담근다 — 백과사전은 "청주에 진달래꽃을 담가 빚는 술"이라 설명한다.',
     history:'1986년 중요무형문화재(현 국가무형유산)로 지정되었다. 기능보유자 박승규는 증조모부터 4대째 이 술 빚는 기능을 잇고 있다.',
     region:'충청남도 당진시 면천 지방의 향토술.' },
@@ -842,7 +866,7 @@ const LIQUORS = [
   tech:['nuruk'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   props:{ color:'샛노란 빛(100일 묻었다 꺼낸 술로 전해짐)' },
   summary:'멥쌀 떡과 가루누룩으로 밑술을, 찹쌀 술밥으로 덧술을 빚는 충남 한산의 이름난 술이에요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'발효주. 멥쌀로 무리떡을 쪄 누룩가루와 묽게 섞어 밑술을 만들고, 다시 찹쌀로 술밥을 쪄 곱게 친 가루누룩과 함께 빚는다.',
     history:'백제가 망한 뒤 백제 유민들이 나라 잃은 슬픔을 달래려 빚어 마신 백제 궁중 술이라고 전해진다. 100일 동안 땅속에 묻었다 열면 끈끈하고 샛노란 술이 된다고 한다. 1979년 충청남도 무형문화재로 지정되었다.',
     region:'충청남도 서천군 한산면을 중심으로 전승된다.' },
@@ -853,7 +877,7 @@ const LIQUORS = [
   origin:{ countries:['kr'], note:'전라남도 진도' }, methods:['distilled'], materials:['herb'], styles:['kr_trad_spirit'],
   tech:[], aging:{ methods:[] }, abv:null, props:{ color:'담홍색(지초 뿌리)' }, flavors:[], uses:[],
   summary:'지초 뿌리를 넣어 내린, 맑은 붉은빛의 진도 전통 증류주예요.',
-  detail:{
+  detail:{ subNote:'한 지역의 전통 방식으로 빚는 술이라 따로 나뉜 세부 유형이 없어요.',
     making:'증류주. 불의 세기를 조절하며 8~10시간 내리면 맑고 끈적하며 떫은 담홍색 홍주가 나온다.',
     process:'붉은빛은 지초 뿌리를 말린 「지초건근」에서 나온다.',
     history:'고려 때 원나라에서 들어왔다는 소주에서 근원을 찾는다. 1994년 12월 전라남도 무형문화재(현 무형유산)로 지정되었으나, 지금은 거의 사라져 가고 있다고 기록되어 있다.' },
@@ -866,18 +890,22 @@ const LIQUORS = [
   tech:['qu','yeast'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'사오싱 지역에서 찹쌀과 밀 곡(麴)으로 빚는, 지리적 표시로 보호되는 황주예요.',
   detail:{
+    subtypes:['위안훙주 — 드라이(총당 15.0g/L 이하)','자판주(화댜오주) — 세미드라이(15.1~40.0g/L)','산냥주 — 세미스위트(40.1~100.0g/L)','샹쉐주 — 스위트(100.0g/L 초과)'],
+    subNative:['元红酒','加饭酒(花雕酒)','善酿酒','香雪酒'],
     making:'발효주. 쌀을 밀 곡과 효모로 발효시킨다. 찹쌀로 빚은 황주가 향미가 더 좋다는 연구가 있다.',
     process:'사오싱이 황주의 주산지가 된 이유 가운데 하나로 감호(鑒湖) 같은 좋은 물이 꼽힌다. 감호 물로 빚은 황주는 에스터·단 향·알코올 향이 더 두드러졌다는 연구가 있다.',
     legal:'사오싱 황주는 지리적 표시로 보호되는 제품이다.',
     diff:'황주는 지역에 따라 사오싱·팡셴·다이셴·지모 황주 등으로 나뉜다.' },
   legal:{ protected:'지리적 표시 紹興黃酒' },
-  sources:[ LQS.shaoxing_water, LQS.shaoxing_rice ] },
+  sources:[ LQS.shaoxing_water, LQS.shaoxing_rice ,
+    { title:'중국 국가표준 GB/T 17946-2008 — 지리표시 제품 사오싱주', url:'https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=069F13A5BC9E97DA708E56A9ED877879', checked:'2026-11-14' }
+  ] },
 
 { id:'sauce_baijiu', kind:'type', parent:'baijiu', emoji:'🏺', name:'장향형 백주', local:'醬香型白酒 (마오타이 향형)', en:'Sauce-aroma baijiu',
   origin:{ countries:['cn'], note:'구이저우성 츠수이강 유역' }, methods:['distilled'], materials:['sorghum','wheat'], styles:['baijiu'],
   tech:['qu','solid_ferm'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'수수를 1년에 아홉 번 찌고 여덟 번 발효해 일곱 번 증류하는, 마오타이로 대표되는 백주예요.',
-  detail:{
+  detail:{ subNote:'백주의 한 향형이에요. 다른 향형은 상위 ‘백주’ 카드를 참고하세요.',
     making:'증류주. 「12987」 공정 — 1년 한 주기, 원료 2번 투입, 9번 찌기, 8번 발효, 7번 술 받기.',
     process:'원료는 주로 수수다. 밀로만 만든 고온 대곡(60~65℃에서 띄움)을 발효제로 쓴다.',
     region:'핵심 산지는 츠수이강(赤水河) 유역으로, 물이 맑고 미량 원소가 많다고 설명된다.' },
@@ -888,7 +916,7 @@ const LIQUORS = [
   origin:{ countries:['cn'], note:'산둥성 칭다오' }, methods:['fermented'], materials:['barley'], styles:['lager'],
   tech:['yeast'], aging:{ methods:[] }, abv:null, flavors:[], uses:[],
   summary:'1903년 칭다오에서 문을 연 맥주 회사에서 이어져 온 중국 맥주예요.',
-  detail:{
+  detail:{ subNote:'한 회사가 만드는 단일 제품이라 세부 유형으로 나뉘지 않아요.',
     making:'발효주(맥주).',
     history:'전신은 1903년 8월 칭다오에서 독일·영국 이주민이 세운 「앵글로-저먼 브루어리」다. 회사는 이곳을 중국에서 가장 오래된 맥주 공장으로 소개한다.' },
   era:{ year:1903, note:'칭다오의 앵글로-저먼 브루어리' },
@@ -899,7 +927,7 @@ const LIQUORS = [
   origin:{ countries:['jp'] }, methods:['compound'], materials:['rice'], styles:['mirin'],
   tech:['koji'], aging:{ methods:[] }, abv:{ max:15, maxText:'미만', unit:'%', basis:'law', note:'주세법상 15도 미만(실제 약 14%)' }, flavors:['sweet'], flavorBasis:'general', uses:['cooking'],
   summary:'찹쌀·쌀 코지를 소주나 알코올에 넣어 숙성시킨 일본의 단 술로, 주로 요리에 써요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'찹쌀, 쌀 코지, 소주 또는 알코올을 주원료로 한다. 코지가 찐 쌀의 녹말을 당으로 바꾸지만, 술덧에서 알코올 발효는 일어나지 않는다 — 알코올은 원료인 소주·알코올에서 온다.',
     legal:'일본 주세법상 미린은 알코올분 15도 미만, 엑기스분 40도 이상이다.',
     taste:'당분이 약 45%로 매우 달다.',
@@ -910,7 +938,7 @@ const LIQUORS = [
   origin:{ countries:['jp'] }, methods:['fermented'], materials:['rice'], styles:['doburoku','rice_wine'],
   tech:['koji'], aging:{ methods:[] }, abv:null, props:{ turbidity:'거르지 않아 흐림' }, flavors:[], uses:[],
   summary:'쌀·쌀 코지·물로 빚어 거르지 않은, 일본의 탁한 쌀 발효주예요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'발효주. 쌀·쌀 코지·물로 빚어 거르지 않은 술로, 주세법상 「기타 양조주」에 속한다.',
     legal:'구조개혁 특구에서는 농가가 최소 제조량(연 6킬로리터) 기준 없이 도부로쿠를 만들 수 있다.',
     diff:'같은 원료로 빚어 거른 것이 사케(청주)다. 한국의 막걸리처럼 거르지 않은 술이다.' },
@@ -921,7 +949,7 @@ const LIQUORS = [
   tech:[], aging:{ methods:['oak','other_wood'], period:'3년 이상(일본 국내)', vessel:'700L 이하 나무통' },
   abv:{ min:40, unit:'%', basis:'law', note:'업계 자율 기준: 병입 40도 이상' }, flavors:[], uses:[],
   summary:'일본 안에서 당화·발효·증류하고 나무통에서 3년 이상 숙성해야 이름을 쓸 수 있는 위스키예요.',
-  detail:{
+  detail:{ subNote:'몰트·그레인·블렌디드 같은 구분은 상위 ‘위스키’ 카드의 세부 유형을 참고하세요.',
     making:'증류주. 원료는 맥아(반드시 사용)·곡물·일본에서 뜬 물로 한정한다. 당화·발효·증류는 일본 안의 증류소에서, 증류 때 알코올분은 95도 미만.',
     aging:'700리터 이하 나무통에 담아 다음 날부터 3년 이상 일본에서 저장한다.',
     legal:'일본양주주조조합이 2021년 2월 12일 정해 4월 1일부터 시행한 자율 기준. 일본에서 병입하고 40도 이상이어야 하며, 색을 맞추기 위한 캐러멜은 쓸 수 있다.' },
@@ -1018,6 +1046,8 @@ const LIQUORS = [
   tech:['infusion'], aging:{ methods:[] }, abv:{ min:37.5, unit:'%', basis:'law', note:'EU 최소 37.5%' }, flavors:['herbal','spice'], flavorBasis:'general', uses:[],
   summary:'캐러웨이나 딜 씨앗으로 향을 낸 증류주예요.',
   detail:{
+    subtypes:['스웨덴 아쿠아비트 — EU 지리적 표시','덴마크 아쿠아비트 — EU 지리적 표시'],
+    subNative:['Svensk Aquavit · Svensk Akvavit','Dansk Akvavit · Dansk Aquavit'],
     making:'증류주(가향). EU 규정상 농산물 알코올에 식물·향신료 증류액으로 향을 내며, 향은 주로 캐러웨이나 딜 씨앗의 증류액에서 와야 한다.' },
   legal:{ rules:['향은 주로 캐러웨이·딜 씨앗 증류액에서','에센셜 오일 사용 금지','쓴맛이 두드러지면 안 됨','건조 추출물 100mL에 1.5g 이하'] },
   sources:[ LQS.eu787_ann ] },
@@ -1042,7 +1072,7 @@ const LIQUORS = [
   origin:{ countries:['it'], note:'노바라에서 시작, 밀라노' }, methods:['liqueur','infused'], materials:['herb'], styles:['herbal_liqueur'],
   tech:['infusion'], aging:{ methods:[] }, abv:{ min:24, max:24, unit:'%', basis:'product' }, flavors:['bitter','herbal'], flavorBasis:'product', uses:['aperitif','cocktail_base'],
   summary:'1860년 가스파레 캄파리가 만든 붉은 쓴맛 식전주로, 네그로니·아메리카노에 들어가요.',
-  detail:{
+  detail:{ subNote:'한 회사가 만드는 단일 제품이라 세부 유형으로 나뉘지 않아요.',
     making:'쓴 허브·향기 나는 식물·과일을 알코올과 물에 우려 만든다. 레시피는 비밀이다.',
     history:'1860년 리큐르 장인 가스파레 캄파리가 노바라에서 처음 만들었다. 1915년 밀라노 갤러리아 비토리오 에마누엘레 2세에 「카메리노」 바가 문을 열었고, 1932년 병에 든 「캄파리 소다」가 나왔다.',
     pairing:'네그로니·아메리카노의 재료로 쓰인다.' },
@@ -1053,7 +1083,7 @@ const LIQUORS = [
   origin:{ countries:['it'], note:'파도바' }, methods:['liqueur','infused'], materials:['herb'], styles:['herbal_liqueur'],
   tech:['infusion'], aging:{ methods:[] }, abv:{ min:11, max:11, unit:'%', basis:'product' }, flavors:['bitter','herbal','citrus'], flavorBasis:'product', uses:['aperitif','cocktail_base'],
   summary:'1919년 파도바에서 만들어진 도수 11%의 가벼운 주황빛 식전주예요.',
-  detail:{
+  detail:{ subNote:'한 회사가 만드는 단일 제품이라 세부 유형으로 나뉘지 않아요.',
     making:'여러 허브와 뿌리를 우려 만들며, 레시피는 지금까지 비밀이다.',
     history:'바르비에리 형제가 1912년부터 개발해 1919년 파도바 국제 박람회에서 처음 선보였다. 이름은 식전주를 뜻하는 프랑스어 「아페로」에서 따왔다.',
     pairing:'프로세코·탄산수와 섞는 아페롤 스프리츠로 많이 마신다.' },
@@ -1081,7 +1111,7 @@ const LIQUORS = [
   origin:{ countries:['it'], note:'토리노(피에몬테)' }, methods:['aromatized','fortified'], materials:['grape','herb'], styles:['vermouth','aromatized_wine'],
   tech:['infusion'], aging:{ methods:[] }, abv:{ min:14.5, max:22, maxText:'미만', unit:'%', basis:'law', note:'가향 와인: 실제 14.5% 이상 22% 미만' }, flavors:['herbal','bitter'], flavorBasis:'general', uses:['aperitif','cocktail_base'],
   summary:'쑥 종류(아르테미시아)로 맛을 낸 가향 와인에 알코올을 더한 술로, 토리노가 지리적 표시를 가졌어요.',
-  detail:{
+  detail:{ subNote:'공식 자료에서 정해진 세부 유형을 확인하지 못했어요.',
     making:'EU 규정상 베르무트는 알코올을 더한 가향 와인이며, 특유의 맛을 아르테미시아속 식물로 낸다.',
     legal:'「Vermut di Torino / Vermouth di Torino」는 EU 가향 와인 규정에 등록된 이탈리아 지리적 표시다.',
     pairing:'네그로니·아메리카노·마티니 같은 칵테일에 스위트·드라이 베르무트가 들어간다.' },
@@ -1093,6 +1123,8 @@ const LIQUORS = [
   tech:[], aging:{ methods:[] }, abv:null, props:{ color:'짙은 호박색' }, flavors:['sweet'], flavorBasis:'general', uses:['cooking'],
   summary:'1773년부터 시칠리아에서 만든, 졸인 포도즙을 더하는 강화 와인이에요.',
   detail:{
+    subtypes:['피네 — 1년 이상 숙성','수페리오레 — 2년 이상 숙성','수페리오레 리제르바 — 4년 이상 숙성','베르지네·솔레라스 — 5년 이상 숙성','베르지네·솔레라스 스트라베키오(리제르바) — 10년 이상 숙성','색에 따른 구분 — 오로(금색)·암브라(호박색)·루비노(루비색)','단맛에 따른 구분 — 세코·세미세코(아마빌레)·돌체'],
+    subNative:['Fine','Superiore','Superiore Riserva','Vergine · Soleras','Vergine Stravecchio · Soleras Riserva','Oro · Ambra · Rubino','Secco · Semisecco · Dolce'],
     making:'강화주. 포도즙을 끓여 3분의 1로 졸여 더하기 때문에 짙은 호박색과 탄 설탕 같은 맛이 난다.',
     history:'1773년부터 만들어졌다. 영국 상인 존 우드하우스가 마르살라에 와인 공장을 열어 영국과의 마르살라 와인 무역을 키웠다.',
     taste:'드라이한 것부터 단 것까지 있다.',
@@ -1100,7 +1132,9 @@ const LIQUORS = [
     region:'시칠리아 서부 마르살라 일대(트라파니).' },
   legal:{ protected:'DOC Marsala' },
   era:{ year:1773, note:'1773년부터 시칠리아에서 만듦' },
-  sources:[ LQS.marsala ] },
+  sources:[ LQS.marsala ,
+    { title:'이탈리아 농업부 — Marsala DOC 생산 규정(Disciplinare)', url:'http://catalogoviti.politicheagricole.it/scheda_denom.php?t=dsc&q=2183', checked:'2026-11-14' }
+  ] },
 
 // ══════════════ 칵테일 (IBA 공식 레시피) ══════════════
 { id:'negroni', kind:'cocktail', emoji:'🍸', name:'네그로니', local:'Negroni', en:'Negroni',
@@ -1109,7 +1143,7 @@ const LIQUORS = [
   summary:'진·캄파리·스위트 베르무트를 같은 양으로 섞는 칵테일이에요.',
   recipe:{ base:['gin'], items:[['진','30 ml'],['캄파리(비터)','30 ml'],['스위트 레드 베르무트','30 ml']],
     method:'얼음을 채운 차가운 올드패션드 잔에 모두 붓고 살살 젓는다.' },
-  detail:{ history:'1919년 피렌체의 카페 카소니에서 카밀로 네그로니 백작이 늘 마시던 아메리카노에 탄산수 대신 진을 넣어 달라고 한 데서 생겼다. 바텐더는 레몬 대신 오렌지 조각으로 장식했다.', diff:'진 대신 탄산수를 넣으면 아메리카노와 비슷해진다(아메리카노는 캄파리·베르무트·탄산수).' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', history:'1919년 피렌체의 카페 카소니에서 카밀로 네그로니 백작이 늘 마시던 아메리카노에 탄산수 대신 진을 넣어 달라고 한 데서 생겼다. 바텐더는 레몬 대신 오렌지 조각으로 장식했다.', diff:'진 대신 탄산수를 넣으면 아메리카노와 비슷해진다(아메리카노는 캄파리·베르무트·탄산수).' },
   era:{ year:1919, note:'피렌체 카페 카소니' },
   sources:[ iba('negroni','Negroni'), LQS.negroni_hist ] },
 
@@ -1119,6 +1153,7 @@ const LIQUORS = [
   summary:'진에 드라이 베르무트를 조금 섞어 저어 만드는 칵테일이에요.',
   recipe:{ base:['gin'], items:[['진','60 ml'],['드라이 베르무트','10 ml']],
     method:'얼음을 넣은 믹싱 글라스에 붓고 잘 저은 뒤, 차갑게 한 마티니 잔에 걸러 따른다.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', },
   sources:[ iba('dry-martini','Dry Martini') ] },
 
 { id:'mojito', kind:'cocktail', emoji:'🍹', name:'모히토', local:'Mojito', en:'Mojito',
@@ -1127,13 +1162,14 @@ const LIQUORS = [
   summary:'화이트 럼에 라임즙·민트·설탕·탄산수를 더한 칵테일이에요.',
   recipe:{ base:['rum'], items:[['쿠바산 화이트 럼','45 ml'],['생라임즙','20 ml'],['민트 줄기','6개'],['흰 사탕수수 설탕','2작은술'],['탄산수','적당량']],
     method:'민트·설탕·라임즙을 섞고 탄산수를 조금 넣은 뒤 얼음을 채운다. 럼을 붓고 탄산수로 채워 가볍게 젓는다. 민트와 라임 조각으로 장식.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', },
   sources:[ iba('mojito','Mojito') ] },
 
 { id:'daiquiri', kind:'cocktail', emoji:'🍸', name:'다이키리', local:'Daiquiri', en:'Daiquiri',
   origin:{ countries:['cu'], note:'아바나' }, methods:['mixed'], materials:['spirits','citrus'], styles:['daiquiri'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['citrus','sour'], flavorBasis:'general', uses:[],
   summary:'화이트 럼·라임즙·설탕을 흔들어 만드는 칵테일이에요.',
-  detail:{ history:'쿠바 아바나에서 발전한 칵테일로, 바 「라 플로리다(엘 플로리디타)」의 바텐더 콘스탄티노 리바라이과 베르트가 여러 변형을 완성해 이름을 알렸다.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', history:'쿠바 아바나에서 발전한 칵테일로, 바 「라 플로리다(엘 플로리디타)」의 바텐더 콘스탄티노 리바라이과 베르트가 여러 변형을 완성해 이름을 알렸다.' },
   recipe:{ base:['rum'], items:[['쿠바산 화이트 럼','60 ml'],['생라임즙','20 ml'],['고운 설탕','바 스푼 2개']],
     method:'셰이커에 모두 넣고 저어 설탕을 녹인 뒤, 얼음을 넣고 흔들어 차가운 칵테일 잔에 걸러 따른다.' },
   sources:[ iba('daiquiri','Daiquiri'), LQS.daiquiri_hist ] },
@@ -1142,7 +1178,7 @@ const LIQUORS = [
   origin:{ countries:['us'], note:'캘리포니아 오클랜드' }, methods:['mixed'], materials:['spirits','citrus'], styles:['mai_tai'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['citrus','nutty','sweet'], flavorBasis:'general', uses:[],
   summary:'두 가지 럼에 오렌지 큐라소·아몬드 시럽·라임즙을 더한 칵테일이에요.',
-  detail:{ history:'1944년 트레이더 빅이 오클랜드의 자기 식당에서 처음 만들었다. 맛을 본 손님이 타히티 말로 「마이 타이 — 로아 애(세상 밖의 맛, 최고)」라고 한 데서 이름이 붙었다.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', history:'1944년 트레이더 빅이 오클랜드의 자기 식당에서 처음 만들었다. 맛을 본 손님이 타히티 말로 「마이 타이 — 로아 애(세상 밖의 맛, 최고)」라고 한 데서 이름이 붙었다.' },
   recipe:{ base:['rum'], items:[['앰버 자메이카 럼','30 ml'],['마르티니크 당밀 럼','30 ml'],['오렌지 큐라소','15 ml'],['오르자 시럽(아몬드)','15 ml'],['생라임즙','30 ml'],['설탕 시럽','7.5 ml']],
     method:'얼음과 함께 셰이커에 넣어 흔든 뒤 더블 록 잔이나 하이볼 잔에 따른다. 파인애플·민트·라임 껍질로 장식.' },
   era:{ year:1944, note:'트레이더 빅이 오클랜드에서 처음 만듦' },
@@ -1154,7 +1190,7 @@ const LIQUORS = [
   summary:'캄파리와 스위트 베르무트에 탄산수를 더한 칵테일이에요(커피 아메리카노와 다름).',
   recipe:{ base:[], items:[['캄파리(비터)','30 ml'],['스위트 레드 베르무트','30 ml'],['탄산수','조금']],
     method:'얼음을 채운 올드패션드 잔에 바로 섞는다. 오렌지 반 조각과 레몬 껍질로 장식.' },
-  detail:{ history:'1860년 무렵 밀라노의 카페 캄파리에서 「밀라노-토리노」라는 이름으로 처음 냈고, 미국 관광객에게 인기를 얻으면서 아메리카노로 불리게 되었다.', diff:'네그로니에서 진을 빼고 탄산수를 넣은 구성과 같다.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', history:'1860년 무렵 밀라노의 카페 캄파리에서 「밀라노-토리노」라는 이름으로 처음 냈고, 미국 관광객에게 인기를 얻으면서 아메리카노로 불리게 되었다.', diff:'네그로니에서 진을 빼고 탄산수를 넣은 구성과 같다.' },
   era:{ year:1860, note:'1860년 무렵 밀라노 카페 캄파리의 「밀라노-토리노」' },
   sources:[ iba('americano','Americano'), LQS.campari_hist ] },
 
@@ -1162,7 +1198,7 @@ const LIQUORS = [
   origin:{ countries:['it'] }, methods:['mixed'], materials:['spirits','grape'], styles:['spritz'], tech:['blending'], aging:{ methods:[] }, abv:null,
   flavors:['bitter','citrus'], flavorBasis:'general', uses:['aperitif'],
   summary:'프로세코(스파클링 와인)와 아페롤에 탄산수를 더한 칵테일이에요.',
-  detail:{ history:'아페롤은 1919년 파도바에서 만들어졌고, 프로세코 3·아페롤 2·탄산수 조금으로 만드는 아페롤 스프리츠는 1950년대에 이탈리아의 아페리티보 자리에서 인기를 얻었다. 이름은 독일어 「스프리처(물을 튀기다)」에서 따왔다.' },
+  detail:{ subNote:'칵테일은 세부 유형 대신 위의 공식 레시피를 기준으로 해요.', history:'아페롤은 1919년 파도바에서 만들어졌고, 프로세코 3·아페롤 2·탄산수 조금으로 만드는 아페롤 스프리츠는 1950년대에 이탈리아의 아페리티보 자리에서 인기를 얻었다. 이름은 독일어 「스프리처(물을 튀기다)」에서 따왔다.' },
   recipe:{ base:[], items:[['프로세코','90 ml'],['아페롤','60 ml'],['탄산수','조금']],
     method:'얼음을 채운 와인 잔에 모두 붓는다. 아페롤 대신 캄파리·치나르·셀렉트를 쓰는 버전도 있다.' },
   era:{ year:1950, note:'1950년대 아페롤 스프리츠가 인기를 얻음' },
