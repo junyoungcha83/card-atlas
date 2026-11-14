@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v59';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v60';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -21,9 +21,10 @@ function toggleEdit(){
   route();
 }
 // 슬라이드 렌더 후 [data-upslot] 요소에 +버튼(편집 모드) 부착
-function decorateUploads(root){
-  if(!EDIT || !root) return;
-  root.querySelectorAll('[data-upslot]').forEach(el=>{
+// sel: 편집 모드가 아니어도 +를 붙일 칸(예: 술 상세의 '[data-upslot^="lq-"]') — 술 사진은 언제든 직접 넣을 수 있게
+function decorateUploads(root, sel){
+  if(!root || (!EDIT && !sel)) return;
+  root.querySelectorAll(EDIT ? '[data-upslot]' : sel).forEach(el=>{
     if(el.querySelector(':scope > .up-ov')) return;
     const slot=el.dataset.upslot;
     el.classList.add('up-host');
@@ -41,7 +42,10 @@ function fileInput(){
   _fileInput.onchange=()=>{ const f=_fileInput.files[0]; _fileInput.value=''; if(f&&_pendingSlot) uploadImage(_pendingSlot,f); };
   document.body.appendChild(_fileInput); return _fileInput;
 }
-function pickUpload(slot){ _pendingSlot=slot; fileInput().click(); }
+function pickUpload(slot){
+  // 편집 모드를 거치지 않고 +를 누른 경우 — 비밀번호가 없으면 여기서 한 번 묻는다
+  if(!editToken()){ const p=prompt('사진을 올리려면 편집 비밀번호를 입력하세요'); if(!p) return; localStorage.setItem('ca-edit', p.trim()); }
+  _pendingSlot=slot; fileInput().click(); }
 // 큰 사진은 캔버스로 축소(최대 변 1600px, JPEG) 후 업로드
 function downscale(file, maxSide, q){
   return new Promise((res,rej)=>{
@@ -1416,7 +1420,7 @@ function renderLiqDetail(id){
   const eb=document.getElementById('editBtn'); if(eb) eb.onclick=toggleEdit;
   APP.querySelectorAll('.lq-crumb,.lq-sublink').forEach(b=>b.onclick=()=>nav('liqd='+b.dataset.id));
   APP.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ LQF=lqEmptyFilter(); LQF[b.dataset.go]=[b.dataset.gv]; lqSave(); LQ_PANEL=false; nav('liqall'); });
-  decorateUploads(APP);
+  decorateUploads(APP, '[data-upslot^="lq-"]');   // 술 사진은 편집 모드가 아니어도 +로 바로 넣는다
   window.scrollTo(0,0);
 }
 function infoLine(k,v){ return `<p class="lq-sm"><b>${esc(k)}</b> ${esc(v)}</p>`; }
