@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v57';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v58';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1450,15 +1450,24 @@ const zjKstDate = ms => { const d=new Date(ms+ZJ_KST); return {y:d.getUTCFullYea
 const zjMod = (a,n) => ((a%n)+n)%n;
 const zjGanji = y => ({ s:zjMod(y-4,10), b:zjMod(y-4,12) });
 const zjGanjiText = y => { const g=zjGanji(y); return `${ZJ_STEMS[g.s]}${ZJ_BRANCHES[g.b][0]}년(${ZJ_STEMS_HJ[g.s]}${ZJ_BRANCHES[g.b][1]})`; };
-// 음력(단기 달력) 날짜 — 브라우저 Intl 의 한국 전통 달력(dangi)을 쓴다
+// 음력 날짜 — zodiac.js 의 ZJ_LUNAR_TABLE(한국천문연구원 자료 기반 1900~2049)로 계산한다.
+// 예전에는 브라우저 Intl 음력을 썼는데, 삼성 인터넷 등에서 연도를 60갑자 순번으로 줘(1983→'60')
+// 1983년 3월생이 원숭이띠로 잘못 나왔다. 표 기반으로 바꿔 기기와 상관없이 같은 값을 낸다.
 function zjLunar(ms){
-  try{
-    const parts=new Intl.DateTimeFormat('ko-KR-u-ca-dangi',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date(ms));
-    const g=t=>(parts.find(p=>p.type===t)||{}).value;
-    const y=+(g('relatedYear')||g('year')); const mon=g('month')||'', day=g('day');
-    if(!y||!day) return null;
-    return { y, leap:/윤|bis|leap/i.test(mon), m:parseInt(String(mon).replace(/\D/g,''),10), d:+day };
-  }catch(_){ return null; }
+  const k=zjKstDate(ms);
+  const day=Math.round((Date.UTC(k.y,k.m-1,k.d)-Date.UTC(1900,0,1))/86400000);
+  let row=null;
+  for(const r of ZJ_LUNAR_TABLE){ if(r[1]<=day) row=r; else break; }
+  if(!row) return null;
+  const [y,start,leap,bits,count]=row;
+  const months=[]; for(let m=1;m<=12;m++){ months.push({m,leap:false}); if(m===leap) months.push({m,leap:true}); }
+  let off=day-start;
+  for(let i=0;i<count;i++){
+    const len=((bits>>(count-1-i))&1)?30:29;
+    if(off<len) return { y, m:months[i].m, leap:months[i].leap, d:off+1 };
+    off-=len;
+  }
+  return null;   // 표 범위(2049년 음력 12월) 밖
 }
 // 별자리 번호(0=양자리) — 태양 황경 30°마다
 const zjSignAt = ms => Math.floor(zjSunLon(ms)/30)%12;
@@ -1498,7 +1507,7 @@ function zjStarHTML(){
 function zjMeHTML(){
   let saved={}; try{ saved=JSON.parse(localStorage.getItem('ca-zj-me')||'{}')||{}; }catch(_){}
   return `<div class="zj-form">
-      <label>생년월일 (양력)<input type="date" id="zjDate" min="1900-01-01" max="2100-12-31" value="${esc(saved.d||'')}"></label>
+      <label>생년월일 (양력)<input type="date" id="zjDate" min="1900-01-31" max="2049-12-31" value="${esc(saved.d||'')}"></label>
       <label>태어난 시각 <small>(모르면 비워 두세요)</small><input type="time" id="zjTime" value="${esc(saved.t||'')}"></label>
       <button class="zj-go" id="zjGo" type="button">확인하기</button>
     </div>
@@ -1526,7 +1535,7 @@ function zjResult(dateStr, timeStr){
       out.push(`<p class="zj-note">⚠️ 입춘(${ipK.m}월 ${ipK.d}일 ${String(ipK.h).padStart(2,'0')}:${String(ipK.mi).padStart(2,'0')}쯤) 근처에 태어났어요. 사주 기준 띠는 태어난 시각을 넣어야 정확해요.</p>`);
     }
   } else {
-    out.push('<p class="zj-note">이 브라우저는 음력 계산을 지원하지 않아 띠를 계산하지 못했어요.</p>');
+    out.push('<p class="zj-note">1900년 1월 31일부터 2049년까지만 계산할 수 있어요.</p>');
   }
   // 3) 태어난 시(12시)
   if(hasT){
