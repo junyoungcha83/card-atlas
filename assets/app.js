@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v56';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v57';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -583,11 +583,11 @@ const MY_CITY_ORDER = ['masan','cheongju','icheon','yongsan','mapo'];
 // ── 세계 국가: 대륙 선택 → 나라 목록 → 국가 카드(그 대륙 나라끼리 넘김) ──
 // 대륙은 region 앞부분으로 정한다. 두 대륙에 걸친 나라는 CONT_OVERRIDE로 한 대륙에만 넣는다.
 const CONTINENTS = [
-  { id:'asia', name:'아시아',     emoji:'🌏', key:'아시아' },
+  { id:'asia', name:'아시아',     emoji:'<img class="cont-ico" src="assets/seokguram.svg" alt="석굴암 본존불">', key:'아시아' },
   { id:'eu',   name:'유럽',       emoji:'🏰', key:'유럽' },
   { id:'af',   name:'아프리카',   emoji:'🦁', key:'아프리카' },
   { id:'na',   name:'북아메리카', emoji:'🗽', key:'북아메리카' },
-  { id:'sa',   name:'남아메리카', emoji:'🌎', key:'남아메리카' },
+  { id:'sa',   name:'남아메리카', emoji:'<img class="cont-ico" src="assets/machupicchu.svg" alt="마추픽추">', key:'남아메리카' },
   { id:'oc',   name:'오세아니아', emoji:'🦘', key:'오세아니아' },
 ];
 const CONT_OVERRIDE = { '러시아':'eu', '튀르키예':'asia' };

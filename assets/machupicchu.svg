@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 128">
+  <!-- 마추픽추 — 세계 국가 '남아메리카' 아이콘.
+       뒤쪽 뾰족한 와이나픽추 봉우리 + 앞쪽 계단식 밭(안데네스)과 돌집 지붕 실루엣.
+       46px 로 줄어드므로 계단은 4단만 그린다. -->
+  <defs>
+    <linearGradient id="mpPeak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6fae63"/><stop offset="1" stop-color="#2f6b3a"/>
+    </linearGradient>
+    <linearGradient id="mpBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cb6a0"/><stop offset="1" stop-color="#4f7d68"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="84" cy="121" rx="72" ry="4" fill="#000" opacity=".22"/>
+  <!-- 먼 산 -->
+  <path d="M4 92 L34 52 L56 70 L74 40 L96 66 L120 58 L164 92 Z" fill="url(#mpBack)" opacity=".75"/>
+  <!-- 와이나픽추 -->
+  <path d="M92 96 L112 30 Q118 10 124 30 L150 96 Z" fill="url(#mpPeak)" stroke="#24522c" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M116 28 L121 40 L113 52" fill="none" stroke="#9ccf8a" stroke-width="2" opacity=".7"/>
+  <!-- 유적이 있는 능선(초록 평지) -->
+  <path d="M6 100 Q40 80 82 82 Q120 84 162 100 L162 118 L6 118 Z" fill="#5d9a52" stroke="#2f6b3a" stroke-width="2.2"/>
+  <!-- 계단식 밭 4단 -->
+  <g fill="none" stroke="#d9d4c7" stroke-width="2.4" stroke-linecap="round">
+    <path d="M12 104 Q46 88 82 89"/>
+    <path d="M14 110 Q48 95 84 96"/>
+    <path d="M16 116 Q50 102 86 103"/>
+  </g>
+  <!-- 돌집 지붕(박공) -->
+  <g fill="#cfc8b8" stroke="#8a8272" stroke-width="2" stroke-linejoin="round">
+    <path d="M92 92 L100 82 L108 92 Z"/><rect x="93" y="92" width="14" height="10"/>
+    <path d="M110 94 L118 84 L126 94 Z"/><rect x="111" y="94" width="14" height="10"/>
+    <path d="M128 96 L135 87 L142 96 Z"/><rect x="129" y="96" width="12" height="9"/>
+  </g>
+</svg>

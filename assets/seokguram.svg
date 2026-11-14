@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 석굴암 본존불 — 세계 국가 '아시아' 아이콘.
+       46px 로 줄어들므로 광배·머리(육계)·어깨·결가부좌 다리·연꽃 대좌의 실루엣만 그린다.
+       어두운 배경 위라 밝은 화강암 색을 쓴다. -->
+  <defs>
+    <linearGradient id="sgStone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6f1e7"/><stop offset=".6" stop-color="#ddd3c2"/><stop offset="1" stop-color="#b9ad98"/>
+    </linearGradient>
+    <radialGradient id="sgHalo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffe7a8" stop-opacity=".9"/><stop offset=".7" stop-color="#f1c35a" stop-opacity=".55"/><stop offset="1" stop-color="#f1c35a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="122" rx="50" ry="4" fill="#000" opacity=".22"/>
+  <!-- 광배 -->
+  <circle cx="64" cy="34" r="27" fill="url(#sgHalo)"/>
+  <circle cx="64" cy="34" r="21" fill="none" stroke="#e9c86a" stroke-width="2" opacity=".8"/>
+  <!-- 연꽃 대좌 -->
+  <path d="M18 106 Q24 98 34 101 Q40 94 50 99 Q57 92 64 98 Q71 92 78 99 Q88 94 94 101 Q104 98 110 106 Z" fill="#cfc3ad" stroke="#9c8f77" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="22" y="105" width="84" height="12" rx="3" fill="#bfb39c" stroke="#9c8f77" stroke-width="2"/>
+  <!-- 결가부좌 다리 -->
+  <path d="M20 100 Q22 84 44 80 L84 80 Q106 84 108 100 Q86 106 64 104 Q42 106 20 100 Z" fill="url(#sgStone)" stroke="#9c8f77" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- 몸통(가사, 오른쪽 어깨 드러냄) -->
+  <path d="M36 82 Q34 60 46 54 Q56 50 64 50 Q72 50 82 54 Q94 60 92 82 Z" fill="url(#sgStone)" stroke="#9c8f77" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M46 55 Q56 66 54 82" fill="none" stroke="#a99d86" stroke-width="2"/>
+  <path d="M60 58 Q70 66 80 78" fill="none" stroke="#a99d86" stroke-width="1.6" opacity=".8"/>
+  <!-- 오른손: 무릎 위로 내린 손(항마촉지인) / 왼손: 배 앞 -->
+  <path d="M86 70 Q92 78 90 90" fill="none" stroke="#9c8f77" stroke-width="2.4" stroke-linecap="round"/>
+  <ellipse cx="60" cy="80" rx="9" ry="4" fill="#ece5d7" stroke="#9c8f77" stroke-width="1.8"/>
+  <!-- 목 -->
+  <rect x="58" y="44" width="12" height="9" rx="3" fill="#e6dccb" stroke="#9c8f77" stroke-width="1.6"/>
+  <!-- 머리와 육계, 긴 귀 -->
+  <ellipse cx="51" cy="35" rx="3.2" ry="7" fill="#e3d9c7" stroke="#9c8f77" stroke-width="1.6"/>
+  <ellipse cx="77" cy="35" rx="3.2" ry="7" fill="#e3d9c7" stroke="#9c8f77" stroke-width="1.6"/>
+  <ellipse cx="64" cy="34" rx="12.5" ry="14" fill="url(#sgStone)" stroke="#9c8f77" stroke-width="2"/>
+  <ellipse cx="64" cy="19" rx="7.5" ry="5.5" fill="#d8cdb9" stroke="#9c8f77" stroke-width="1.8"/>
+  <path d="M53 27 Q64 21 75 27" fill="none" stroke="#9c8f77" stroke-width="1.6"/>
+  <!-- 감은 눈·백호 -->
+  <path d="M57 35 q3 2 6 0 M65 35 q3 2 6 0" fill="none" stroke="#7d715c" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="64" cy="30" r="1.2" fill="#7d715c"/>
+</svg>
