@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v55';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v56';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -517,6 +517,7 @@ function renderHome(){
         <button class="home-card" data-k="religion"><span class="hc-emo">🙏</span><b>세계종교</b><small>우리나라 · 세계 종교의 흐름</small></button>
         <button class="home-card" data-k="geo"><img class="hc-emo hc-emo-img" src="assets/maps/kr.svg" alt="한반도"><b>한국지리</b><small>전국 도·시·군·구 · 과거도시</small></button>
         <button class="home-card" data-k="liq"><span class="hc-emo">🍺</span><b>술의 역사</b><small>${LIQUORS.length}종 · 원료·제조법·숙성·향미</small></button>
+        <button class="home-card" data-k="zodiac"><span class="hc-emo">🐉</span><b>띠와 별자리</b><small>12지 · 황도 12궁 · 나의 띠/별자리</small></button>
       </div>
     </div>`;
   APP.querySelectorAll('.home-card').forEach(b=> b.onclick=()=>nav(b.dataset.k));
@@ -1426,6 +1427,157 @@ function openDeck(kind, it=0, sd=0, cont=''){
   renderDeck();
 }
 
+// ── 띠와 별자리 — 12지 · 별자리 · 나의 띠/별자리 계산 ──
+// 태양 겉보기 황경(°) — Meeus 저정밀식, 오차 약 0.01°(시각으로 15분 안팎)
+function zjSunLon(ms){
+  const JD=ms/86400000+2440587.5, T=(JD-2451545)/36525, r=Math.PI/180;
+  const L0=280.46646+36000.76983*T+0.0003032*T*T;
+  const M=357.52911+35999.05029*T-0.0001537*T*T;
+  const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M*r)+(0.019993-0.000101*T)*Math.sin(2*M*r)+0.000289*Math.sin(3*M*r);
+  const O=125.04-1934.136*T;
+  return (((L0+C-0.00569-0.00478*Math.sin(O*r))%360)+360)%360;
+}
+// 그 해에 태양 황경이 target° 가 되는 순간(UTC ms) — 입춘 315°, 춘분 0° …
+function zjSolarTerm(year, target){
+  const guess=Date.UTC(year,0,1)+((target-280+360)%360)/360*365.2422*86400000;
+  let a=guess-20*86400000, b=guess+20*86400000;
+  const f=t=>{ let d=zjSunLon(t)-target; if(d>180)d-=360; if(d<-180)d+=360; return d; };
+  for(let i=0;i<60;i++){ const m=(a+b)/2; if(f(m)<0) a=m; else b=m; }
+  return (a+b)/2;
+}
+const ZJ_KST=9*3600000;
+const zjKstDate = ms => { const d=new Date(ms+ZJ_KST); return {y:d.getUTCFullYear(), m:d.getUTCMonth()+1, d:d.getUTCDate(), h:d.getUTCHours(), mi:d.getUTCMinutes()}; };
+const zjMod = (a,n) => ((a%n)+n)%n;
+const zjGanji = y => ({ s:zjMod(y-4,10), b:zjMod(y-4,12) });
+const zjGanjiText = y => { const g=zjGanji(y); return `${ZJ_STEMS[g.s]}${ZJ_BRANCHES[g.b][0]}년(${ZJ_STEMS_HJ[g.s]}${ZJ_BRANCHES[g.b][1]})`; };
+// 음력(단기 달력) 날짜 — 브라우저 Intl 의 한국 전통 달력(dangi)을 쓴다
+function zjLunar(ms){
+  try{
+    const parts=new Intl.DateTimeFormat('ko-KR-u-ca-dangi',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date(ms));
+    const g=t=>(parts.find(p=>p.type===t)||{}).value;
+    const y=+(g('relatedYear')||g('year')); const mon=g('month')||'', day=g('day');
+    if(!y||!day) return null;
+    return { y, leap:/윤|bis|leap/i.test(mon), m:parseInt(String(mon).replace(/\D/g,''),10), d:+day };
+  }catch(_){ return null; }
+}
+// 별자리 번호(0=양자리) — 태양 황경 30°마다
+const zjSignAt = ms => Math.floor(zjSunLon(ms)/30)%12;
+
+function zjJiHTML(){
+  const now=new Date().getFullYear();
+  return `<p class="zj-intro">띠는 태어난 해의 지지(地支)를 동물 이름으로 부르는 말이에요. 12지는 해뿐 아니라 하루의 12시각, 12방위, 음력 12달에도 하나씩 배정돼요.</p>
+  <div class="zj-grid">${ZJ_BRANCHES.map((b,i)=>{
+    const years=[]; for(let y=now-72;y<=now+12;y++) if(zjMod(y-4,12)===i) years.push(y);
+    return `<div class="zj-card">
+      <div class="zj-head"><span class="zj-emo">${b[4]}</span><div><b>${esc(b[2])}띠</b>${b[3]?` <small>(${esc(b[3])}띠)</small>`:''}<div class="zj-hj">${i+1}번째 · ${esc(b[0])}(${b[1]})</div></div></div>
+      <dl class="zj-dl"><dt>시각</dt><dd>${esc(b[0])}시 · ${esc(b[5])}</dd><dt>방위</dt><dd>${esc(b[6])}</dd><dt>음력 달</dt><dd>${esc(b[7])}</dd></dl>
+      <div class="zj-years">${years.map(y=>`<span${y===now?' class="on"':''}>${y}<small>${zjGanjiText(y).slice(0,2)}</small></span>`).join('')}</div>
+      <p class="zj-trait">🗣️ ${esc(b[8])}</p>
+      <a class="zj-src" href="https://encykorea.aks.ac.kr/Article/${b[9]}" target="_blank" rel="noopener">백과사전 ${esc(b[2])}띠 ›</a>
+    </div>`; }).join('')}</div>
+  <p class="zj-note">연도는 그 해 설날부터 다음 설날 전까지예요(1·2월생은 ‘나의 띠’ 탭에서 확인). 성격 풀이는 민속에서 전해 오는 이야기라 재미로 보세요.</p>`;
+}
+function zjStarHTML(){
+  const year=new Date().getFullYear();
+  // 경계가 걸린 날은 그날 정오 전에 바뀌면 새 별자리 쪽으로 센다(겹치지 않게). 정확한 건 태어난 시각으로 확인
+  const startDay=ms=>{ const k=zjKstDate(ms); return Date.UTC(k.y,k.m-1,k.d)+(k.h>=12?86400000:0); };
+  const f=t=>{ const d=new Date(t); return `${d.getUTCMonth()+1}월 ${d.getUTCDate()}일`; };
+  const rows=ZJ_SIGNS.map((s,i)=>{
+    const deg=i*30;
+    const st = zjSolarTerm(deg===270?year-1:year, deg);
+    const en = zjSolarTerm(deg===330?year:year, (deg+30)%360);
+    return `<div class="zj-card zj-star">
+      <div class="zj-head"><span class="zj-emo">${s[4]}</span><div><b>${esc(s[0])}</b> <span class="zj-sym">${s[3]}</span><div class="zj-hj">${esc(s[1])} · ${esc(s[2])}</div></div></div>
+      <dl class="zj-dl"><dt>${deg===270?`${year-1}~${year}`:year}년</dt><dd>${f(startDay(st))} ~ ${f(startDay(en)-86400000)}</dd><dt>태양 황경</dt><dd>${deg}° ~ ${deg+30}°</dd></dl>
+    </div>`; }).join('');
+  return `<p class="zj-intro">태양이 1년 동안 하늘에서 지나가는 길(황도)을 따라 늘어선 12개 별자리가 ‘황도 12궁’이에요. 생일 별자리는 춘분 때 태양 위치(황경 0°)부터 30°씩 나눈 이 12궁으로 정해요.</p>
+  <div class="zj-grid">${rows}</div>
+  <p class="zj-note">📅 날짜는 ${year}년 태양 위치로 계산한 값이에요. 해마다 하루 정도 앞뒤로 달라져서, 경계 날짜에 태어났다면 ‘나의 별자리’ 탭에서 태어난 해로 확인하세요.<br>
+  🔭 1928년 국제천문연맹이 하늘 전체를 88개 별자리로 정했어요. 황도는 뱀주인자리 남쪽도 지나가지만, 뱀주인자리는 황도 12궁에 들지 않아요.</p>`;
+}
+function zjMeHTML(){
+  let saved={}; try{ saved=JSON.parse(localStorage.getItem('ca-zj-me')||'{}')||{}; }catch(_){}
+  return `<div class="zj-form">
+      <label>생년월일 (양력)<input type="date" id="zjDate" min="1900-01-01" max="2100-12-31" value="${esc(saved.d||'')}"></label>
+      <label>태어난 시각 <small>(모르면 비워 두세요)</small><input type="time" id="zjTime" value="${esc(saved.t||'')}"></label>
+      <button class="zj-go" id="zjGo" type="button">확인하기</button>
+    </div>
+    <div id="zjOut"></div>`;
+}
+function zjResult(dateStr, timeStr){
+  const [Y,M,D]=dateStr.split('-').map(Number);
+  if(!Y||!M||!D) return '<p class="zj-note">생년월일을 입력해 주세요.</p>';
+  const hasT=!!timeStr; const [hh,mm]=(timeStr||'12:00').split(':').map(Number);
+  const ms=Date.UTC(Y,M-1,D,hh,mm)-ZJ_KST;          // 한국 시각 → UTC
+  const dayStart=Date.UTC(Y,M-1,D)-ZJ_KST, dayEnd=dayStart+86400000-60000;
+  const lunar=zjLunar(ms);
+  const out=[];
+  // 1) 띠 — 설날 기준
+  if(lunar){
+    const b=ZJ_BRANCHES[zjMod(lunar.y-4,12)];
+    out.push(`<div class="zj-res"><span class="zj-big">${b[4]}</span><div><small>나의 띠 (설날 기준)</small><b>${esc(b[2])}띠</b><div>${zjGanjiText(lunar.y)} · 음력 ${lunar.y}년 ${lunar.leap?'윤':''}${lunar.m}월 ${lunar.d}일생</div></div></div>`);
+    // 2) 입춘 기준(사주)
+    const ip=zjSolarTerm(Y,315), ipK=zjKstDate(ip);
+    const ipYear = ms>=ip ? Y : Y-1;
+    if(ipYear!==lunar.y){
+      const b2=ZJ_BRANCHES[zjMod(ipYear-4,12)];
+      out.push(`<div class="zj-res zj-alt"><span class="zj-big">${b2[4]}</span><div><small>사주(입춘 기준)로는</small><b>${esc(b2[2])}띠</b><div>${zjGanjiText(ipYear)} — ${Y}년 입춘은 ${ipK.m}월 ${ipK.d}일 ${String(ipK.h).padStart(2,'0')}:${String(ipK.mi).padStart(2,'0')}쯤이에요. 설과 입춘 사이에 태어나면 두 기준의 띠가 달라요.</div></div></div>`);
+    } else if(Math.abs(ms-ip)<36*3600000 && !hasT){
+      out.push(`<p class="zj-note">⚠️ 입춘(${ipK.m}월 ${ipK.d}일 ${String(ipK.h).padStart(2,'0')}:${String(ipK.mi).padStart(2,'0')}쯤) 근처에 태어났어요. 사주 기준 띠는 태어난 시각을 넣어야 정확해요.</p>`);
+    }
+  } else {
+    out.push('<p class="zj-note">이 브라우저는 음력 계산을 지원하지 않아 띠를 계산하지 못했어요.</p>');
+  }
+  // 3) 태어난 시(12시)
+  if(hasT){
+    const idx=zjMod(Math.floor(((hh*60+mm)+60)/120),12);   // 23:00부터 자시
+    const b=ZJ_BRANCHES[idx];
+    out.push(`<div class="zj-res"><span class="zj-big">🕰️</span><div><small>태어난 시</small><b>${esc(b[0])}시(${b[1]}時)</b><div>${esc(b[5])} · ${esc(b[2])}의 시각</div></div></div>`);
+  }
+  // 4) 별자리
+  const si=zjSignAt(ms), s=ZJ_SIGNS[si];
+  const edge = !hasT && zjSignAt(dayStart)!==zjSignAt(dayEnd);
+  out.push(`<div class="zj-res"><span class="zj-big">${s[4]}</span><div><small>나의 별자리</small><b>${esc(s[0])} ${s[3]}</b><div>${esc(s[1])} · 태양 황경 ${zjSunLon(ms).toFixed(1)}°</div></div></div>`);
+  if(edge){ const a=ZJ_SIGNS[zjSignAt(dayStart)], c=ZJ_SIGNS[zjSignAt(dayEnd)];
+    out.push(`<p class="zj-note">⚠️ 이날은 태양이 ${esc(a[0])}에서 ${esc(c[0])}로 넘어가는 날이에요. 태어난 시각을 넣으면 정확히 알려 드려요.</p>`); }
+  out.push('<p class="zj-note">띠는 설날(음력 1월 1일)부터 바뀌는 것으로 계산했어요. 별자리 경계와 입춘 시각은 계산값이라 몇 분 정도 오차가 있을 수 있어요.</p>');
+  return out.join('');
+}
+function renderZodiac(tab){
+  KIND='zodiac';
+  tab = ['ji','star','me'].includes(tab) ? tab : 'ji';
+  const body = t => t==='star'?zjStarHTML():t==='me'?zjMeHTML():zjJiHTML();
+  APP.innerHTML=`
+    <div class="bar"><button class="bar-btn" id="home">‹ 홈</button><div class="bar-title">🐉 띠와 별자리</div></div>
+    <div class="kh-wrap zj-wrap">
+      <div class="kbs-tabs" role="tablist">
+        <button class="kbs-tab ${tab==='ji'?'on':''}" type="button" data-zt="ji">🐀 12지(띠)</button>
+        <button class="kbs-tab ${tab==='star'?'on':''}" type="button" data-zt="star">✨ 별자리</button>
+        <button class="kbs-tab ${tab==='me'?'on':''}" type="button" data-zt="me">🎂 나의 띠·별자리</button>
+      </div>
+      <div id="zjBody">${body(tab)}</div>
+      <div class="c-sec zj-srcs"><h3>출처</h3><ol class="lq-src">${ZJ_SOURCES.map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`:esc(s.title)} <small>확인 ${ZJ_CHECKED}</small></li>`).join('')}</ol></div>
+    </div>`;
+  document.getElementById('home').onclick=()=>history.back();
+  const wire=()=>{
+    const go=document.getElementById('zjGo'); if(!go) return;
+    const run=()=>{ const d=document.getElementById('zjDate').value, t=document.getElementById('zjTime').value;
+      try{ localStorage.setItem('ca-zj-me', JSON.stringify({d,t})); }catch(_){}
+      document.getElementById('zjOut').innerHTML=zjResult(d,t); };
+    go.onclick=run;
+    if(document.getElementById('zjDate').value) run();
+  };
+  APP.querySelectorAll('.kbs-tab').forEach(t=>t.onclick=()=>{
+    const w=t.dataset.zt;
+    APP.querySelectorAll('.kbs-tab').forEach(x=>x.classList.toggle('on',x===t));
+    document.getElementById('zjBody').innerHTML=body(w);
+    history.replaceState(null,'','#zodiac'+(w==='ji'?'':'='+w));
+    wire();
+  });
+  wire();
+  window.scrollTo(0,0);
+}
+
 function route(){
   // 가로보기에서 화면 폭을 전부 쓰는 건 비교 타임라인뿐이다. 매번 끄고 그 화면에서만 켠다.
   document.body.classList.remove('tl-wide');
@@ -1449,6 +1601,8 @@ function route(){
   if(ws){ renderTLSection('worldhist', ws[1]); return; }
   const wt=h.match(/^whst=([a-z0-9-]+)$/i);
   if(wt){ renderTLState('worldhist', wt[1]); return; }
+  const zd=h.match(/^zodiac(?:=([a-z]+))?$/i);
+  if(zd){ renderZodiac(zd[1]||'ji'); return; }
   if(h==='liq'){ renderLiqHome(); return; }
   if(h==='liqall'){ renderLiqIndex(); return; }
   const lx=h.match(/^liqx=([a-z]+)$/i);

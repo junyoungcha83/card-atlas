@@ -626,3 +626,33 @@ body.tl-wide #app{height:100%;height:100dvh;min-height:0;padding-bottom:0}
 .cont-flags{display:flex;gap:3px;margin-top:6px;flex-wrap:wrap;justify-content:center}
 .cont-flags img{height:12px!important;width:auto;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
 .ctry-tile .ctry-flag{height:auto;width:72px;max-width:90%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.15)}
+
+/* ── 띠와 별자리 ── */
+.zj-intro{color:var(--muted);line-height:1.6;margin:12px 0}
+.zj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.zj-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
+.zj-head{display:flex;gap:10px;align-items:center}
+.zj-emo{font-size:2.2rem;line-height:1}
+.zj-head b{font-size:1.1rem}
+.zj-hj{color:var(--primary2);font-size:.85rem;margin-top:2px}
+.zj-sym{color:var(--primary2);font-size:1.1rem}
+.zj-dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:10px 0 0;font-size:.88rem}
+.zj-dl dt{color:var(--muted)}.zj-dl dd{margin:0}
+.zj-years{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.zj-years span{font-size:.78rem;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1px 6px}
+.zj-years span small{color:var(--muted);margin-left:3px}
+.zj-years span.on{border-color:var(--primary);color:var(--primary2);font-weight:700}
+.zj-trait{font-size:.85rem;color:var(--text);margin:8px 0 4px;line-height:1.5}
+.zj-src{font-size:.78rem;color:var(--muted)}
+.zj-note{color:var(--muted);font-size:.82rem;line-height:1.6;margin:10px 0}
+.zj-form{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px}
+.zj-form label{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--muted)}
+.zj-form input{font:inherit;font-size:1rem;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);color-scheme:dark}
+.zj-go{font:inherit;font-weight:700;padding:11px;border-radius:10px;border:0;background:var(--primary);color:#fff;cursor:pointer}
+.zj-res{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:10px}
+.zj-res.zj-alt{border-style:dashed}
+.zj-big{font-size:2.6rem;line-height:1}
+.zj-res small{display:block;color:var(--muted);font-size:.78rem}
+.zj-res b{font-size:1.25rem;display:block;margin:2px 0}
+.zj-res div div{font-size:.85rem;color:var(--muted);line-height:1.5}
+.zj-srcs{margin-top:16px}
