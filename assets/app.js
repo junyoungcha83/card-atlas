@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v58';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v59';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -780,7 +780,17 @@ function renderMyCity(id){
 }
 
 // ── 한국역사 (① 시대별 역사 · ② 왕 계보) ──
+// 시대 카드 — 나라가 여럿인 시대는 나라별 칸(색 띠)으로, 한 나라 시대는 주제별 칸으로 나눈다. 출처는 맨 아래
 function khEraHTML(){
+  const body=e=>{
+    const secs=e.sections ? e.sections.map(s=>`
+      <section class="era-sec sec-${esc(s.c||'old')}">
+        <h4>${esc(s.t)}${s.s?`<small>${esc(s.s)}</small>`:''}</h4>
+        <ol class="timeline">${s.pts.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>
+      </section>`).join('') : `<ol class="timeline">${(e.points||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ol>`;
+    const src=(e.src||[]).length?`<div class="era-src">출처: 한국민족문화대백과사전 ${e.src.map((id,i)=>`<a href="https://encykorea.aks.ac.kr/Article/${esc(id)}" target="_blank" rel="noopener">[${i+1}]</a>`).join(' ')}</div>`:'';
+    return secs+((e.keywords&&e.keywords.length)?`<div class="chips">${e.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`:'')+src;
+  };
   return `<div class="era-list">${KH_ERAS.map(e=>`
     <div class="era-card">
       <button class="era-head" type="button">
@@ -789,10 +799,7 @@ function khEraHTML(){
         <span class="era-caret">▾</span>
       </button>
       <div class="era-sum">${esc(e.summary)}</div>
-      <div class="era-body">
-        <ol class="timeline">${e.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>
-        ${(e.keywords&&e.keywords.length)?`<div class="chips">${e.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`:''}
-      </div>
+      <div class="era-body">${body(e)}</div>
     </div>`).join('')}</div>`;
 }
 function khDynHTML(){
