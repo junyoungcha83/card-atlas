@@ -1,5 +1,5 @@
 // 카드 도감 — 홈/덱, flip(책장 넘김)·slide(다음 카드), 딥링크(#world=3.1)
-const BUILD = 'v62';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
+const BUILD = 'v63';   // 화면 표시 버전 — sw.js CACHE 번호와 같이 올릴 것
 const APP = document.getElementById('app');
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1209,7 +1209,46 @@ const LQ_AXES = [
   { id:'aging',     name:'숙성 방식', emoji:'🛢️', desc:'오크통·솔레라·가열 숙성…' },
   { id:'flavors',   name:'향미',      emoji:'👃', desc:'과일·꽃·허브·오크·쓴맛…' },
   { id:'era',       name:'시대',      emoji:'⏳', desc:'처음 기록된 때 — 연도순' },
+  { id:'all',       name:'전체',      emoji:'📚', desc:'모든 술·세부 유형 — 가나다순' },
 ];
+// 전체(가나다순) — 술 카드와 카드 안 세부 유형을 한 줄씩. 사진 슬롯·상세 화면은 원래 카드와 같은 것을 쓴다(연계)
+const LQ_CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const LQ_CHO_BASE = {ㄲ:'ㄱ',ㄸ:'ㄷ',ㅃ:'ㅂ',ㅆ:'ㅅ',ㅉ:'ㅈ'};
+function lqCho(name){ const c=String(name).trim().codePointAt(0)||0;
+  if(c<0xAC00||c>0xD7A3) return '기타'; const ch=LQ_CHO[Math.floor((c-0xAC00)/588)]; return LQ_CHO_BASE[ch]||ch; }
+function lqAllItems(){
+  const out=[];
+  LIQUORS.forEach(d=>{
+    out.push({ key:d.id, name:d.name, d });
+    const x=d.detail||{};
+    (x.subtypes||[]).forEach((t,i)=>{ const [head,...rest]=String(t).split(' — ');
+      out.push({ key:d.id+'|'+i, name:head, d, sub:{ text:t, head, desc:rest.join(' — '), native:(x.subNative||[])[i]||'' } }); });
+  });
+  return out.sort((a,b)=>a.name.localeCompare(b.name,'ko'));
+}
+function lqARow(it){
+  const d=it.d;
+  if(!it.sub){
+    const par=lqParent(d);
+    return `<button class="lq-card lq-arow" data-id="${d.id}">
+      ${lqPic(d,'lq-pic lq-apic')}
+      <div class="lq-cbody">
+        <div class="lq-ctop"><b>${esc(d.name)}</b>${d.kind!=='type'?`<span class="lq-kind">${esc(LQ_KINDS[d.kind])}</span>`:''}</div>
+        <small class="lq-local">${esc(d.local)}</small>
+        <div class="lq-meta">${esc(lqCountries(d))}${par?` · ↳ ${esc(par.name)}의 한 종류`:''}</div>
+        <p class="lq-sum">${esc(d.summary)}</p>
+      </div></button>`;
+  }
+  const s=it.sub, slot=(lqSlot(d)+'-s'+lqHash(s.head)).slice(0,64), up=IMG_SET.has(slot);
+  return `<button class="lq-card lq-arow" data-id="${d.id}">
+    <div class="lq-pic lq-apic lq-asub" data-upslot="${slot}">${up?`<img src="${imgURL(slot,'')}" alt="" loading="lazy">`:lqBottle(d.id, s.native, s.head)}</div>
+    <div class="lq-cbody">
+      <div class="lq-ctop"><b>${esc(s.head)}</b><span class="lq-kind lq-subk">세부 유형</span></div>
+      ${s.native?`<small class="lq-local">${esc(s.native)}</small>`:''}
+      <div class="lq-meta lq-par">↳ ${esc(d.emoji||'')} ${esc(d.name)}의 세부 유형</div>
+      ${s.desc?`<p class="lq-sum">${esc(s.desc)}</p>`:''}
+    </div></button>`;
+}
 // 시대 — era.period 가 있으면 그대로, 없으면 연도로 구간을 정한다
 const lqEra = d => !d.era ? null : (d.era.period || (LQ_ERAS.find(e=>d.era.year<=e.to)||{}).id);
 const lqEraText = d => !d.era ? '' : `${d.era.year!=null?d.era.year+'년':(LQ_ERAS.find(e=>e.id===d.era.period)||{}).name}${d.era.note?' — '+d.era.note:''}`;
@@ -1217,6 +1256,11 @@ const lqEraText = d => !d.era ? '' : `${d.era.year!=null?d.era.year+'년':(LQ_ER
 function lqGroups(axis){
   const L=LIQUORS, groups=[];
   const byOrder=(items, order)=>items.slice().sort((a,b)=>order(a)-order(b));
+  if(axis==='all'){
+    const m=new Map(); lqAllItems().forEach(it=>{ const c=lqCho(it.name); if(!m.has(c)) m.set(c,[]); m.get(c).push(it); });
+    return [...m.keys()].sort((a,b)=>a==='기타'?1:b==='기타'?-1:LQ_CHO.indexOf(a)-LQ_CHO.indexOf(b))
+      .map(c=>({ key:c, title:c, all:true, subs:[{ items:m.get(c) }] }));
+  }
   if(axis==='styles'){
     LQ_STYLES.forEach(g=>{ const its=L.filter(d=>(d.styles||[]).some(s=>g.items.includes(s)));
       const ord=d=>Math.min(...d.styles.map(s=>{ const i=g.items.indexOf(s); return i<0?99:i; }));
@@ -1256,8 +1300,8 @@ function renderLiqHome(){
     <div class="lq-wrap">
       <div class="lq-search"><input id="lqQ" type="search" placeholder="이름·나라·원료·세부 유형으로 찾기 (예: 쌀, 프랑스, 준마이)"></div>
       <h3 class="lq-h">무엇으로 묶어 볼까요?</h3>
-      <div class="lq-axes">${LQ_AXES.map(a=>{ const g=lqGroups(a.id).filter(x=>!x.dim).length;
-        return `<button class="lq-axis" data-ax="${a.id}"><span class="lq-axis-emo">${a.emoji}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><span class="lq-axis-n">${g}개 묶음</span></button>`; }).join('')}</div>
+      <div class="lq-axes">${LQ_AXES.map(a=>{ const g=a.id==='all'?lqAllItems().length+'개':lqGroups(a.id).filter(x=>!x.dim).length+'개 묶음';
+        return `<button class="lq-axis" data-ax="${a.id}"><span class="lq-axis-emo">${a.emoji}</span><b>${esc(a.name)}</b><small>${esc(a.desc)}</small><span class="lq-axis-n">${g}</span></button>`; }).join('')}</div>
       <button class="lq-all" id="lqAll">📋 전체 목록 · 자세히 찾기 <small>여러 조건을 함께 골라 찾기</small></button>
       <p class="lq-note lq-foot">같은 술이 여러 묶음에 나올 수 있어요(예: 포트는 '발효주'와 '강화주'). 카드는 모두 같은 원본을 가리켜요.</p>
     </div>`;
@@ -1274,14 +1318,17 @@ function renderLiqAxis(axis){
   const ax=LQ_AXES.find(a=>a.id===axis); if(!ax){ renderLiqHome(); return; }
   KIND='liq';
   const groups=lqGroups(axis);
-  const sec=(g,i)=>{ const n=new Set(g.subs.flatMap(x=>x.items.map(d=>d.id))).size;
+  const sec=(g,i)=>{ if(g.all) return `<section class="lq-sec" id="lqs-${i}">
+      <h3 class="lq-sech">${esc(g.title)} <span>${g.subs[0].items.length}개</span></h3>
+      <div class="lq-alist">${g.subs[0].items.map(lqARow).join('')}</div></section>`;
+    const n=new Set(g.subs.flatMap(x=>x.items.map(d=>d.id))).size;
     return `<section class="lq-sec${g.dim?' dim':''}" id="lqs-${i}">
       <h3 class="lq-sech">${esc(g.title)} <span>${n}종</span></h3>
       ${g.subs.map(sb=>`${sb.title?`<h4 class="lq-subh">${esc(sb.title)} <span>${sb.items.length}</span></h4>`:''}
         <div class="lq-mgrid">${sb.items.map(lqMini).join('')}</div>`).join('')}
     </section>`; };
   APP.innerHTML=`
-    <div class="bar"><button class="bar-btn" id="back">‹ 세계의 술</button><div class="bar-title">${ax.emoji} ${esc(ax.name)}별</div>
+    <div class="bar"><button class="bar-btn" id="back">‹ 세계의 술</button><div class="bar-title">${ax.emoji} ${esc(ax.name)}${axis==='all'?' (가나다순)':'별'}</div>
       <button class="bar-btn edit-btn ${EDIT?'on':''}" id="editBtn" title="사진 편집">${EDIT?'✎ 편집중':'✎'}</button></div>
     <div class="lq-wrap">
       <div class="lq-jump">${groups.map((g,i)=>`<button class="lq-chip${g.dim?' ro':''}" data-jump="${i}">${esc(g.title)}</button>`).join('')}</div>
